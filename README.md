@@ -1,73 +1,151 @@
-# React + TypeScript + Vite
+# Миссия: Информатика
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Учебное React-приложение в формате интерактивного симулятора для изучения информатики. Проект сочетает модульную структуру, миссии с разными типами заданий, словарь терминов, ключевые фразы и систему прогресса с XP и значками.
 
-Currently, two official plugins are available:
+## Обзор проекта
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+«Миссия: Информатика» — это фронтенд-проект, ориентированный на пошаговое прохождение учебных модулей. Пользователь начинает с главного экрана, переходит к карте модулей, открывает конкретный модуль, изучает словарь и фразы, затем выполняет миссию и получает результат.
 
-## React Compiler
+На текущем этапе проект реализован как клиентское SPA-приложение без backend-части. Прогресс пользователя сохраняется локально в браузере.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Для кого проект
 
-## Expanding the ESLint configuration
+Проект рассчитан на:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- студентов подготовительных и вводных учебных программ;
+- начинающих изучать основы информатики;
+- преподавателей и разработчиков учебных демо-платформ;
+- команду, которая развивает интерактивный образовательный интерфейс на React.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Что уже реализовано
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Сейчас в проекте доступны:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- стартовый экран проекта;
+- экран карты модулей;
+- экран отдельного модуля;
+- экран миссии с пошаговым сценарием;
+- экран результата после прохождения;
+- экран профиля с прогрессом, рангом и значками;
+- система локального прогресса: XP, завершённые миссии, лучшие результаты и значки;
+- 12 учебных модулей;
+- 26 миссий в данных проекта;
+- 5 миссий с включённой логикой прохождения;
+- словарь терминов и блок ключевых фраз внутри модулей;
+- несколько форматов интерактивных заданий.
+
+## Текущие типы активностей
+
+В проекте уже реализованы следующие типы заданий:
+
+- `matching` — сопоставление терминов и определений;
+- `sequence` — восстановление хронологии;
+- `multiple_choice` — выбор правильного ответа;
+- `drag_drop` — распределение элементов по зонам;
+- `classification` — классификация объектов по категориям;
+- `error_correction` — поиск и исправление ошибок.
+
+Часть типов миссий и часть модулей уже подготовлены на уровне структуры данных, но ещё не реализованы в интерфейсе прохождения.
+
+## Технологический стек
+
+- React 19
+- TypeScript
+- Vite
+- ESLint
+- CSS через глобальные стили проекта
+- LocalStorage для хранения пользовательского прогресса
+
+## Структура проекта
+
+```text
+src/
+  activities/   # интерактивные учебные задания
+  assets/       # изображения и статические ресурсы
+  components/   # переиспользуемые UI- и mission-компоненты
+  data/         # модули, контент, звания и учебные данные
+  hooks/        # пользовательские хуки, включая прогресс
+  screens/      # основные экраны приложения
+  styles/       # глобальные стили
+  types/        # типы TypeScript
+  utils/        # вспомогательные функции
+  App.tsx       # основной маршрутизирующий слой приложения
+  main.tsx      # точка входа
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Локальный запуск
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Требования
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js 18+ рекомендуется
+- npm
+
+### Установка зависимостей
+
+```bash
+npm install
 ```
+
+### Запуск в режиме разработки
+
+```bash
+npm run dev
+```
+
+После запуска Vite покажет локальный адрес приложения в терминале.
+
+### Сборка проекта
+
+```bash
+npm run build
+```
+
+### Предпросмотр production-сборки
+
+```bash
+npm run preview
+```
+
+## Как устроен пользовательский сценарий
+
+Текущий поток работы приложения выглядит так:
+
+1. Пользователь попадает на стартовый экран.
+2. Переходит к карте модулей.
+3. Выбирает доступный модуль.
+4. Изучает описание, словарь и фразы.
+5. Выполняет миссию.
+6. Получает результат, XP и возможную награду.
+7. Возвращается к модулю, карте или профилю.
+
+## Текущее состояние проекта
+
+Проект находится в стадии активной фронтенд-разработки. Уже готова базовая архитектура приложения, основная навигация, визуальная система экранов, локальная модель прогресса и несколько полноценных интерактивных механик.
+
+При этом проект пока не включает:
+
+- backend;
+- авторизацию;
+- серверное хранение данных;
+- синхронизацию прогресса между устройствами;
+- административную панель;
+- полноценную реализацию всех объявленных типов миссий.
+
+## Roadmap
+
+Ближайшие направления развития:
+
+- расширение количества реализованных миссий;
+- подключение остальных типов учебных активностей;
+- наполнение контентом всех модулей;
+- улучшение UX прохождения и обратной связи по ошибкам;
+- дальнейшая адаптация интерфейса под разные размеры экранов;
+- возможное добавление серверного хранения прогресса в будущих версиях.
+
+## Назначение репозитория
+
+Этот репозиторий подходит как:
+
+- учебный пример SPA на React + TypeScript;
+- основа для образовательного интерфейса по информатике;
+- стартовая точка для дальнейшего расширения контента и логики миссий.
