@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import './styles/global.css';
 
 import { useProgress }       from './hooks/useProgress';
@@ -14,6 +14,18 @@ import ProfileScreen   from './screens/ProfileScreen';
 import type { Module, Mission, BadgeDef } from './types/content';
 
 type View = 'landing' | 'dashboard' | 'module' | 'mission' | 'result' | 'profile';
+type Theme = 'light' | 'dark';
+
+const THEME_STORAGE_KEY = 'mss2_theme';
+
+function loadTheme(): Theme {
+  try {
+    const saved = localStorage.getItem(THEME_STORAGE_KEY);
+    return saved === 'dark' ? 'dark' : 'light';
+  } catch {
+    return 'light';
+  }
+}
 
 interface LastResult {
   score: number;
@@ -27,13 +39,20 @@ interface LastResult {
 export default function App() {
   const { progress, completeMission, reset } = useProgress();
 
+  const [theme,         setTheme]         = useState<Theme>(loadTheme);
   const [view,          setView]          = useState<View>('landing');
   const [activeMod,     setActiveMod]     = useState<Module | null>(null);
   const [activeMission, setActiveMission] = useState<Mission | null>(null);
   const [lastResult,    setLastResult]    = useState<LastResult | null>(null);
 
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
+
   const goHome    = () => { setView('dashboard'); setActiveMod(null); setActiveMission(null); };
   const goProfile = () => setView('profile');
+  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
 
   // ── Called by MissionScreen once the activity reports a score ──
   const handleMissionFinish = useCallback((score: number) => {
@@ -85,7 +104,13 @@ export default function App() {
   return (
     <>
       {view !== 'landing' && (
-        <NavBar xp={progress.xp} onHome={goHome} onProfile={goProfile} />
+        <NavBar
+          xp={progress.xp}
+          theme={theme}
+          onHome={goHome}
+          onProfile={goProfile}
+          onToggleTheme={toggleTheme}
+        />
       )}
 
       {view === 'landing' && (

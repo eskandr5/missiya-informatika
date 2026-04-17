@@ -11,11 +11,11 @@ export default function PhraseRow({ phrase, showEn, delay = '' }: Props) {
     <div
       className={`fu ${delay} flex items-start gap-3 px-4 py-3 rounded-xl`}
       style={{
-        background: 'rgba(37,99,235,.07)',
-        border: '1px solid rgba(37,99,235,.13)',
+        background: 'var(--accent-softer)',
+        border: '1px solid var(--border-accent-soft)',
       }}
     >
-      <span style={{ color: '#3b82f6', marginTop: '2px', flexShrink: 0 }}>›</span>
+      <span style={{ color: 'var(--accent)', marginTop: '2px', flexShrink: 0 }}>›</span>
       <div>
         <p className="text-slate-200 text-sm font-semibold">{phrase.ru}</p>
         {showEn && (

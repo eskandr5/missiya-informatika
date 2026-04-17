@@ -2,11 +2,13 @@ import { getRank } from '../../data/ranks';
 
 interface Props {
   xp: number;
+  theme: 'light' | 'dark';
   onHome: () => void;
   onProfile: () => void;
+  onToggleTheme: () => void;
 }
 
-export default function NavBar({ xp, onHome, onProfile }: Props) {
+export default function NavBar({ xp, theme, onHome, onProfile, onToggleTheme }: Props) {
   const rank = getRank(xp);
   return (
     <nav className="app-nav">
@@ -15,7 +17,7 @@ export default function NavBar({ xp, onHome, onProfile }: Props) {
         style={{ background: 'none', border: 'none', cursor: 'pointer' }}
         className="app-nav__brand hf font-bold text-lg text-white flex items-center gap-2"
       >
-        <span style={{ color: '#3b82f6' }}>◈</span>
+        <span style={{ color: 'var(--accent)' }}>◈</span>
         <span className="app-nav__brand-text">Миссия: Информатика</span>
       </button>
 
@@ -23,8 +25,8 @@ export default function NavBar({ xp, onHome, onProfile }: Props) {
         <div
           className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg"
           style={{
-            background: 'rgba(20,30,60,.6)',
-            border: '1px solid rgba(37,99,235,.18)',
+            background: 'var(--surface-soft)',
+            border: '1px solid var(--border-accent-soft)',
           }}
         >
           <span className="text-sm">{rank.icon}</span>
@@ -32,6 +34,10 @@ export default function NavBar({ xp, onHome, onProfile }: Props) {
           <span className="text-slate-600 text-xs">·</span>
           <span className="hf text-blue-400 font-bold text-sm">{xp} XP</span>
         </div>
+        <button onClick={onToggleTheme} className="theme-toggle" aria-label="Переключить тему">
+          <span className="theme-toggle__icon" aria-hidden="true">{theme === 'light' ? '☀' : '☾'}</span>
+          <span className="theme-toggle__label">{theme === 'light' ? 'Light' : 'Dark'}</span>
+        </button>
         <button onClick={onProfile} className="btn-g text-sm px-3 py-1.5">
           Профиль
         </button>

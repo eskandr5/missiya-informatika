@@ -26,9 +26,9 @@ export default function LandingScreen({ progress, onStart }: Props) {
       >
         <div
           className="fu inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6"
-          style={{ background: 'rgba(37,99,235,.1)', border: '1px solid rgba(37,99,235,.28)' }}
+          style={{ background: 'var(--accent-soft)', border: '1px solid var(--accent-ring)' }}
         >
-          <span style={{ color: '#3b82f6', fontSize: '.7rem' }}>●</span>
+          <span style={{ color: 'var(--accent)', fontSize: '.7rem' }}>●</span>
           <span className="text-blue-300 text-xs font-bold tracking-wider uppercase">
             Цифровая академия · Учебный симулятор
           </span>
@@ -40,14 +40,14 @@ export default function LandingScreen({ progress, onStart }: Props) {
             fontSize: 'clamp(2.4rem,6vw,4.5rem)',
             fontWeight: 900,
             lineHeight: 1.08,
-            color: '#fff',
+            color: 'var(--text-primary)',
             marginBottom: '1rem',
           }}
         >
           Миссия:<br />
           <span
             style={{
-              background: 'linear-gradient(135deg,#60a5fa,#06b6d4)',
+              background: 'var(--hero-title-gradient)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
             }}
@@ -79,7 +79,7 @@ export default function LandingScreen({ progress, onStart }: Props) {
         {returning && (
           <div
             className="fu d5 mt-5 px-5 py-3 rounded-xl text-sm"
-            style={{ background: 'rgba(10,16,32,.8)', border: '1px solid rgba(30,58,138,.28)' }}
+            style={{ background: 'var(--surface-strong)', border: '1px solid var(--border-color)' }}
           >
             <span className="text-slate-400">Прогресс: </span>
             <span className="hf text-blue-300 font-bold">{rank.icon} {rank.name}</span>
@@ -102,7 +102,7 @@ export default function LandingScreen({ progress, onStart }: Props) {
             <div
               key={i}
               className={`card fu d${i + 5} p-5`}
-              style={{ border: '1px solid rgba(30,58,138,.18)' }}
+              style={{ border: '1px solid var(--border-color)' }}
             >
               <div className="text-2xl mb-2">{f.icon}</div>
               <h3 className="hf text-white font-bold mb-1 text-sm">{f.t}</h3>

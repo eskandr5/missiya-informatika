@@ -13,8 +13,8 @@ export default function Badge({ badge, earned, size = 'md' }: Props) {
       <div
         className={`${sz} rounded-xl flex items-center justify-center ${earned ? 'pop' : ''}`}
         style={{
-          background: earned ? 'rgba(37,99,235,.2)' : 'rgba(15,25,50,.5)',
-          border: `1px solid ${earned ? 'rgba(37,99,235,.45)' : 'rgba(30,41,59,.7)'}`,
+          background: earned ? 'var(--accent-soft)' : 'var(--surface-contrast)',
+          border: `1px solid ${earned ? 'var(--accent-ring)' : 'var(--border-strong)'}`,
         }}
       >
         {badge.icon}

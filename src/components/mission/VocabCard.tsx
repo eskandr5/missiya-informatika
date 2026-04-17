@@ -27,8 +27,8 @@ export default function VocabCard({ word, showEn, delay = '' }: Props) {
           <span
             className="tag"
             style={{
-              background: 'rgba(6,182,212,.15)',
-              color: '#67e8f9',
+              background: 'var(--cyan-soft)',
+              color: 'var(--accent)',
               flexShrink: 0,
               fontSize: '.62rem',
             }}

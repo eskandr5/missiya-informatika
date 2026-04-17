@@ -53,7 +53,7 @@ export default function ClassificationActivity({ data, onComplete }: Props) {
       {/* Pool */}
       <div
         className="flex flex-wrap gap-2 mb-5 p-3 rounded-xl min-h-12"
-        style={{ background: 'rgba(10,16,32,.6)', border: '1px solid rgba(30,58,138,.2)' }}
+        style={{ background: 'var(--surface-soft)', border: '1px solid var(--border-color)' }}
       >
         {unassigned.length > 0 ? (
           unassigned.map(it => (
@@ -62,10 +62,10 @@ export default function ClassificationActivity({ data, onComplete }: Props) {
               onClick={() => pickItem(it.id)}
               className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-all"
               style={{
-                background: selected === it.id ? 'rgba(37,99,235,.22)' : 'rgba(20,30,60,.9)',
-                border: `1px solid ${selected === it.id ? 'rgba(37,99,235,.65)' : 'rgba(30,58,138,.35)'}`,
-                color: selected === it.id ? '#93c5fd' : '#cbd5e1',
-                boxShadow: selected === it.id ? '0 0 14px rgba(37,99,235,.28)' : 'none',
+                background: selected === it.id ? 'var(--accent-soft)' : 'var(--surface-contrast)',
+                border: `1px solid ${selected === it.id ? 'var(--accent-ring)' : 'var(--border-color)'}`,
+                color: selected === it.id ? 'var(--accent)' : 'var(--text-secondary)',
+                boxShadow: selected === it.id ? '0 0 14px var(--accent-glow)' : 'none',
               }}
             >
               <span className="text-xl">{it.icon}</span>
@@ -88,8 +88,8 @@ export default function ClassificationActivity({ data, onComplete }: Props) {
               onClick={() => canDrop && pickCat(cat.id)}
               className="rounded-2xl p-4 min-h-32 transition-all"
               style={{
-                background: canDrop ? `${cat.color}0c` : 'rgba(10,16,32,.55)',
-                border: `2px ${canDrop ? 'dashed' : 'solid'} ${canDrop ? cat.color + '55' : 'rgba(30,58,138,.2)'}`,
+                background: canDrop ? `${cat.color}0c` : 'var(--surface-soft)',
+                border: `2px ${canDrop ? 'dashed' : 'solid'} ${canDrop ? cat.color + '55' : 'var(--border-color)'}`,
                 cursor: canDrop ? 'pointer' : 'default',
               }}
             >
@@ -108,9 +108,9 @@ export default function ClassificationActivity({ data, onComplete }: Props) {
                       onClick={e => { e.stopPropagation(); unassign(it.id); }}
                       className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-sm font-semibold"
                       style={{
-                        background: ok ? 'rgba(34,197,94,.13)' : err ? 'rgba(239,68,68,.13)' : 'rgba(30,58,138,.22)',
-                        border: `1px solid ${ok ? 'rgba(34,197,94,.45)' : err ? 'rgba(239,68,68,.45)' : cat.color + '40'}`,
-                        color: ok ? '#86efac' : err ? '#fca5a5' : '#e2e8f0',
+                        background: ok ? 'var(--success-soft)' : err ? 'var(--danger-soft)' : 'var(--accent-soft)',
+                        border: `1px solid ${ok ? 'var(--success-color)' : err ? 'var(--danger-color)' : cat.color + '40'}`,
+                        color: ok ? 'var(--success-text)' : err ? 'var(--danger-text)' : 'var(--text-primary)',
                         cursor: submitted ? 'default' : 'pointer',
                       }}
                     >

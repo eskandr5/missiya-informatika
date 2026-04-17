@@ -63,10 +63,10 @@ export default function DragDropActivity({ data, onComplete }: Props) {
                 onClick={() => pickItem(it.id)}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold transition-all"
                 style={{
-                  background: selected === it.id ? 'rgba(37,99,235,.25)' : 'rgba(15,25,50,.8)',
-                  border: `1px solid ${selected === it.id ? 'rgba(37,99,235,.7)' : 'rgba(30,58,138,.3)'}`,
-                  color: selected === it.id ? '#93c5fd' : '#cbd5e1',
-                  boxShadow: selected === it.id ? '0 0 14px rgba(37,99,235,.3)' : 'none',
+                  background: selected === it.id ? 'var(--accent-soft)' : 'var(--surface-contrast)',
+                  border: `1px solid ${selected === it.id ? 'var(--accent-ring)' : 'var(--border-color)'}`,
+                  color: selected === it.id ? 'var(--accent)' : 'var(--text-secondary)',
+                  boxShadow: selected === it.id ? '0 0 14px var(--accent-glow)' : 'none',
                 }}
               >
                 <span>{it.icon}</span><span>{it.label}</span>
@@ -87,8 +87,8 @@ export default function DragDropActivity({ data, onComplete }: Props) {
               onClick={() => canDrop && pickZone(zone.id)}
               className="rounded-2xl p-4 min-h-28 transition-all"
               style={{
-                background: canDrop ? `${zone.color}0d` : 'rgba(10,16,32,.6)',
-                border: `2px ${canDrop ? 'dashed' : 'solid'} ${canDrop ? zone.color + '60' : 'rgba(30,58,138,.22)'}`,
+                background: canDrop ? `${zone.color}0d` : 'var(--surface-soft)',
+                border: `2px ${canDrop ? 'dashed' : 'solid'} ${canDrop ? zone.color + '60' : 'var(--border-color)'}`,
                 cursor: canDrop ? 'pointer' : 'default',
               }}
             >
@@ -107,9 +107,9 @@ export default function DragDropActivity({ data, onComplete }: Props) {
                       onClick={e => { e.stopPropagation(); removeItem(it.id); }}
                       className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-sm font-semibold transition-all"
                       style={{
-                        background: ok ? 'rgba(34,197,94,.15)' : err ? 'rgba(239,68,68,.15)' : 'rgba(30,58,138,.25)',
-                        border: `1px solid ${ok ? 'rgba(34,197,94,.5)' : err ? 'rgba(239,68,68,.5)' : zone.color + '50'}`,
-                        color: ok ? '#86efac' : err ? '#fca5a5' : '#cbd5e1',
+                        background: ok ? 'var(--success-soft)' : err ? 'var(--danger-soft)' : 'var(--accent-soft)',
+                        border: `1px solid ${ok ? 'var(--success-color)' : err ? 'var(--danger-color)' : zone.color + '50'}`,
+                        color: ok ? 'var(--success-text)' : err ? 'var(--danger-text)' : 'var(--text-secondary)',
                         cursor: submitted ? 'default' : 'pointer',
                       }}
                     >

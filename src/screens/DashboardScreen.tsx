@@ -24,8 +24,8 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
       {/* Stats strip */}
       <div
         style={{
-          background: 'linear-gradient(135deg,rgba(10,16,32,.97),rgba(6,11,22,.97))',
-          borderBottom: '1px solid rgba(30,58,138,.2)',
+          background: 'var(--surface-header)',
+          borderBottom: '1px solid var(--border-color)',
           padding: '2rem 1.5rem',
         }}
       >
@@ -45,7 +45,7 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
                 <div
                   key={i}
                   className="card px-4 py-3 text-center"
-                  style={{ minWidth: '90px', border: '1px solid rgba(30,58,138,.2)' }}
+                  style={{ minWidth: '90px', border: '1px solid var(--border-color)' }}
                 >
                   <div className="hf text-white font-bold text-sm">{s.val}</div>
                   <div className="text-xs text-slate-600 mt-0.5">{s.sub}</div>
@@ -80,7 +80,7 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
                 style={{
                   opacity: unlocked ? 1 : 0.45,
                   padding: '1.25rem',
-                  border: `1px solid ${modComplete ? 'rgba(34,197,94,.32)' : unlocked ? 'rgba(30,58,138,.3)' : 'rgba(20,30,55,.5)'}`,
+                  border: `1px solid ${modComplete ? 'var(--success-color)' : unlocked ? 'var(--border-accent-soft)' : 'var(--border-strong)'}`,
                   pointerEvents: unlocked ? 'auto' : 'none',
                 }}
               >
@@ -88,8 +88,8 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
                   <div
                     className="w-11 h-11 rounded-xl flex items-center justify-center text-2xl"
                     style={{
-                      background: unlocked ? `${mod.accent}14` : 'rgba(15,25,50,.5)',
-                      border: `1px solid ${unlocked ? mod.accent + '30' : 'rgba(20,30,55,.5)'}`,
+                      background: unlocked ? `${mod.accent}14` : 'var(--surface-contrast)',
+                      border: `1px solid ${unlocked ? mod.accent + '30' : 'var(--border-strong)'}`,
                     }}
                   >
                     {unlocked ? mod.icon : '🔒'}
@@ -97,14 +97,14 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
                   <Badge badge={mod.badge} earned={badgeEarned} size="sm" />
                 </div>
                 <div className="flex items-center gap-1.5 mb-1">
-                  <span className="tag" style={{ background: 'rgba(10,16,32,.8)', color: '#374151', fontSize: '.62rem' }}>
+                  <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)', fontSize: '.62rem' }}>
                     Модуль {mod.id}
                   </span>
                   {modComplete && (
-                    <span className="tag" style={{ background: 'rgba(34,197,94,.08)', color: '#4ade80' }}>✓</span>
+                    <span className="tag" style={{ background: 'var(--success-soft)', color: 'var(--success-color)' }}>✓</span>
                   )}
                   {!hasImpl && (
-                    <span className="tag" style={{ background: 'rgba(37,99,235,.08)', color: '#3b82f6', fontSize: '.58rem' }}>Скоро</span>
+                    <span className="tag" style={{ background: 'var(--accent-softer)', color: 'var(--accent)', fontSize: '.58rem' }}>Скоро</span>
                   )}
                 </div>
                 <h3 className="hf text-white font-bold text-sm leading-snug mb-0.5">{mod.title}</h3>

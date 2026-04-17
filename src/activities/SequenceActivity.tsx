@@ -50,15 +50,15 @@ export default function SequenceActivity({ data, onComplete }: Props) {
               onClick={() => toggle(ev)}
               className="w-full text-left px-4 py-4 rounded-xl flex items-start gap-3 transition-all"
               style={{
-                background: isOk ? 'rgba(34,197,94,.1)' : isErr ? 'rgba(239,68,68,.1)' : isSel ? 'rgba(37,99,235,.14)' : 'rgba(10,16,32,.7)',
-                border: `1px solid ${isOk ? 'rgba(34,197,94,.4)' : isErr ? 'rgba(239,68,68,.4)' : isSel ? 'rgba(37,99,235,.55)' : 'rgba(30,58,138,.25)'}`,
+                background: isOk ? 'var(--success-soft)' : isErr ? 'var(--danger-soft)' : isSel ? 'var(--accent-soft)' : 'var(--surface-strong)',
+                border: `1px solid ${isOk ? 'var(--success-color)' : isErr ? 'var(--danger-color)' : isSel ? 'var(--accent-ring)' : 'var(--border-color)'}`,
               }}
             >
               <div
                 className="w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold hf flex-shrink-0"
                 style={{
-                  background: isOk ? '#22c55e' : isErr ? '#ef4444' : isSel ? '#3b82f6' : 'rgba(30,41,59,.8)',
-                  color: '#fff',
+                  background: isOk ? 'var(--success-color)' : isErr ? 'var(--danger-color)' : isSel ? 'var(--accent)' : 'var(--text-dim)',
+                  color: 'var(--text-inverse)',
                 }}
               >
                 {isSel ? pos + 1 : '·'}
@@ -80,11 +80,11 @@ export default function SequenceActivity({ data, onComplete }: Props) {
         <div
           className="p-4 rounded-xl text-center"
           style={{
-            background: score >= 70 ? 'rgba(34,197,94,.08)' : 'rgba(245,158,11,.08)',
-            border: `1px solid ${score >= 70 ? 'rgba(34,197,94,.35)' : 'rgba(245,158,11,.35)'}`,
+            background: score >= 70 ? 'var(--success-soft)' : 'var(--warning-soft)',
+            border: `1px solid ${score >= 70 ? 'var(--success-color)' : 'var(--warning-color)'}`,
           }}
         >
-          <div className="hf text-3xl font-bold mb-1" style={{ color: score >= 70 ? '#86efac' : '#fcd34d' }}>
+          <div className="hf text-3xl font-bold mb-1" style={{ color: score >= 70 ? 'var(--success-text)' : 'var(--warning-text)' }}>
             {score}%
           </div>
           <p className="text-slate-400 text-sm">

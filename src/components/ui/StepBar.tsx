@@ -18,10 +18,10 @@ export default function StepBar({ steps, current }: Props) {
               height: '3px',
               borderRadius: '2px',
               background: done
-                ? 'rgba(37,99,235,.6)'
+                ? 'var(--accent-ring)'
                 : active
-                ? '#3b82f6'
-                : 'rgba(30,41,59,.8)',
+                ? 'var(--accent)'
+                : 'var(--border-strong)',
               transition: 'background .35s ease',
             }}
           />

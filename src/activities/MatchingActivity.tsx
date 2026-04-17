@@ -63,10 +63,10 @@ export default function MatchingActivity({ data, onComplete }: Props) {
                   disabled={isDone}
                   className={`w-full text-left px-4 py-3 rounded-xl text-sm font-semibold transition-all hf ${isWrong ? 'shake' : ''}`}
                   style={{
-                    background: isDone ? 'rgba(34,197,94,.1)' : isWrong ? 'rgba(239,68,68,.12)' : isSel ? 'rgba(37,99,235,.18)' : 'rgba(10,16,32,.7)',
-                    border: `1px solid ${isDone ? 'rgba(34,197,94,.4)' : isWrong ? 'rgba(239,68,68,.5)' : isSel ? 'rgba(37,99,235,.7)' : 'rgba(30,58,138,.28)'}`,
-                    color: isDone ? '#86efac' : isWrong ? '#fca5a5' : isSel ? '#93c5fd' : '#cbd5e1',
-                    boxShadow: isSel ? '0 0 16px rgba(37,99,235,.28)' : 'none',
+                    background: isDone ? 'var(--success-soft)' : isWrong ? 'var(--danger-soft)' : isSel ? 'var(--accent-soft)' : 'var(--surface-strong)',
+                    border: `1px solid ${isDone ? 'var(--success-color)' : isWrong ? 'var(--danger-color)' : isSel ? 'var(--accent-ring)' : 'var(--border-color)'}`,
+                    color: isDone ? 'var(--success-text)' : isWrong ? 'var(--danger-text)' : isSel ? 'var(--accent)' : 'var(--text-secondary)',
+                    boxShadow: isSel ? '0 0 16px var(--accent-glow)' : 'none',
                     cursor: isDone ? 'default' : 'pointer',
                   }}
                 >
@@ -94,9 +94,9 @@ export default function MatchingActivity({ data, onComplete }: Props) {
                   disabled={used}
                   className="w-full text-left px-4 py-3 rounded-xl text-sm transition-all"
                   style={{
-                    background: used ? 'rgba(34,197,94,.1)' : canPick ? 'rgba(6,182,212,.07)' : 'rgba(10,16,32,.5)',
-                    border: `1px solid ${used ? 'rgba(34,197,94,.35)' : canPick ? 'rgba(6,182,212,.35)' : 'rgba(30,41,59,.5)'}`,
-                    color: used ? '#86efac' : canPick ? '#a5f3fc' : '#94a3b8',
+                    background: used ? 'var(--success-soft)' : canPick ? 'var(--cyan-soft)' : 'var(--surface-soft)',
+                    border: `1px solid ${used ? 'var(--success-color)' : canPick ? 'var(--accent-ring)' : 'var(--border-strong)'}`,
+                    color: used ? 'var(--success-text)' : canPick ? 'var(--accent)' : 'var(--text-muted)',
                     cursor: used ? 'default' : canPick ? 'pointer' : 'default',
                   }}
                 >
@@ -113,7 +113,7 @@ export default function MatchingActivity({ data, onComplete }: Props) {
           <div className="pb">
             <div
               className="pb-fill"
-              style={{ width: `${pairs.length > 0 ? (correct / pairs.length) * 100 : 0}%`, background: 'linear-gradient(90deg,#3b82f6,#3b82f6cc)' }}
+              style={{ width: `${pairs.length > 0 ? (correct / pairs.length) * 100 : 0}%`, background: 'linear-gradient(90deg, var(--accent), var(--accent))' }}
             />
           </div>
         </div>

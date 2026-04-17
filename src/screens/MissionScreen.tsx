@@ -67,8 +67,8 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
       {/* Mission header */}
       <div
         style={{
-          background: 'rgba(6,11,22,.95)',
-          borderBottom: '1px solid rgba(30,58,138,.25)',
+          background: 'var(--surface-nav)',
+          borderBottom: '1px solid var(--border-color)',
           padding: '1rem 1.5rem',
           position: 'sticky',
           top: '56px',
@@ -81,10 +81,10 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
               <button onClick={prevStep} className="btn-g text-sm px-3 py-1.5 flex-shrink-0">← Назад</button>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="tag" style={{ background: 'rgba(6,182,212,.12)', color: '#67e8f9' }}>
+                  <span className="tag" style={{ background: 'var(--cyan-soft)', color: 'var(--accent)' }}>
                     Модуль {mod.id}
                   </span>
-                  <span className="tag" style={{ background: 'rgba(15,25,50,.8)', color: '#475569' }}>
+                  <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)' }}>
                     Миссия {mission.num}
                   </span>
                 </div>
@@ -96,9 +96,9 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
                 onClick={() => setShowEn(e => !e)}
                 className="text-xs px-3 py-1.5 rounded-lg font-semibold"
                 style={{
-                  background: showEn ? 'rgba(37,99,235,.2)' : 'rgba(20,30,60,.6)',
-                  border: '1px solid rgba(37,99,235,.22)',
-                  color: showEn ? '#93c5fd' : '#475569',
+                  background: showEn ? 'var(--accent-soft)' : 'var(--surface-soft)',
+                  border: '1px solid var(--border-accent-soft)',
+                  color: showEn ? 'var(--accent)' : 'var(--text-dim)',
                   cursor: 'pointer',
                 }}
               >
@@ -115,11 +115,11 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
         {/* ── BRIEFING ── */}
         {step === 'briefing' && (
           <div className="fu">
-            <div className="card p-6 mb-5" style={{ border: '1px solid rgba(37,99,235,.22)' }}>
+            <div className="card p-6 mb-5" style={{ border: '1px solid var(--border-accent-soft)' }}>
               <div className="flex items-start gap-3 mb-4">
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-                  style={{ background: 'rgba(37,99,235,.12)', border: '1px solid rgba(37,99,235,.28)' }}
+                  style={{ background: 'var(--accent-soft)', border: '1px solid var(--accent-ring)' }}
                 >
                   📋
                 </div>
@@ -130,13 +130,13 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
               </div>
               <p className="text-slate-300 leading-relaxed">{mission.briefing}</p>
               <div className="mt-4 flex flex-wrap gap-3">
-                <div className="tag" style={{ background: 'rgba(37,99,235,.1)', color: '#60a5fa' }}>
+                <div className="tag" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
                   Тип: {mission.type.replace('_', ' ')}
                 </div>
-                <div className="tag" style={{ background: 'rgba(245,158,11,.1)', color: '#fbbf24' }}>
+                <div className="tag" style={{ background: 'var(--warning-soft)', color: 'var(--warning-color)' }}>
                   ⚡ {mission.xpReward} XP
                 </div>
-                <div className="tag" style={{ background: 'rgba(34,197,94,.1)', color: '#4ade80' }}>
+                <div className="tag" style={{ background: 'var(--success-soft)', color: 'var(--success-color)' }}>
                   Порог: {mission.passingScore}%
                 </div>
               </div>
@@ -153,7 +153,7 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
                 <p className="text-xs text-blue-400 font-bold uppercase tracking-wider">Словарный запас</p>
                 <h3 className="hf text-white font-bold text-xl">Ключевые понятия</h3>
               </div>
-              <span className="tag" style={{ background: 'rgba(37,99,235,.1)', color: '#60a5fa' }}>
+              <span className="tag" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
                 {modVocab.length} слов
               </span>
             </div>
@@ -201,7 +201,7 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
               </div>
               <button onClick={prevStep} className="btn-g text-sm px-3 py-1.5">← Фразы</button>
             </div>
-            <div className="card p-5" style={{ border: '1px solid rgba(30,58,138,.28)' }}>
+            <div className="card p-5" style={{ border: '1px solid var(--border-color)' }}>
               {ActivityComp && mission.activityData ? (
                 <ActivityComp data={mission.activityData as ActivityData} onComplete={onFinish} />
               ) : (
@@ -209,7 +209,7 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
                   <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔧</div>
                   <h4 className="hf text-white font-bold text-lg mb-2">В разработке</h4>
                   <p className="text-slate-500 text-sm">Этот модуль появится в следующем обновлении.</p>
-                  <div className="tag mt-4" style={{ background: 'rgba(37,99,235,.1)', color: '#60a5fa' }}>Скоро</div>
+                  <div className="tag mt-4" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>Скоро</div>
                 </div>
               )}
             </div>

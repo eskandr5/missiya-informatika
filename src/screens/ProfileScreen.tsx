@@ -32,11 +32,11 @@ export default function ProfileScreen({ progress, onBack, onReset }: Props) {
         </div>
 
         {/* Rank card */}
-        <div className="card p-6 mb-4 fu" style={{ border: '1px solid rgba(37,99,235,.22)' }}>
+        <div className="card p-6 mb-4 fu" style={{ border: '1px solid var(--border-accent-soft)' }}>
           <div className="flex items-center gap-4 mb-4">
             <div
               className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl"
-              style={{ background: 'rgba(37,99,235,.12)', border: '1px solid rgba(37,99,235,.28)' }}
+              style={{ background: 'var(--accent-soft)', border: '1px solid var(--accent-ring)' }}
             >
               {rank.icon}
             </div>
@@ -66,7 +66,7 @@ export default function ProfileScreen({ progress, onBack, onReset }: Props) {
             { val: progress.badges.length,             sub: 'Значков' },
             { val: startedModules,                     sub: 'Модулей' },
           ].map((s, i) => (
-            <div key={i} className="card p-4 text-center" style={{ border: '1px solid rgba(30,58,138,.18)' }}>
+            <div key={i} className="card p-4 text-center" style={{ border: '1px solid var(--border-color)' }}>
               <div className="hf text-2xl font-bold text-white">{s.val}</div>
               <div className="text-xs text-slate-600 mt-1">{s.sub}</div>
             </div>
@@ -74,7 +74,7 @@ export default function ProfileScreen({ progress, onBack, onReset }: Props) {
         </div>
 
         {/* Badges */}
-        <div className="card p-5 mb-4 fu d3" style={{ border: '1px solid rgba(30,58,138,.18)' }}>
+        <div className="card p-5 mb-4 fu d3" style={{ border: '1px solid var(--border-color)' }}>
           <h3 className="hf text-white font-semibold mb-4">Значки</h3>
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-4">
             {MODULES.map(mod => (
@@ -89,7 +89,7 @@ export default function ProfileScreen({ progress, onBack, onReset }: Props) {
         </div>
 
         {/* Module progress list */}
-        <div className="card p-5 mb-5 fu d4" style={{ border: '1px solid rgba(30,58,138,.18)' }}>
+        <div className="card p-5 mb-5 fu d4" style={{ border: '1px solid var(--border-color)' }}>
           <h3 className="hf text-white font-semibold mb-4">Прогресс по модулям</h3>
           <div className="space-y-3">
             {MODULES.map((mod) => {
@@ -112,12 +112,12 @@ export default function ProfileScreen({ progress, onBack, onReset }: Props) {
           <button
             onClick={() => setConfirmReset(true)}
             className="btn-g w-full text-sm"
-            style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,.2)' }}
+            style={{ color: 'var(--danger-color)', borderColor: 'var(--danger-color)' }}
           >
             Сбросить прогресс
           </button>
         ) : (
-          <div className="card p-4 text-center" style={{ border: '1px solid rgba(239,68,68,.28)' }}>
+          <div className="card p-4 text-center" style={{ border: '1px solid var(--danger-color)' }}>
             <p className="text-slate-300 text-sm mb-3">Весь прогресс будет удалён. Продолжить?</p>
             <div className="mission-screen__step-nav justify-center">
               <button onClick={() => setConfirmReset(false)} className="btn-g">Отмена</button>
@@ -125,9 +125,9 @@ export default function ProfileScreen({ progress, onBack, onReset }: Props) {
                 onClick={onReset}
                 className="px-4 py-2 rounded-lg text-sm font-semibold"
                 style={{
-                  background: 'rgba(239,68,68,.12)',
-                  border: '1px solid rgba(239,68,68,.35)',
-                  color: '#fca5a5',
+                  background: 'var(--danger-soft)',
+                  border: '1px solid var(--danger-color)',
+                  color: 'var(--danger-text)',
                   cursor: 'pointer',
                 }}
               >

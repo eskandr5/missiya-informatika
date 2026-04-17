@@ -29,8 +29,8 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
       {/* Header */}
       <div
         style={{
-          background: 'rgba(6,11,22,.96)',
-          borderBottom: '1px solid rgba(30,58,138,.22)',
+          background: 'var(--surface-header)',
+          borderBottom: '1px solid var(--border-color)',
           padding: '2rem 1.5rem',
         }}
       >
@@ -45,11 +45,11 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <span className="tag" style={{ background: 'rgba(37,99,235,.1)', color: '#60a5fa' }}>
+                <span className="tag" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
                   Модуль {mod.id}
                 </span>
                 {doneCount === mod.missions.length && (
-                  <span className="tag" style={{ background: 'rgba(34,197,94,.1)', color: '#4ade80' }}>✓ Завершён</span>
+                  <span className="tag" style={{ background: 'var(--success-soft)', color: 'var(--success-color)' }}>✓ Завершён</span>
                 )}
               </div>
               <h1 className="hf text-2xl font-bold text-white">{mod.title}</h1>
@@ -59,9 +59,9 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
               onClick={() => setShowEn(e => !e)}
               className="flex-shrink-0 text-xs px-3 py-1.5 rounded-lg font-semibold"
               style={{
-                background: showEn ? 'rgba(37,99,235,.18)' : 'rgba(20,30,60,.6)',
-                border: '1px solid rgba(37,99,235,.2)',
-                color: showEn ? '#93c5fd' : '#475569',
+                background: showEn ? 'var(--accent-soft)' : 'var(--surface-soft)',
+                border: '1px solid var(--border-accent-soft)',
+                color: showEn ? 'var(--accent)' : 'var(--text-dim)',
                 cursor: 'pointer',
               }}
             >
@@ -82,7 +82,7 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
         {/* Tab bar */}
         <div
           className="module-screen__tabs mb-5 p-1 rounded-xl"
-          style={{ background: 'rgba(10,16,32,.8)', border: '1px solid rgba(30,58,138,.18)' }}
+          style={{ background: 'var(--surface-strong)', border: '1px solid var(--border-color)' }}
         >
           {(['missions', 'vocab', 'phrases'] as Tab[]).map(t => (
             <button
@@ -90,8 +90,8 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
               onClick={() => setTab(t)}
               className="px-4 py-1.5 rounded-lg text-sm font-semibold transition-all"
               style={{
-                background: tab === t ? 'rgba(37,99,235,.22)' : 'transparent',
-                color: tab === t ? '#93c5fd' : '#475569',
+                background: tab === t ? 'var(--accent-soft)' : 'transparent',
+                color: tab === t ? 'var(--accent)' : 'var(--text-dim)',
                 border: 'none',
                 cursor: 'pointer',
               }}
@@ -114,15 +114,15 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
                   className={`card p-5 ${unlocked ? 'lift' : ''}`}
                   style={{
                     opacity: unlocked ? 1 : 0.5,
-                    border: `1px solid ${done ? 'rgba(34,197,94,.28)' : unlocked ? 'rgba(30,58,138,.3)' : 'rgba(20,30,55,.5)'}`,
+                    border: `1px solid ${done ? 'var(--success-color)' : unlocked ? 'var(--border-accent-soft)' : 'var(--border-strong)'}`,
                   }}
                 >
                   <div className="module-screen__mission-row flex items-center gap-4">
                     <div
                       className="w-12 h-12 rounded-xl flex items-center justify-center font-bold hf flex-shrink-0 text-xl"
                       style={{
-                        background: done ? 'rgba(34,197,94,.1)' : unlocked ? 'rgba(37,99,235,.1)' : 'rgba(15,25,50,.5)',
-                        border: `1px solid ${done ? 'rgba(34,197,94,.3)' : unlocked ? 'rgba(37,99,235,.28)' : 'rgba(30,41,59,.4)'}`,
+                        background: done ? 'var(--success-soft)' : unlocked ? 'var(--accent-soft)' : 'var(--surface-contrast)',
+                        border: `1px solid ${done ? 'var(--success-color)' : unlocked ? 'var(--accent-ring)' : 'var(--border-strong)'}`,
                       }}
                     >
                       {done ? '✓' : unlocked ? m.num : '🔒'}
@@ -130,12 +130,12 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
                     <div className="flex-1 min-w-0">
                       <h3 className="hf text-white font-bold">{m.title}</h3>
                       <div className="flex flex-wrap items-center gap-2 mt-1">
-                        <span className="tag" style={{ background: 'rgba(15,25,50,.8)', color: '#475569' }}>
+                        <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)' }}>
                           {m.type.replace('_', ' ')}
                         </span>
                         <span className="text-xs text-amber-400">⚡{m.xpReward} XP</span>
                         {!m.implemented && (
-                          <span className="tag" style={{ background: 'rgba(37,99,235,.08)', color: '#3b82f6' }}>Скоро</span>
+                          <span className="tag" style={{ background: 'var(--accent-softer)', color: 'var(--accent)' }}>Скоро</span>
                         )}
                         {done && <span className="text-xs text-green-400">Лучший: {sc}%</span>}
                       </div>

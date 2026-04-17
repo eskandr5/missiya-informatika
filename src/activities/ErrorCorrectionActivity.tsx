@@ -50,8 +50,8 @@ export default function ErrorCorrectionActivity({ data, onComplete }: Props) {
               key={stmt.id}
               className="rounded-xl p-4 transition-all"
               style={{
-                background: correct ? 'rgba(34,197,94,.08)' : wrong ? 'rgba(239,68,68,.08)' : 'rgba(10,16,32,.7)',
-                border: `1px solid ${correct ? 'rgba(34,197,94,.35)' : wrong ? 'rgba(239,68,68,.35)' : 'rgba(30,58,138,.22)'}`,
+                background: correct ? 'var(--success-soft)' : wrong ? 'var(--danger-soft)' : 'var(--surface-strong)',
+                border: `1px solid ${correct ? 'var(--success-color)' : wrong ? 'var(--danger-color)' : 'var(--border-color)'}`,
               }}
             >
               <p className="text-slate-200 text-sm mb-3 leading-relaxed">«{stmt.text}»</p>
@@ -59,7 +59,7 @@ export default function ErrorCorrectionActivity({ data, onComplete }: Props) {
                 {(['correct', 'wrong'] as UserAnswer[]).map(val => {
                   const label    = val === 'correct' ? '✓ Верно' : '✗ Ошибка';
                   const active   = ans === val;
-                  const btnColor = val === 'correct' ? '#22c55e' : '#ef4444';
+                  const btnColor = val === 'correct' ? 'var(--success-color)' : 'var(--danger-color)';
                   return (
                     <button
                       key={val}
@@ -67,9 +67,9 @@ export default function ErrorCorrectionActivity({ data, onComplete }: Props) {
                       disabled={submitted}
                       className="px-4 py-1.5 rounded-lg text-xs font-bold transition-all"
                       style={{
-                        background: active ? `${btnColor}20` : 'rgba(20,30,60,.7)',
-                        border: `1px solid ${active ? btnColor + '60' : 'rgba(30,58,138,.3)'}`,
-                        color: active ? btnColor : '#64748b',
+                        background: active ? `${btnColor}20` : 'var(--surface-soft)',
+                        border: `1px solid ${active ? btnColor : 'var(--border-color)'}`,
+                        color: active ? btnColor : 'var(--text-muted)',
                         cursor: submitted ? 'default' : 'pointer',
                       }}
                     >
@@ -86,7 +86,7 @@ export default function ErrorCorrectionActivity({ data, onComplete }: Props) {
               {submitted && (
                 <div
                   className="text-xs text-slate-400 leading-relaxed mt-1 pt-2"
-                  style={{ borderTop: '1px solid rgba(30,58,138,.2)' }}
+                  style={{ borderTop: '1px solid var(--border-color)' }}
                 >
                   {!stmt.isCorrect && stmt.correction && (
                     <p className="text-amber-300 mb-1">

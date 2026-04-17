@@ -25,7 +25,7 @@ export default function MultipleChoiceActivity({ data, onComplete }: Props) {
   return (
     <div className="space-y-4">
       {questions.map((q, qi) => (
-        <div key={q.id} className="card p-4" style={{ border: '1px solid rgba(30,58,138,.25)' }}>
+        <div key={q.id} className="card p-4" style={{ border: '1px solid var(--border-color)' }}>
           <p className="text-slate-200 font-semibold mb-3 text-sm">{qi + 1}. {q.q}</p>
           <div className="space-y-2">
             {q.opts.map((opt, oi) => {
@@ -38,9 +38,9 @@ export default function MultipleChoiceActivity({ data, onComplete }: Props) {
                   onClick={() => !submitted && setAnswers(a => ({ ...a, [q.id]: oi }))}
                   className="w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all"
                   style={{
-                    background: isOk ? 'rgba(34,197,94,.12)' : isErr ? 'rgba(239,68,68,.12)' : chosen ? 'rgba(37,99,235,.14)' : 'rgba(10,16,32,.6)',
-                    border: `1px solid ${isOk ? 'rgba(34,197,94,.4)' : isErr ? 'rgba(239,68,68,.4)' : chosen ? 'rgba(37,99,235,.5)' : 'rgba(30,41,59,.55)'}`,
-                    color: isOk ? '#86efac' : isErr ? '#fca5a5' : chosen ? '#93c5fd' : '#94a3b8',
+                    background: isOk ? 'var(--success-soft)' : isErr ? 'var(--danger-soft)' : chosen ? 'var(--accent-soft)' : 'var(--surface-soft)',
+                    border: `1px solid ${isOk ? 'var(--success-color)' : isErr ? 'var(--danger-color)' : chosen ? 'var(--accent-ring)' : 'var(--border-strong)'}`,
+                    color: isOk ? 'var(--success-text)' : isErr ? 'var(--danger-text)' : chosen ? 'var(--accent)' : 'var(--text-muted)',
                     cursor: submitted ? 'default' : 'pointer',
                   }}
                 >
