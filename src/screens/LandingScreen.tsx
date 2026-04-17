@@ -15,12 +15,12 @@ export default function LandingScreen({ progress, onStart }: Props) {
       {/* Hero */}
       <div
         style={{
-          minHeight: '92vh',
+          minHeight: '94vh',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '4rem 1.5rem 2rem',
+          padding: '4.5rem 1.5rem 2.5rem',
           textAlign: 'center',
         }}
       >
@@ -28,7 +28,7 @@ export default function LandingScreen({ progress, onStart }: Props) {
           className="fu inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6"
           style={{ background: 'var(--accent-soft)', border: '1px solid var(--accent-ring)' }}
         >
-          <span style={{ color: 'var(--accent)', fontSize: '.7rem' }}>●</span>
+          <span style={{ color: 'var(--accent)', fontSize: '.78rem' }}>●</span>
           <span className="text-blue-300 text-xs font-bold tracking-wider uppercase">
             Цифровая академия · Учебный симулятор
           </span>
@@ -37,11 +37,11 @@ export default function LandingScreen({ progress, onStart }: Props) {
         <h1
           className="hf fu d1"
           style={{
-            fontSize: 'clamp(2.4rem,6vw,4.5rem)',
+            fontSize: 'clamp(2.7rem, 6.4vw, 4.9rem)',
             fontWeight: 900,
-            lineHeight: 1.08,
+            lineHeight: 1.04,
             color: 'var(--text-primary)',
-            marginBottom: '1rem',
+            marginBottom: '1.15rem',
           }}
         >
           Миссия:<br />
@@ -58,7 +58,7 @@ export default function LandingScreen({ progress, onStart }: Props) {
 
         <p
           className="fu d2 text-slate-400 text-lg mb-4"
-          style={{ maxWidth: '500px', lineHeight: 1.65 }}
+          style={{ maxWidth: '560px', lineHeight: 1.72 }}
         >
           Учебная платформа для студентов подготовительного факультета. Прогрессируйте через 12 модулей информатики.
         </p>

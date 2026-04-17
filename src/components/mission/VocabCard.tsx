@@ -14,8 +14,8 @@ export default function VocabCard({ word, showEn, delay = '' }: Props) {
       onClick={() => setFlipped(f => !f)}
       className={`fu ${delay} card lift`}
       style={{
-        padding: '1rem',
-        minHeight: '6.5rem',
+        padding: '1.1rem',
+        minHeight: '7.6rem',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -30,7 +30,7 @@ export default function VocabCard({ word, showEn, delay = '' }: Props) {
               background: 'var(--cyan-soft)',
               color: 'var(--accent)',
               flexShrink: 0,
-              fontSize: '.62rem',
+              fontSize: '.68rem',
             }}
           >
             {word.en}
