@@ -11,8 +11,9 @@ import module09 from './module09';
 import module10 from './module10';
 import module11 from './module11';
 import module12 from './module12';
+import { MODULE_VARIETY } from './moduleVariety';
 
-export const MODULES: Module[] = [
+const BASE_MODULES: Module[] = [
   module01,
   module02,
   module03,
@@ -26,3 +27,8 @@ export const MODULES: Module[] = [
   module11,
   module12,
 ];
+
+export const MODULES: Module[] = BASE_MODULES.map((mod) => ({
+  ...mod,
+  ...MODULE_VARIETY[mod.id],
+}));

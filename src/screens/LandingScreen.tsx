@@ -1,3 +1,4 @@
+import { MODULES } from '../data/modules';
 import { getRank } from '../data/ranks';
 import type { Progress } from '../types/progress';
 
@@ -9,6 +10,8 @@ interface Props {
 export default function LandingScreen({ progress, onStart }: Props) {
   const rank      = getRank(progress.xp);
   const returning = progress.completedMissions.length > 0;
+  const totalModules = MODULES.length;
+  const totalMissions = MODULES.reduce((sum, mod) => sum + mod.missions.length, 0);
 
   return (
     <div className="min-h-screen bg-grid" style={{ paddingBottom: '4rem' }}>
@@ -60,12 +63,12 @@ export default function LandingScreen({ progress, onStart }: Props) {
           className="fu d2 text-slate-400 text-lg mb-4"
           style={{ maxWidth: '560px', lineHeight: 1.72 }}
         >
-          Учебная платформа для студентов подготовительного факультета. Прогрессируйте через 12 модулей информатики.
+          Учебная платформа для студентов подготовительного факультета. Прогрессируйте через {totalModules} модулей информатики.
         </p>
 
         <div className="fu d3 flex flex-wrap gap-3 justify-center text-slate-500 text-sm mb-8">
-          <span>📚 12 модулей</span><span>·</span>
-          <span>⚡ 35 миссий</span><span>·</span>
+          <span>📚 {totalModules} модулей</span><span>·</span>
+          <span>⚡ {totalMissions} миссий</span><span>·</span>
           <span>🏆 Рейтинг</span><span>·</span>
           <span>🎖️ Значки</span>
         </div>

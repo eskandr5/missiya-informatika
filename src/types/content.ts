@@ -16,6 +16,18 @@ export type MissionType =
   | 'logic_table'
   | 'final_mixed';
 
+export type MissionStageType = 'mission' | 'checkpoint';
+
+export interface ModuleVariety {
+  moduleIdentity: string;
+  openingStyle: string;
+  rewardType: string;
+  videoMode: string;
+  chapter: string;
+  moduleFeel: string;
+  specialMechanic: string;
+}
+
 export interface VocabWord {
   id: string;
   ru: string;
@@ -39,6 +51,7 @@ export interface Mission {
   num: number;
   title: string;
   type: MissionType;
+  stageType?: MissionStageType;
   xpReward: number;
   passingScore: number;
   implemented: boolean;
@@ -57,6 +70,13 @@ export interface Module {
   accent: string;
   xpReward: number;
   badge: BadgeDef;
+  moduleIdentity?: string;
+  openingStyle?: string;
+  rewardType?: string;
+  videoMode?: string;
+  chapter?: string;
+  moduleFeel?: string;
+  specialMechanic?: string;
   vocab: VocabWord[];
   phrases: Phrase[];
   missions: Mission[];

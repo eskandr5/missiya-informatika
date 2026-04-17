@@ -19,6 +19,7 @@ export default function ResultScreen({
 }: Props) {
   const ringColor = passed ? 'var(--success-color)' : score >= 50 ? 'var(--warning-color)' : 'var(--danger-color)';
   const circumference = 289; // 2π × 46
+  const isCheckpoint = mission.stageType === 'checkpoint';
 
   return (
     <div className="app-page result-screen min-h-screen bg-grid flex items-center justify-center p-6">
@@ -30,27 +31,29 @@ export default function ResultScreen({
           border: `1px solid ${passed ? 'var(--success-color)' : 'var(--danger-color)'}`,
         }}
       >
-        {/* Icon */}
         <div style={{ fontSize: '3.5rem', marginBottom: '.75rem' }} className="pop">
-          {passed ? '🎯' : '🔁'}
+          {passed ? (isCheckpoint ? '🏁' : '🎯') : '🔁'}
         </div>
 
         <h2
           className="hf text-3xl font-bold mb-1"
           style={{ color: passed ? 'var(--success-text)' : 'var(--danger-text)' }}
         >
-          {passed ? 'Миссия выполнена!' : 'Не пройдено'}
+          {passed ? (isCheckpoint ? 'Чекпоинт пройден!' : 'Миссия выполнена!') : 'Не пройдено'}
         </h2>
         <p className="text-slate-500 text-sm mb-6">{mission.title} · Модуль {mod.id}</p>
 
-        {/* Score ring */}
         <div className="flex justify-center mb-5">
           <div className="relative" style={{ width: '112px', height: '112px' }}>
             <svg width="112" height="112" viewBox="0 0 112 112">
               <circle cx="56" cy="56" r="46" fill="none" stroke="var(--progress-track)" strokeWidth="9" />
               <circle
-                cx="56" cy="56" r="46" fill="none"
-                stroke={ringColor} strokeWidth="9"
+                cx="56"
+                cy="56"
+                r="46"
+                fill="none"
+                stroke={ringColor}
+                strokeWidth="9"
                 strokeDasharray={`${(score / 100) * circumference} ${circumference}`}
                 strokeLinecap="round"
                 transform="rotate(-90 56 56)"
@@ -59,9 +62,12 @@ export default function ResultScreen({
             </svg>
             <div
               style={{
-                position: 'absolute', inset: 0,
-                display: 'flex', flexDirection: 'column',
-                alignItems: 'center', justifyContent: 'center',
+                position: 'absolute',
+                inset: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
               <span className="hf text-2xl font-bold text-white">{score}%</span>
@@ -70,7 +76,6 @@ export default function ResultScreen({
           </div>
         </div>
 
-        {/* Pass / fail threshold */}
         <div
           className="mb-5 px-4 py-2.5 rounded-xl text-sm"
           style={{
@@ -87,7 +92,18 @@ export default function ResultScreen({
           )}
         </div>
 
-        {/* Rewards (pass only) */}
+        {passed && isCheckpoint && (
+          <div
+            className="mb-5 px-4 py-3 rounded-xl"
+            style={{ background: 'var(--accent-soft)', border: '1px solid var(--border-accent-soft)' }}
+          >
+            <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Переход главы</p>
+            <p className="text-slate-300 text-sm font-semibold">
+              {mod.chapter ?? 'Первая глава'} завершена. Базовый этап академии закрыт, и можно переходить к следующему блоку.
+            </p>
+          </div>
+        )}
+
         {passed && (
           <div className="result-screen__rewards flex justify-center gap-3 mb-5 fu d2">
             <div
@@ -109,22 +125,22 @@ export default function ResultScreen({
           </div>
         )}
 
-        {/* Hint on fail */}
         {!passed && (
           <p className="text-slate-500 text-xs mb-5">
             Повторите словарный запас и попробуйте снова. XP начисляется только при прохождении.
           </p>
         )}
 
-        {/* Buttons */}
         <div className="flex flex-col gap-2">
           {passed && onNext && (
-            <button onClick={onNext} className="btn-p w-full">Следующая миссия →</button>
+            <button onClick={onNext} className="btn-p w-full">
+              {isCheckpoint ? 'К следующему этапу →' : 'Следующая миссия →'}
+            </button>
           )}
           <div className="result-screen__actions flex gap-2">
-            <button onClick={onRetry}      className="btn-s flex-1">↺ Повторить</button>
+            <button onClick={onRetry} className="btn-s flex-1">↺ Повторить</button>
             <button onClick={onModulePage} className="btn-g flex-1">Модуль</button>
-            <button onClick={onDashboard}  className="btn-g flex-1">◈ Карта</button>
+            <button onClick={onDashboard} className="btn-g flex-1">◈ Карта</button>
           </div>
         </div>
       </div>

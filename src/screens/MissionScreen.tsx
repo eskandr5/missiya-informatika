@@ -70,15 +70,17 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
   }, [mission, mod]);
 
   const stepIdx = FLOW_STEPS.indexOf(step);
+  const isCheckpoint = mission.stageType === 'checkpoint';
+  const ActivityComp = ACTIVITY_MAP[mission.type];
+
   const nextStep = () => {
     if (stepIdx < FLOW_STEPS.length - 1) setStep(FLOW_STEPS[stepIdx + 1]);
   };
+
   const prevStep = () => {
     if (stepIdx > 0) setStep(FLOW_STEPS[stepIdx - 1]);
     else onBack();
   };
-
-  const ActivityComp = ACTIVITY_MAP[mission.type];
 
   return (
     <div className="app-page min-h-screen bg-grid" style={{ paddingBottom: '3rem' }}>
@@ -102,8 +104,13 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
                     Модуль {mod.id}
                   </span>
                   <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)' }}>
-                    Миссия {mission.num}
+                    {isCheckpoint ? 'Чекпоинт' : `Миссия ${mission.num}`}
                   </span>
+                  {mod.chapter && (
+                    <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)' }}>
+                      {mod.chapter}
+                    </span>
+                  )}
                 </div>
                 <h2 className="hf text-white font-bold text-base mt-0.5 truncate">{mission.title}</h2>
               </div>
@@ -137,18 +144,47 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
                   className="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
                   style={{ background: 'var(--accent-soft)', border: '1px solid var(--accent-ring)' }}
                 >
-                  📋
+                  {isCheckpoint ? '🏁' : mod.icon}
                 </div>
                 <div>
-                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider">Инструктаж</p>
+                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider">
+                    {isCheckpoint ? 'Контрольная точка' : 'Инструктаж'}
+                  </p>
                   <h3 className="hf text-white font-bold text-lg">{mission.title}</h3>
+                  {mod.moduleIdentity && (
+                    <p className="text-slate-500 text-xs mt-1">{mod.moduleIdentity}</p>
+                  )}
                 </div>
               </div>
+
               <p className="text-slate-300 leading-relaxed">{mission.briefing}</p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                <div
+                  className="rounded-xl p-4"
+                  style={{ background: 'var(--surface-soft)', border: '1px solid var(--border-color)' }}
+                >
+                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Стиль</p>
+                  <p className="text-slate-300 text-sm font-semibold">{mod.openingStyle ?? 'Академический запуск'}</p>
+                </div>
+                <div
+                  className="rounded-xl p-4"
+                  style={{ background: 'var(--surface-soft)', border: '1px solid var(--border-color)' }}
+                >
+                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Механика</p>
+                  <p className="text-slate-300 text-sm font-semibold">{mod.specialMechanic ?? 'Практика по теме модуля'}</p>
+                </div>
+              </div>
+
               <div className="mt-4 flex flex-wrap gap-3">
                 <div className="tag" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
-                  Тип: {mission.type.replace('_', ' ')}
+                  Тип: {TYPE_LABELS[mission.type] ?? mission.type.replace(/_/g, ' ')}
                 </div>
+                {isCheckpoint && (
+                  <div className="tag" style={{ background: 'var(--warning-soft)', color: 'var(--warning-color)' }}>
+                    Переход к новой главе
+                  </div>
+                )}
                 <div className="tag" style={{ background: 'var(--warning-soft)', color: 'var(--warning-color)' }}>
                   ⚡ {mission.xpReward} XP
                 </div>
@@ -166,7 +202,9 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-xs text-blue-400 font-bold uppercase tracking-wider">Словарный запас</p>
-                <h3 className="hf text-white font-bold text-xl">Ключевые понятия</h3>
+                <h3 className="hf text-white font-bold text-xl">
+                  {isCheckpoint ? 'Быстрое повторение' : 'Ключевые понятия'}
+                </h3>
               </div>
               <span className="tag" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
                 {modVocab.length} слов
@@ -188,8 +226,14 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
           <div className="fu">
             <div className="mb-4">
               <p className="text-xs text-blue-400 font-bold uppercase tracking-wider">Ключевые фразы</p>
-              <h3 className="hf text-white font-bold text-xl">Запомните эти выражения</h3>
-              <p className="text-slate-500 text-sm mt-1">Эти фразы встречаются в задании. Изучите их перед началом.</p>
+              <h3 className="hf text-white font-bold text-xl">
+                {isCheckpoint ? 'Последняя настройка перед чекпоинтом' : 'Запомните эти выражения'}
+              </h3>
+              <p className="text-slate-500 text-sm mt-1">
+                {isCheckpoint
+                  ? 'Пробегитесь по знакомым командам и переходите к короткому обзору главы.'
+                  : 'Эти фразы встречаются в задании. Изучите их перед началом.'}
+              </p>
             </div>
             <div className="space-y-2 mb-6">
               {mod.phrases.map((phrase, index) => (
@@ -198,7 +242,7 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
             </div>
             <div className="mission-screen__step-nav">
               <button onClick={prevStep} className="btn-g">← Назад</button>
-              <button onClick={nextStep} className="btn-p">К заданию →</button>
+              <button onClick={nextStep} className="btn-p">{isCheckpoint ? 'К чекпоинту →' : 'К заданию →'}</button>
             </div>
           </div>
         )}
@@ -208,9 +252,12 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-xs text-blue-400 font-bold uppercase tracking-wider">
-                  {TYPE_LABELS[mission.type] ?? 'Задание'}
+                  {isCheckpoint ? 'Контрольная точка' : TYPE_LABELS[mission.type] ?? 'Задание'}
                 </p>
                 <h3 className="hf text-white font-bold text-xl">{mission.title}</h3>
+                {mod.moduleFeel && (
+                  <p className="text-slate-500 text-sm mt-1">{mod.moduleFeel}</p>
+                )}
               </div>
               <button onClick={prevStep} className="btn-g text-sm px-3 py-1.5">← Фразы</button>
             </div>
