@@ -71,7 +71,7 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
           borderBottom: '1px solid var(--border-color)',
           padding: '1rem 1.5rem',
           position: 'sticky',
-          top: '56px',
+          top: 'var(--nav-height)',
           zIndex: 30,
         }}
       >
