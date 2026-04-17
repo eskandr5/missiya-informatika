@@ -8,6 +8,8 @@ import SequenceActivity from '../activities/SequenceActivity';
 import MultipleChoiceActivity from '../activities/MultipleChoiceActivity';
 import PhraseOrderingActivity from '../activities/PhraseOrderingActivity';
 import PhraseChoiceActivity from '../activities/PhraseChoiceActivity';
+import ListenAndChooseActivity from '../activities/ListenAndChooseActivity';
+import ListenAndMatchActivity from '../activities/ListenAndMatchActivity';
 import DragDropActivity from '../activities/DragDropActivity';
 import ClassificationActivity from '../activities/ClassificationActivity';
 import ErrorCorrectionActivity from '../activities/ErrorCorrectionActivity';
@@ -28,6 +30,8 @@ const ACTIVITY_MAP: Partial<Record<MissionType, ComponentType<ActivityProps>>> =
   multiple_choice: MultipleChoiceActivity,
   phrase_ordering: PhraseOrderingActivity,
   phrase_choice: PhraseChoiceActivity,
+  listen_and_choose: ListenAndChooseActivity,
+  listen_and_match: ListenAndMatchActivity,
   drag_drop: DragDropActivity,
   classification: ClassificationActivity,
   error_correction: ErrorCorrectionActivity,
@@ -42,6 +46,8 @@ const TYPE_LABELS: Partial<Record<MissionType, string>> = {
   multiple_choice: 'Тест',
   phrase_ordering: 'Сборка фраз',
   phrase_choice: 'Выбор фразы',
+  listen_and_choose: 'Аудиовыбор',
+  listen_and_match: 'Аудиосоответствие',
   drag_drop: 'Распределение',
   classification: 'Классификация',
   error_correction: 'Исправление ошибок',

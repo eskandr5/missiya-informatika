@@ -6,6 +6,8 @@ export type MissionType =
   | 'multiple_choice'
   | 'phrase_ordering'
   | 'phrase_choice'
+  | 'listen_and_choose'
+  | 'listen_and_match'
   | 'drag_drop'
   | 'classification'
   | 'error_correction'

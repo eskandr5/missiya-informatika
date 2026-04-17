@@ -49,6 +49,30 @@ export interface PhraseChoiceData {
   questions: PhraseChoiceQuestion[];
 }
 
+export interface ListenAndChooseQuestion {
+  id: string;
+  prompt: string;
+  audioText: string;
+  choices: string[];
+  correct: number;
+  helperText?: string;
+  revealText?: string;
+}
+export interface ListenAndChooseData {
+  questions: ListenAndChooseQuestion[];
+}
+
+export interface ListenAndMatchPair {
+  id: string;
+  label: string;
+  audioText: string;
+  matchText: string;
+  helperText?: string;
+}
+export interface ListenAndMatchData {
+  pairs: ListenAndMatchPair[];
+}
+
 export interface DragDropItem {
   id: string;
   label: string;
@@ -102,6 +126,8 @@ export type ActivityData =
   | MultipleChoiceData
   | PhraseOrderingData
   | PhraseChoiceData
+  | ListenAndChooseData
+  | ListenAndMatchData
   | DragDropData
   | ClassificationData
   | ErrorCorrectionData;
