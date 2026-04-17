@@ -169,6 +169,18 @@ svg {
   50% { box-shadow: 0 0 42px rgba(37, 99, 235, .45); }
 }
 
+@keyframes audioPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, .18);
+    transform: scale(1);
+  }
+
+  50% {
+    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0);
+    transform: scale(1.04);
+  }
+}
+
 @keyframes pop {
   0% { transform: scale(0); }
   65% { transform: scale(1.2); }
@@ -586,6 +598,59 @@ svg {
 .module-screen__mission-row { justify-content: space-between; }
 .module-screen__mission-action { flex-shrink: 0; }
 .mission-screen__topbar { min-height: 0; }
+
+.vocab-card,
+.phrase-row,
+.audio-trigger {
+  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, color .2s ease, transform .2s ease;
+}
+
+.vocab-card.is-speaking,
+.phrase-row.is-speaking {
+  border-color: var(--accent-ring) !important;
+  box-shadow: 0 0 0 1px var(--accent-ring), 0 10px 28px rgba(37, 99, 235, .12);
+}
+
+.audio-trigger {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border-accent-soft);
+  background: var(--surface-soft);
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.audio-trigger:hover:not(:disabled) {
+  background: var(--accent-soft);
+  border-color: var(--accent-ring);
+  transform: translateY(-1px);
+}
+
+.audio-trigger:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+.audio-trigger:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.audio-trigger.is-playing {
+  background: var(--accent-soft);
+  border-color: var(--accent-ring);
+  animation: audioPulse 1.25s ease-in-out infinite;
+}
+
+.audio-trigger__icon {
+  width: 1rem;
+  height: 1rem;
+}
 
 .mission-screen__actions,
 .mission-screen__step-nav {
