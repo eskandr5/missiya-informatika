@@ -1,0 +1,82 @@
+export interface MatchingPair {
+  term: string;
+  def: string;
+}
+export interface MatchingData {
+  pairs: MatchingPair[];
+}
+
+export interface SequenceEvent {
+  id: number;
+  year: string;
+  text: string;
+  order: number;
+}
+export interface SequenceData {
+  events: SequenceEvent[];
+}
+
+export interface MCQuestion {
+  id: string;
+  q: string;
+  opts: string[];
+  correct: number;
+}
+export interface MultipleChoiceData {
+  questions: MCQuestion[];
+}
+
+export interface DragDropItem {
+  id: string;
+  label: string;
+  icon: string;
+  correctZone: string;
+}
+export interface DragDropZone {
+  id: string;
+  label: string;
+  desc: string;
+  color: string;
+}
+export interface DragDropData {
+  items: DragDropItem[];
+  zones: DragDropZone[];
+}
+
+export interface ClassificationItem {
+  id: string;
+  label: string;
+  icon: string;
+  category: string;
+}
+export interface ClassificationCategory {
+  id: string;
+  label: string;
+  desc: string;
+  color: string;
+  icon: string;
+}
+export interface ClassificationData {
+  items: ClassificationItem[];
+  categories: ClassificationCategory[];
+}
+
+export interface ErrorStatement {
+  id: string;
+  text: string;
+  isCorrect: boolean;
+  correction?: string;
+  explanation: string;
+}
+export interface ErrorCorrectionData {
+  context?: string;
+  statements: ErrorStatement[];
+}
+
+export type ActivityData =
+  | MatchingData
+  | SequenceData
+  | MultipleChoiceData
+  | DragDropData
+  | ClassificationData
+  | ErrorCorrectionData;
