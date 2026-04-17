@@ -1,43 +1,50 @@
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type { ComponentType } from 'react';
-import type { Mission, Module, MissionType } from '../types/content';
 import type { ActivityData } from '../types/activity';
+import type { Mission, MissionType, Module, Phrase } from '../types/content';
 import { DL } from '../utils/helpers';
-import StepBar from '../components/ui/StepBar';
-import VocabCard from '../components/mission/VocabCard';
-import PhraseRow from '../components/mission/PhraseRow';
-import MatchingActivity      from '../activities/MatchingActivity';
-import SequenceActivity      from '../activities/SequenceActivity';
+import MatchingActivity from '../activities/MatchingActivity';
+import SequenceActivity from '../activities/SequenceActivity';
 import MultipleChoiceActivity from '../activities/MultipleChoiceActivity';
-import DragDropActivity      from '../activities/DragDropActivity';
+import PhraseOrderingActivity from '../activities/PhraseOrderingActivity';
+import PhraseChoiceActivity from '../activities/PhraseChoiceActivity';
+import DragDropActivity from '../activities/DragDropActivity';
 import ClassificationActivity from '../activities/ClassificationActivity';
 import ErrorCorrectionActivity from '../activities/ErrorCorrectionActivity';
+import PhraseRow from '../components/mission/PhraseRow';
+import VocabCard from '../components/mission/VocabCard';
+import StepBar from '../components/ui/StepBar';
 
 interface ActivityProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
   onComplete: (score: number) => void;
+  phrases?: Phrase[];
 }
 
 const ACTIVITY_MAP: Partial<Record<MissionType, ComponentType<ActivityProps>>> = {
-  matching:          MatchingActivity,
-  sequence:          SequenceActivity,
-  multiple_choice:   MultipleChoiceActivity,
-  drag_drop:         DragDropActivity,
-  classification:    ClassificationActivity,
-  error_correction:  ErrorCorrectionActivity,
+  matching: MatchingActivity,
+  sequence: SequenceActivity,
+  multiple_choice: MultipleChoiceActivity,
+  phrase_ordering: PhraseOrderingActivity,
+  phrase_choice: PhraseChoiceActivity,
+  drag_drop: DragDropActivity,
+  classification: ClassificationActivity,
+  error_correction: ErrorCorrectionActivity,
 };
 
 const FLOW_STEPS = ['briefing', 'vocab', 'phrases', 'activity'] as const;
 type FlowStep = typeof FLOW_STEPS[number];
 
 const TYPE_LABELS: Partial<Record<MissionType, string>> = {
-  matching:         'Соответствие',
-  sequence:         'Хронология',
-  drag_drop:        'Распределение',
-  classification:   'Классификация',
+  matching: 'Соответствие',
+  sequence: 'Хронология',
+  multiple_choice: 'Тест',
+  phrase_ordering: 'Сборка фраз',
+  phrase_choice: 'Выбор фразы',
+  drag_drop: 'Распределение',
+  classification: 'Классификация',
   error_correction: 'Исправление ошибок',
-  multiple_choice:  'Тест',
 };
 
 interface Props {
@@ -48,7 +55,7 @@ interface Props {
 }
 
 export default function MissionScreen({ mission, module: mod, onFinish, onBack }: Props) {
-  const [step,   setStep]   = useState<FlowStep>('briefing');
+  const [step, setStep] = useState<FlowStep>('briefing');
   const [showEn, setShowEn] = useState(false);
 
   const modVocab = useMemo(() => {
@@ -57,14 +64,18 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
   }, [mission, mod]);
 
   const stepIdx = FLOW_STEPS.indexOf(step);
-  const nextStep = () => { if (stepIdx < FLOW_STEPS.length - 1) setStep(FLOW_STEPS[stepIdx + 1]); };
-  const prevStep = () => { if (stepIdx > 0) setStep(FLOW_STEPS[stepIdx - 1]); else onBack(); };
+  const nextStep = () => {
+    if (stepIdx < FLOW_STEPS.length - 1) setStep(FLOW_STEPS[stepIdx + 1]);
+  };
+  const prevStep = () => {
+    if (stepIdx > 0) setStep(FLOW_STEPS[stepIdx - 1]);
+    else onBack();
+  };
 
   const ActivityComp = ACTIVITY_MAP[mission.type];
 
   return (
     <div className="app-page min-h-screen bg-grid" style={{ paddingBottom: '3rem' }}>
-      {/* Mission header */}
       <div
         style={{
           background: 'var(--surface-nav)',
@@ -93,7 +104,7 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
             </div>
             <div className="mission-screen__actions flex items-center gap-2 flex-shrink-0">
               <button
-                onClick={() => setShowEn(e => !e)}
+                onClick={() => setShowEn(value => !value)}
                 className="text-xs px-3 py-1.5 rounded-lg font-semibold"
                 style={{
                   background: showEn ? 'var(--accent-soft)' : 'var(--surface-soft)',
@@ -112,7 +123,6 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
       </div>
 
       <div className="app-shell app-shell--narrow" style={{ maxWidth: '880px', margin: '0 auto', paddingBlock: '2rem' }}>
-        {/* ── BRIEFING ── */}
         {step === 'briefing' && (
           <div className="fu">
             <div className="card p-6 mb-5" style={{ border: '1px solid var(--border-accent-soft)' }}>
@@ -145,7 +155,6 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
           </div>
         )}
 
-        {/* ── VOCAB ── */}
         {step === 'vocab' && (
           <div className="fu">
             <div className="flex items-center justify-between mb-4">
@@ -158,8 +167,8 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
               </span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-5">
-              {modVocab.map((w, i) => (
-                <VocabCard key={w.id} word={w} showEn={showEn} delay={DL[i] ?? ''} />
+              {modVocab.map((word, index) => (
+                <VocabCard key={word.id} word={word} showEn={showEn} delay={DL[index] ?? ''} />
               ))}
             </div>
             <div className="mission-screen__step-nav">
@@ -169,7 +178,6 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
           </div>
         )}
 
-        {/* ── PHRASES ── */}
         {step === 'phrases' && (
           <div className="fu">
             <div className="mb-4">
@@ -178,8 +186,8 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
               <p className="text-slate-500 text-sm mt-1">Эти фразы встречаются в задании. Изучите их перед началом.</p>
             </div>
             <div className="space-y-2 mb-6">
-              {mod.phrases.map((ph, i) => (
-                <PhraseRow key={i} phrase={ph} showEn={showEn} delay={DL[i] ?? ''} />
+              {mod.phrases.map((phrase, index) => (
+                <PhraseRow key={index} phrase={phrase} showEn={showEn} delay={DL[index] ?? ''} />
               ))}
             </div>
             <div className="mission-screen__step-nav">
@@ -189,7 +197,6 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
           </div>
         )}
 
-        {/* ── ACTIVITY ── */}
         {step === 'activity' && (
           <div className="fu">
             <div className="flex items-center justify-between mb-4">
@@ -203,7 +210,11 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
             </div>
             <div className="card p-5" style={{ border: '1px solid var(--border-color)' }}>
               {ActivityComp && mission.activityData ? (
-                <ActivityComp data={mission.activityData as ActivityData} onComplete={onFinish} />
+                <ActivityComp
+                  data={mission.activityData as ActivityData}
+                  onComplete={onFinish}
+                  phrases={mod.phrases}
+                />
               ) : (
                 <div className="text-center py-14">
                   <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔧</div>

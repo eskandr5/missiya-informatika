@@ -4,6 +4,8 @@ export type MissionType =
   | 'matching'
   | 'sequence'
   | 'multiple_choice'
+  | 'phrase_ordering'
+  | 'phrase_choice'
   | 'drag_drop'
   | 'classification'
   | 'error_correction'

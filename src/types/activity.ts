@@ -26,6 +26,29 @@ export interface MultipleChoiceData {
   questions: MCQuestion[];
 }
 
+export type PhrasePromptMode = 'ru_to_en' | 'en_to_ru';
+
+export interface PhraseOrderingQuestion {
+  id: string;
+  prompt: string;
+  phraseIndex: number;
+  chunks: string[];
+}
+export interface PhraseOrderingData {
+  questions: PhraseOrderingQuestion[];
+}
+
+export interface PhraseChoiceQuestion {
+  id: string;
+  prompt: string;
+  phraseIndex: number;
+  optionIndexes: number[];
+  mode?: PhrasePromptMode;
+}
+export interface PhraseChoiceData {
+  questions: PhraseChoiceQuestion[];
+}
+
 export interface DragDropItem {
   id: string;
   label: string;
@@ -77,6 +100,8 @@ export type ActivityData =
   | MatchingData
   | SequenceData
   | MultipleChoiceData
+  | PhraseOrderingData
+  | PhraseChoiceData
   | DragDropData
   | ClassificationData
   | ErrorCorrectionData;
