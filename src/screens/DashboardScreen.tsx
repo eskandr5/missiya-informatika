@@ -28,6 +28,11 @@ const TOPOLOGY_SLOTS = [
   'slot-d2',
   'slot-d3',
 ] as const;
+const CHAPTERS = [
+  { id: 1, short: 'ГЛАВА I', title: 'ГЛАВА I — ОСНОВЫ', range: 'Модули 1–4', zoneClass: 'zone-i', delay: 'd1' },
+  { id: 2, short: 'ГЛАВА II', title: 'ГЛАВА II — ВЫЧИСЛЕНИЯ', range: 'Модули 5–8', zoneClass: 'zone-ii', delay: 'd2' },
+  { id: 3, short: 'ГЛАВА III', title: 'ГЛАВА III — ПРОГРАММИРОВАНИЕ', range: 'Модули 9–12', zoneClass: 'zone-iii', delay: 'd3' },
+] as const;
 
 export default function DashboardScreen({ progress, onSelectModule }: Props) {
   const rank      = getRank(progress.xp);
@@ -109,6 +114,16 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
       {/* Module grid */}
       <div className="app-shell" style={{ maxWidth: '1000px', margin: '2rem auto' }}>
         <div className="dashboard-topology">
+          {CHAPTERS.map((chapter) => (
+            <div
+              key={chapter.id}
+              className={`dashboard-topology__chapter ${chapter.zoneClass} fu ${chapter.delay}`}
+            >
+              <p className="dashboard-topology__chapter-kicker">{chapter.short}</p>
+              <h2 className="dashboard-topology__chapter-title hf">{chapter.title}</h2>
+              <p className="dashboard-topology__chapter-range">{chapter.range}</p>
+            </div>
+          ))}
           {MODULES.map((mod, idx) => {
             const unlocked    = isModuleUnlocked(mod, progress.completedMissions, MODULES);
             const done        = mod.missions.filter(m => progress.completedMissions.includes(m.id)).length;
@@ -116,6 +131,8 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
             const badgeEarned = progress.badges.includes(mod.badge.id);
             const hasImpl     = mod.missions.some(m => m.implemented);
             const isActive    = activeModule?.id === mod.id;
+            const chapterId   = mod.id <= 4 ? 1 : mod.id <= 8 ? 2 : 3;
+            const chapter     = CHAPTERS[chapterId - 1];
             const stateLabel  = modComplete
               ? 'RESTORED'
               : isActive
@@ -127,7 +144,7 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
               <div
                 key={mod.id}
                 onClick={() => unlocked && onSelectModule(mod)}
-                className={`card dashboard-module-card dashboard-topology__node ${TOPOLOGY_SLOTS[idx] ?? ''} fu ${DL[idx] ?? ''} ${unlocked ? 'lift' : ''} ${!unlocked ? 'is-locked' : ''} ${modComplete ? 'is-restored' : ''} ${isActive ? 'is-active' : ''}`}
+                className={`card dashboard-module-card dashboard-topology__node chapter-${chapterId} ${TOPOLOGY_SLOTS[idx] ?? ''} fu ${DL[idx] ?? ''} ${unlocked ? 'lift' : ''} ${!unlocked ? 'is-locked' : ''} ${modComplete ? 'is-restored' : ''} ${isActive ? 'is-active' : ''}`}
                 style={{
                   '--module-accent': mod.accent,
                   opacity: unlocked ? 1 : 0.45,
@@ -151,6 +168,9 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
                 <div className="flex items-center gap-1.5 mb-1">
                   <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)', fontSize: '.62rem' }}>
                     {ARCHIVE_COPY.moduleLabel} {mod.id}
+                  </span>
+                  <span className="tag dashboard-module-card__chapter-tag">
+                    {chapter.short}
                   </span>
                   {modComplete && (
                     <span className="tag" style={{ background: 'var(--success-soft)', color: 'var(--success-color)' }}>восстановлен</span>
