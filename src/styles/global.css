@@ -627,6 +627,116 @@ svg {
   z-index: 2;
 }
 
+.dashboard-checkpoint-node {
+  position: relative;
+  z-index: 2;
+  min-height: 122px;
+  padding: 1rem 1.1rem;
+  border-radius: 1.15rem;
+  border: 1px solid color-mix(in srgb, var(--border-strong) 85%, transparent);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .05), transparent 48%),
+    color-mix(in srgb, var(--surface-card) 90%, transparent);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, .02),
+    0 10px 24px rgba(15, 23, 42, .05);
+}
+
+.dashboard-checkpoint-node::before,
+.dashboard-checkpoint-node::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.dashboard-checkpoint-node::before {
+  background:
+    radial-gradient(circle at 50% 18%, color-mix(in srgb, var(--accent) 11%, transparent), transparent 42%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(148, 163, 184, .045) 0 1px,
+      transparent 1px 10px
+    );
+  opacity: .72;
+}
+
+.dashboard-checkpoint-node::after {
+  inset: 10px;
+  border-radius: .85rem;
+  border: 1px dashed color-mix(in srgb, var(--accent) 12%, transparent);
+  opacity: .72;
+}
+
+.dashboard-checkpoint-node__short,
+.dashboard-checkpoint-node__title,
+.dashboard-checkpoint-node__subtitle,
+.dashboard-checkpoint-node__state {
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard-checkpoint-node__short {
+  color: var(--accent);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  margin-bottom: .45rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.dashboard-checkpoint-node__title {
+  color: var(--text-primary);
+  font-size: .94rem;
+  line-height: 1.28;
+  margin-bottom: .35rem;
+}
+
+.dashboard-checkpoint-node__subtitle {
+  color: var(--text-muted);
+  font-size: .78rem;
+  line-height: 1.45;
+}
+
+.dashboard-checkpoint-node__state {
+  color: var(--text-dim);
+  font-size: .68rem;
+  letter-spacing: .12em;
+  margin-top: .55rem;
+  text-transform: uppercase;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.dashboard-checkpoint-node.is-restored {
+  border-color: color-mix(in srgb, var(--success-color) 34%, var(--border-color));
+  box-shadow:
+    inset 0 0 0 1px rgba(34, 197, 94, .06),
+    0 12px 28px rgba(22, 163, 74, .08);
+}
+
+.dashboard-checkpoint-node.is-restored::before {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(34, 197, 94, .12), transparent 42%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(148, 163, 184, .045) 0 1px,
+      transparent 1px 10px
+    );
+}
+
+.dashboard-checkpoint-node.is-active {
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--border-color));
+  box-shadow:
+    inset 0 0 0 1px rgba(37, 99, 235, .08),
+    0 14px 32px rgba(37, 99, 235, .12);
+}
+
 .dashboard-topology__chapter {
   position: relative;
   z-index: 1;
@@ -696,6 +806,9 @@ svg {
 .dashboard-topology__chapter.zone-i { --chapter-tint: #3b82f6; grid-column: 1 / span 6; grid-row: 1 / span 3; }
 .dashboard-topology__chapter.zone-ii { --chapter-tint: #0ea5e9; grid-column: 3 / span 7; grid-row: 3 / span 3; }
 .dashboard-topology__chapter.zone-iii { --chapter-tint: #14b8a6; grid-column: 7 / span 6; grid-row: 2 / span 5; }
+
+.dashboard-checkpoint-node.gate-1 { grid-column: 5 / span 2; grid-row: 3; }
+.dashboard-checkpoint-node.gate-2 { grid-column: 9 / span 2; grid-row: 3; }
 
 .dashboard-topology__node.slot-a1 { grid-column: 1 / span 4; grid-row: 2; }
 .dashboard-topology__node.slot-a2 { grid-column: 4 / span 3; grid-row: 1; }
@@ -1016,6 +1129,9 @@ svg {
   .dashboard-topology__chapter.zone-ii { grid-column: 1 / span 6; grid-row: 4 / span 3; }
   .dashboard-topology__chapter.zone-iii { grid-column: 1 / span 6; grid-row: 7 / span 3; }
 
+  .dashboard-checkpoint-node.gate-1 { grid-column: 3 / span 2; grid-row: 4; }
+  .dashboard-checkpoint-node.gate-2 { grid-column: 3 / span 2; grid-row: 7; }
+
   .dashboard-topology__node.slot-a1 { grid-column: 1 / span 3; grid-row: 2; }
   .dashboard-topology__node.slot-a2 { grid-column: 4 / span 3; grid-row: 2; }
   .dashboard-topology__node.slot-a3 { grid-column: 2 / span 3; grid-row: 3; }
@@ -1133,6 +1249,10 @@ svg {
   }
 
   .dashboard-topology__chapter {
+    display: none;
+  }
+
+  .dashboard-checkpoint-node {
     display: none;
   }
 

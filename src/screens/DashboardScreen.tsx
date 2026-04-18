@@ -32,14 +32,20 @@ const PATHWAYS = [
   { id: 'p1', from: 1, to: 2, d: 'M 212 214 C 290 170, 408 118, 522 98' },
   { id: 'p2', from: 2, to: 3, d: 'M 518 110 C 470 184, 366 254, 302 346' },
   { id: 'p3', from: 3, to: 4, d: 'M 334 352 C 400 350, 472 350, 540 350' },
-  { id: 'p4', from: 4, to: 5, d: 'M 548 380 C 548 416, 548 452, 548 486' },
-  { id: 'p5', from: 5, to: 6, d: 'M 590 486 C 654 458, 724 404, 822 346' },
-  { id: 'p6', from: 6, to: 7, d: 'M 826 370 C 804 486, 520 518, 356 638' },
-  { id: 'p7', from: 7, to: 8, d: 'M 402 646 C 470 646, 556 646, 648 646' },
-  { id: 'p8', from: 8, to: 9, d: 'M 688 630 C 812 604, 912 390, 1026 214' },
-  { id: 'p9', from: 9, to: 10, d: 'M 1016 248 C 978 340, 930 412, 892 486' },
-  { id: 'p10', from: 10, to: 11, d: 'M 926 486 C 968 530, 1000 580, 1038 634' },
-  { id: 'p11', from: 11, to: 12, d: 'M 1030 676 C 1010 728, 986 754, 944 782' },
+  { id: 'p4', from: 4, to: 'gate-1', d: 'M 548 380 C 548 412, 548 438, 548 466' },
+  { id: 'p5', from: 'gate-1', to: 5, d: 'M 548 514 C 548 534, 548 554, 548 580' },
+  { id: 'p6', from: 5, to: 6, d: 'M 590 604 C 654 550, 724 432, 822 346' },
+  { id: 'p7', from: 6, to: 7, d: 'M 826 370 C 804 486, 520 518, 356 638' },
+  { id: 'p8', from: 7, to: 8, d: 'M 402 646 C 470 646, 556 646, 648 646' },
+  { id: 'p9', from: 8, to: 'gate-2', d: 'M 688 630 C 760 600, 830 532, 878 470' },
+  { id: 'p10', from: 'gate-2', to: 9, d: 'M 924 414 C 962 350, 992 294, 1026 214' },
+  { id: 'p11', from: 9, to: 10, d: 'M 1016 248 C 978 340, 930 412, 892 486' },
+  { id: 'p12', from: 10, to: 11, d: 'M 926 486 C 968 530, 1000 580, 1038 634' },
+  { id: 'p13', from: 11, to: 12, d: 'M 1030 676 C 1010 728, 986 754, 944 782' },
+] as const;
+const CHECKPOINTS = [
+  { id: 'gate-1', short: 'УЗЕЛ I', title: 'КОНТРОЛЬНАЯ ТОЧКА', subtitle: 'Переход к ГЛАВЕ II', slotClass: 'gate-1' },
+  { id: 'gate-2', short: 'УЗЕЛ II', title: 'КОНТРОЛЬНАЯ ТОЧКА', subtitle: 'Переход к ГЛАВЕ III', slotClass: 'gate-2' },
 ] as const;
 const CHAPTERS = [
   { id: 1, short: 'ГЛАВА I', title: 'ГЛАВА I — ОСНОВЫ', range: 'Модули 1–4', zoneClass: 'zone-i', delay: 'd1' },
@@ -65,6 +71,9 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
       mod.missions.every(m => progress.completedMissions.includes(m.id)),
     ]),
   ) as Record<number, boolean>;
+  const chapterOneComplete = MODULES.filter(mod => mod.id <= 4).every(mod => completedByModule[mod.id]);
+  const chapterTwoComplete = MODULES.filter(mod => mod.id >= 5 && mod.id <= 8).every(mod => completedByModule[mod.id]);
+  const activeChapter = activeModule ? (activeModule.id <= 4 ? 1 : activeModule.id <= 8 ? 2 : 3) : null;
   const restoredPct = Math.round((doneM / totalM) * 100);
   const systemState = doneM === 0
     ? 'INITIAL_SYNC'
@@ -140,11 +149,18 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
             preserveAspectRatio="none"
           >
             {PATHWAYS.map((pathway) => {
-              const routeState = pathway.to === activeModule?.id
-                ? 'is-active'
-                : completedByModule[pathway.from]
-                ? 'is-restored'
-                : 'is-inactive';
+              const gateOneLive = chapterOneComplete && activeChapter === 2;
+              const gateTwoLive = chapterTwoComplete && activeChapter === 3;
+              const routeState = (() => {
+                if (pathway.to === activeModule?.id) return 'is-active';
+                if (pathway.from === 'gate-1' || pathway.to === 'gate-1') {
+                  return chapterOneComplete ? (gateOneLive ? 'is-active' : 'is-restored') : 'is-inactive';
+                }
+                if (pathway.from === 'gate-2' || pathway.to === 'gate-2') {
+                  return chapterTwoComplete ? (gateTwoLive ? 'is-active' : 'is-restored') : 'is-inactive';
+                }
+                return completedByModule[pathway.from] ? 'is-restored' : 'is-inactive';
+              })();
               return (
                 <path
                   key={pathway.id}
@@ -164,6 +180,23 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
               <p className="dashboard-topology__chapter-range">{chapter.range}</p>
             </div>
           ))}
+          {CHECKPOINTS.map((checkpoint, index) => {
+            const isFirst = checkpoint.id === 'gate-1';
+            const restored = isFirst ? chapterOneComplete : chapterTwoComplete;
+            const active = isFirst ? activeChapter === 2 : activeChapter === 3;
+            const stateLabel = restored ? (active ? 'ACTIVE_GATE' : 'VERIFIED') : 'STANDBY';
+            return (
+              <div
+                key={checkpoint.id}
+                className={`dashboard-checkpoint-node ${checkpoint.slotClass} fu d${index + 4} ${restored ? 'is-restored' : ''} ${active ? 'is-active' : ''}`}
+              >
+                <span className="dashboard-checkpoint-node__short">{checkpoint.short}</span>
+                <h3 className="dashboard-checkpoint-node__title hf">{checkpoint.title}</h3>
+                <p className="dashboard-checkpoint-node__subtitle">{checkpoint.subtitle}</p>
+                <p className="dashboard-checkpoint-node__state">STATE={stateLabel}</p>
+              </div>
+            );
+          })}
           {MODULES.map((mod, idx) => {
             const unlocked    = isModuleUnlocked(mod, progress.completedMissions, MODULES);
             const done        = mod.missions.filter(m => progress.completedMissions.includes(m.id)).length;
