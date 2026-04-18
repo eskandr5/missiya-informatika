@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { MODULES } from '../data/modules';
 import { getRank, getNextRank } from '../data/ranks';
 import { ARCHIVE_COPY } from '../data/archiveTerminology';
@@ -21,6 +22,11 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
   const totalM    = MODULES.reduce((s, m) => s + m.missions.length, 0);
   const doneM     = progress.completedMissions.length;
   const unlockedModules = MODULES.filter(mod => isModuleUnlocked(mod, progress.completedMissions, MODULES)).length;
+  const activeModule = MODULES.find((mod) => {
+    const unlocked = isModuleUnlocked(mod, progress.completedMissions, MODULES);
+    const done = mod.missions.filter(m => progress.completedMissions.includes(m.id)).length;
+    return unlocked && done < mod.missions.length;
+  }) ?? null;
   const restoredPct = Math.round((doneM / totalM) * 100);
   const systemState = doneM === 0
     ? 'INITIAL_SYNC'
@@ -95,21 +101,30 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
             const modComplete = done === mod.missions.length;
             const badgeEarned = progress.badges.includes(mod.badge.id);
             const hasImpl     = mod.missions.some(m => m.implemented);
+            const isActive    = activeModule?.id === mod.id;
+            const stateLabel  = modComplete
+              ? 'RESTORED'
+              : isActive
+              ? 'PROCESSING'
+              : unlocked
+              ? 'AVAILABLE'
+              : 'DEGRADED';
             return (
               <div
                 key={mod.id}
                 onClick={() => unlocked && onSelectModule(mod)}
-                className={`card fu ${DL[idx] ?? ''} ${unlocked ? 'lift' : ''}`}
+                className={`card dashboard-module-card fu ${DL[idx] ?? ''} ${unlocked ? 'lift' : ''} ${!unlocked ? 'is-locked' : ''} ${modComplete ? 'is-restored' : ''} ${isActive ? 'is-active' : ''}`}
                 style={{
+                  '--module-accent': mod.accent,
                   opacity: unlocked ? 1 : 0.45,
                   padding: '1.25rem',
                   border: `1px solid ${modComplete ? 'var(--success-color)' : unlocked ? 'var(--border-accent-soft)' : 'var(--border-strong)'}`,
                   pointerEvents: unlocked ? 'auto' : 'none',
-                }}
+                } as CSSProperties}
               >
                 <div className="flex items-start justify-between gap-2 mb-3">
                   <div
-                    className="w-11 h-11 rounded-xl flex items-center justify-center text-2xl"
+                    className="dashboard-module-card__icon w-11 h-11 rounded-xl flex items-center justify-center text-2xl"
                     style={{
                       background: unlocked ? `${mod.accent}14` : 'var(--surface-contrast)',
                       border: `1px solid ${unlocked ? mod.accent + '30' : 'var(--border-strong)'}`,
@@ -132,6 +147,9 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
                 </div>
                 <h3 className="hf text-white font-bold text-sm leading-snug mb-0.5">{mod.title}</h3>
                 <p className="text-slate-600 text-xs mb-3">{mod.subtitle}</p>
+                <p className="dashboard-module-card__state mb-3">
+                  STATE={stateLabel} · LOAD={done}/{mod.missions.length}
+                </p>
                 <div className="mb-1.5">
                   <ProgressBar value={done} max={mod.missions.length} color={mod.accent} />
                 </div>
