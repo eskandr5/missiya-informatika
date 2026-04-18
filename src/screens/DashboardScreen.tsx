@@ -1,5 +1,6 @@
 import { MODULES } from '../data/modules';
 import { getRank, getNextRank } from '../data/ranks';
+import { ARCHIVE_COPY } from '../data/archiveTerminology';
 import { isModuleUnlocked } from '../utils/progression';
 import ProgressBar from '../components/ui/ProgressBar';
 import Badge from '../components/ui/Badge';
@@ -32,15 +33,15 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
         <div className="app-shell app-shell--flush" style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
             <div className="fu">
-              <p className="text-blue-400 text-xs font-bold uppercase tracking-widest mb-1">Карта модулей</p>
-              <h1 className="hf text-3xl font-bold text-white">Миссия: Информатика</h1>
-              <p className="text-slate-500 mt-1 text-sm">12 модулей · {totalM} миссий · Полная программа</p>
+              <p className="text-blue-400 text-xs font-bold uppercase tracking-widest mb-1">{ARCHIVE_COPY.dashboardTitle}</p>
+              <h1 className="hf text-3xl font-bold text-white">{ARCHIVE_COPY.appTitle}</h1>
+              <p className="text-slate-500 mt-1 text-sm">12 {ARCHIVE_COPY.moduleLabelPlural} · {totalM} {ARCHIVE_COPY.missionLabelPlural} · Учебный реестр</p>
             </div>
             <div className="dashboard-screen__summary flex items-center gap-2 fu d2">
               {[
-                { val: `${rank.icon} ${rank.name}`, sub: 'звание' },
+                { val: `${rank.icon} ${rank.name}`, sub: ARCHIVE_COPY.rankLabel.toLowerCase() },
                 { val: `${progress.xp} XP`,          sub: 'получено' },
-                { val: `${doneM}/${totalM}`,           sub: 'миссий' },
+                { val: `${doneM}/${totalM}`,        sub: ARCHIVE_COPY.missionLabelPlural },
               ].map((s, i) => (
                 <div
                   key={i}
@@ -55,7 +56,7 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
           </div>
           <div className="fu d3">
             <div className="flex justify-between text-xs text-slate-600 mb-1.5">
-              <span>Общий прогресс</span>
+              <span>Сводка прогресса</span>
               {nextRank && <span>До «{nextRank.name}»: {nextRank.minXP - progress.xp} XP</span>}
             </div>
             <ProgressBar value={doneM} max={totalM} />
@@ -98,7 +99,7 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
                 </div>
                 <div className="flex items-center gap-1.5 mb-1">
                   <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)', fontSize: '.62rem' }}>
-                    Модуль {mod.id}
+                    {ARCHIVE_COPY.moduleLabel} {mod.id}
                   </span>
                   {modComplete && (
                     <span className="tag" style={{ background: 'var(--success-soft)', color: 'var(--success-color)' }}>✓</span>

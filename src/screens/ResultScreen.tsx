@@ -1,4 +1,5 @@
 import type { Mission, Module, BadgeDef } from '../types/content';
+import { ARCHIVE_COPY } from '../data/archiveTerminology';
 
 interface Props {
   score: number;
@@ -39,9 +40,9 @@ export default function ResultScreen({
           className="hf text-3xl font-bold mb-1"
           style={{ color: passed ? 'var(--success-text)' : 'var(--danger-text)' }}
         >
-          {passed ? (isCheckpoint ? 'Чекпоинт пройден!' : 'Миссия выполнена!') : 'Не пройдено'}
+          {passed ? (isCheckpoint ? 'Контрольный узел закрыт' : 'Протокол завершён') : 'Порог не достигнут'}
         </h2>
-        <p className="text-slate-500 text-sm mb-6">{mission.title} · Модуль {mod.id}</p>
+        <p className="text-slate-500 text-sm mb-6">{mission.title} · {ARCHIVE_COPY.moduleLabel} {mod.id}</p>
 
         <div className="flex justify-center mb-5">
           <div className="relative" style={{ width: '112px', height: '112px' }}>
@@ -84,10 +85,10 @@ export default function ResultScreen({
           }}
         >
           {passed ? (
-            <span className="text-green-300">✓ Результат выше порога ({mission.passingScore}%)</span>
+            <span className="text-green-300">✓ Порог выполнен ({mission.passingScore}%)</span>
           ) : (
             <span className="text-red-300">
-              Порог прохождения: {mission.passingScore}% · Ваш результат: {score}%
+              Требуемый порог: {mission.passingScore}% · Зафиксировано: {score}%
             </span>
           )}
         </div>
@@ -97,9 +98,9 @@ export default function ResultScreen({
             className="mb-5 px-4 py-3 rounded-xl"
             style={{ background: 'var(--accent-soft)', border: '1px solid var(--border-accent-soft)' }}
           >
-            <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Переход главы</p>
+            <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Переход раздела</p>
             <p className="text-slate-300 text-sm font-semibold">
-              {mod.chapter ?? 'Первая глава'} завершена. Базовый этап академии закрыт, и можно переходить к следующему блоку.
+              {mod.chapter ?? 'Первый раздел'} завершён. Реестр обновлён, можно переходить к следующему блоку.
             </p>
           </div>
         )}
@@ -111,7 +112,7 @@ export default function ResultScreen({
               style={{ background: 'var(--accent-soft)', border: '1px solid var(--border-accent-soft)' }}
             >
               <div className="hf text-xl font-bold text-blue-300">+{xpEarned}</div>
-              <div className="text-xs text-slate-500 mt-0.5">XP получено</div>
+              <div className="text-xs text-slate-500 mt-0.5">XP зафиксировано</div>
             </div>
             {badgeEarned && (
               <div
@@ -127,20 +128,20 @@ export default function ResultScreen({
 
         {!passed && (
           <p className="text-slate-500 text-xs mb-5">
-            Повторите словарный запас и попробуйте снова. XP начисляется только при прохождении.
+            Проверьте термины и формулировки, затем повторите попытку. XP фиксируется только после успешного завершения.
           </p>
         )}
 
         <div className="flex flex-col gap-2">
           {passed && onNext && (
             <button onClick={onNext} className="btn-p w-full">
-              {isCheckpoint ? 'К следующему этапу →' : 'Следующая миссия →'}
+              {isCheckpoint ? 'К следующему разделу →' : 'Следующий протокол →'}
             </button>
           )}
           <div className="result-screen__actions flex gap-2">
             <button onClick={onRetry} className="btn-s flex-1">↺ Повторить</button>
-            <button onClick={onModulePage} className="btn-g flex-1">Модуль</button>
-            <button onClick={onDashboard} className="btn-g flex-1">◈ Карта</button>
+            <button onClick={onModulePage} className="btn-g flex-1">{ARCHIVE_COPY.moduleLabel}</button>
+            <button onClick={onDashboard} className="btn-g flex-1">◈ Реестр</button>
           </div>
         </div>
       </div>

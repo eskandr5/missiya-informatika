@@ -1,4 +1,5 @@
 import { getRank } from '../../data/ranks';
+import { ARCHIVE_COPY } from '../../data/archiveTerminology';
 
 interface Props {
   xp: number;
@@ -18,7 +19,7 @@ export default function NavBar({ xp, theme, onHome, onProfile, onToggleTheme }: 
         className="app-nav__brand hf font-bold text-lg text-white flex items-center gap-2"
       >
         <span style={{ color: 'var(--accent)' }}>◈</span>
-        <span className="app-nav__brand-text">Миссия: Информатика</span>
+        <span className="app-nav__brand-text">{ARCHIVE_COPY.appTitle}</span>
       </button>
 
       <div className="app-nav__meta flex items-center gap-2">

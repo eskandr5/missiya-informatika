@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { MODULES } from '../data/modules';
+import {
+  ARCHIVE_COPY,
+  ARCHIVE_MISSION_TYPE_LABELS,
+} from '../data/archiveTerminology';
 import { isMissionUnlocked } from '../utils/progression';
 import { DL } from '../utils/helpers';
 import ProgressBar from '../components/ui/ProgressBar';
 import VocabCard from '../components/mission/VocabCard';
 import PhraseRow from '../components/mission/PhraseRow';
-import type { Module, Mission, MissionType } from '../types/content';
+import type { Module, Mission } from '../types/content';
 import type { Progress } from '../types/progress';
 
 interface Props {
@@ -16,23 +20,6 @@ interface Props {
 }
 
 type Tab = 'missions' | 'vocab' | 'phrases';
-
-const MISSION_TYPE_LABELS: Partial<Record<MissionType, string>> = {
-  matching: 'Соответствие',
-  sequence: 'Хронология',
-  multiple_choice: 'Тест',
-  phrase_ordering: 'Сборка фраз',
-  phrase_choice: 'Выбор фразы',
-  listen_and_choose: 'Аудиовыбор',
-  listen_and_match: 'Аудиосопоставление',
-  drag_drop: 'Распределение',
-  classification: 'Классификация',
-  error_correction: 'Исправление ошибок',
-  audio_quiz: 'Аудио',
-  video_quiz: 'Видео',
-  logic_table: 'Логика',
-  final_mixed: 'Финал',
-};
 
 export default function ModuleScreen({ module: mod, progress, onSelectMission, onBack }: Props) {
   const [tab, setTab] = useState<Tab>('missions');
@@ -51,7 +38,7 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
         }}
       >
         <div className="app-shell app-shell--narrow app-shell--flush" style={{ maxWidth: '900px', margin: '0 auto' }}>
-          <button onClick={onBack} className="btn-g text-sm px-3 py-1.5 mb-4">← Карта модулей</button>
+          <button onClick={onBack} className="btn-g text-sm px-3 py-1.5 mb-4">← {ARCHIVE_COPY.dashboardTitle}</button>
           <div className="module-screen__hero flex items-start gap-4">
             <div
               className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
@@ -62,7 +49,7 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2 mb-1">
                 <span className="tag" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
-                  Модуль {mod.id}
+                  {ARCHIVE_COPY.moduleLabel} {mod.id}
                 </span>
                 {mod.chapter && (
                   <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)' }}>
@@ -97,15 +84,15 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
             <div className="card p-4 mt-4" style={{ border: '1px solid var(--border-color)' }}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Режим модуля</p>
+                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Режим раздела</p>
                   <p className="text-slate-300 text-sm font-semibold">{mod.moduleIdentity}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Открытие</p>
+                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Вводная</p>
                   <p className="text-slate-300 text-sm font-semibold">{mod.openingStyle}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Особая механика</p>
+                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Операционный режим</p>
                   <p className="text-slate-300 text-sm font-semibold">{mod.specialMechanic}</p>
                 </div>
                 <div>
@@ -116,7 +103,7 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
               <div className="flex flex-wrap gap-2 mt-4">
                 {mod.rewardType && (
                   <span className="tag" style={{ background: 'var(--success-soft)', color: 'var(--success-color)' }}>
-                    Награда: {mod.rewardType}
+                    Выдача: {mod.rewardType}
                   </span>
                 )}
                 {mod.videoMode && (
@@ -130,8 +117,8 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
 
           <div className="mt-4">
             <div className="flex justify-between text-xs text-slate-500 mb-1.5">
-              <span>Прогресс модуля</span>
-              <span className="hf font-semibold text-slate-400">{doneCount}/{mod.missions.length} миссий · {pct}%</span>
+              <span>Прогресс раздела</span>
+              <span className="hf font-semibold text-slate-400">{doneCount}/{mod.missions.length} {ARCHIVE_COPY.missionLabelPlural} · {pct}%</span>
             </div>
             <ProgressBar value={doneCount} max={mod.missions.length} color={mod.accent} />
           </div>
@@ -155,7 +142,7 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
                 cursor: 'pointer',
               }}
             >
-              {t === 'missions' ? 'Миссии' : t === 'vocab' ? 'Словарь' : 'Фразы'}
+              {t === 'missions' ? 'Протоколы' : t === 'vocab' ? ARCHIVE_COPY.vocabLabel : ARCHIVE_COPY.phraseLabel}
             </button>
           ))}
         </div>
@@ -191,11 +178,11 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
                       <h3 className="hf text-white font-bold">{m.title}</h3>
                       <div className="flex flex-wrap items-center gap-2 mt-1">
                         <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)' }}>
-                          {MISSION_TYPE_LABELS[m.type] ?? m.type.replace(/_/g, ' ')}
+                          {ARCHIVE_MISSION_TYPE_LABELS[m.type] ?? m.type.replace(/_/g, ' ')}
                         </span>
                         {isCheckpoint && (
                           <span className="tag" style={{ background: 'var(--warning-soft)', color: 'var(--warning-color)' }}>
-                            Чекпоинт
+                            {ARCHIVE_COPY.checkpointLabel}
                           </span>
                         )}
                         <span className="text-xs text-amber-400">⚡{m.xpReward} XP</span>
@@ -212,7 +199,7 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
                         onClick={() => onSelectMission(m)}
                         className={`module-screen__mission-action ${done ? 'btn-s text-sm px-4 py-2' : 'btn-p text-sm px-4 py-2'}`}
                       >
-                        {done ? 'Повторить' : isCheckpoint ? 'Пройти чекпоинт →' : 'Начать →'}
+                        {done ? 'Повторить' : isCheckpoint ? 'Открыть узел →' : 'Открыть →'}
                       </button>
                     )}
                   </div>
@@ -224,7 +211,7 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
 
         {tab === 'vocab' && (
           <div className="fu">
-            <p className="text-slate-500 text-sm mb-4">{mod.vocab.length} понятий · Нажмите карточку для определения</p>
+            <p className="text-slate-500 text-sm mb-4">{mod.vocab.length} терминов · Нажмите карточку для просмотра определения</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {mod.vocab.map((w, i) => (
                 <VocabCard key={w.id} word={w} showEn={showEn} delay={DL[i] ?? ''} />

@@ -1,5 +1,6 @@
 import { MODULES } from '../data/modules';
 import { getRank } from '../data/ranks';
+import { ARCHIVE_COPY } from '../data/archiveTerminology';
 import type { Progress } from '../types/progress';
 
 interface Props {
@@ -33,7 +34,7 @@ export default function LandingScreen({ progress, onStart }: Props) {
         >
           <span style={{ color: 'var(--accent)', fontSize: '.78rem' }}>●</span>
           <span className="text-blue-300 text-xs font-bold tracking-wider uppercase">
-            Цифровая академия · Учебный симулятор
+            {ARCHIVE_COPY.appKicker}
           </span>
         </div>
 
@@ -47,7 +48,7 @@ export default function LandingScreen({ progress, onStart }: Props) {
             marginBottom: '1.15rem',
           }}
         >
-          Миссия:<br />
+          АРХИВ:<br />
           <span
             style={{
               background: 'var(--hero-title-gradient)',
@@ -63,19 +64,20 @@ export default function LandingScreen({ progress, onStart }: Props) {
           className="fu d2 text-slate-400 text-lg mb-4"
           style={{ maxWidth: '560px', lineHeight: 1.72 }}
         >
-          Учебная платформа для студентов подготовительного факультета. Прогрессируйте через {totalModules} модулей информатики.
+          Учебный реестр для последовательного прохождения {totalModules} разделов информатики.
+          Изучайте терминологию, фиксируйте результаты и открывайте новые уровни допуска.
         </p>
 
         <div className="fu d3 flex flex-wrap gap-3 justify-center text-slate-500 text-sm mb-8">
-          <span>📚 {totalModules} модулей</span><span>·</span>
-          <span>⚡ {totalMissions} миссий</span><span>·</span>
-          <span>🏆 Рейтинг</span><span>·</span>
-          <span>🎖️ Значки</span>
+          <span>📚 {totalModules} {ARCHIVE_COPY.moduleLabelPlural}</span><span>·</span>
+          <span>⚡ {totalMissions} {ARCHIVE_COPY.missionLabelPlural}</span><span>·</span>
+          <span>◈ {ARCHIVE_COPY.rankLabel}</span><span>·</span>
+          <span>🎖️ Знаки</span>
         </div>
 
         <div className="fu d4">
           <button onClick={onStart} className="btn-p text-lg px-8 py-4 glow">
-            {returning ? 'Продолжить обучение →' : 'Начать миссию →'}
+            {returning ? 'Продолжить работу →' : 'Открыть реестр →'}
           </button>
         </div>
 
@@ -84,12 +86,12 @@ export default function LandingScreen({ progress, onStart }: Props) {
             className="fu d5 mt-5 px-5 py-3 rounded-xl text-sm"
             style={{ background: 'var(--surface-strong)', border: '1px solid var(--border-color)' }}
           >
-            <span className="text-slate-400">Прогресс: </span>
+            <span className="text-slate-400">Статус: </span>
             <span className="hf text-blue-300 font-bold">{rank.icon} {rank.name}</span>
             <span className="text-slate-600 mx-2">·</span>
             <span className="hf text-amber-400 font-bold">{progress.xp} XP</span>
             <span className="text-slate-600 mx-2">·</span>
-            <span className="text-slate-400">{progress.completedMissions.length} миссий завершено</span>
+            <span className="text-slate-400">{progress.completedMissions.length} {ARCHIVE_COPY.missionLabelPlural} завершено</span>
           </div>
         )}
       </div>
@@ -98,9 +100,9 @@ export default function LandingScreen({ progress, onStart }: Props) {
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 1.5rem' }}>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { icon: '🗂️', t: 'Словарный запас',        d: 'Карточки с русскими понятиями и английскими глоссами для каждого модуля' },
-            { icon: '🎯', t: 'Интерактивные задания',   d: 'Соответствия, хронология, классификация, исправление ошибок и другие типы' },
-            { icon: '🏆', t: 'Прогресс и достижения',  d: 'Система XP, звания, значки за каждый модуль и карта прогресса' },
+            { icon: '🗂️', t: 'Терминологические карты', d: 'Карточки с ключевыми понятиями и английскими соответствиями для каждого раздела' },
+            { icon: '◈', t: 'Исполнительные протоколы', d: 'Сопоставление, последовательности, классификация, коррекция и другие режимы' },
+            { icon: '⬡', t: 'Допуск и фиксация',       d: 'XP, уровни допуска, знаки по разделам и общая сводка прогресса' },
           ].map((f, i) => (
             <div
               key={i}
