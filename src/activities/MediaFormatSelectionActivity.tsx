@@ -20,7 +20,6 @@ export default function MediaFormatSelectionActivity({ data, onComplete }: Props
 
   const currentPrompt = data.prompts[currentIndex];
   const isLastPrompt = currentIndex === data.prompts.length - 1;
-
   const isAnswered = selectedFormat !== null;
 
   useEffect(() => {
@@ -85,7 +84,19 @@ export default function MediaFormatSelectionActivity({ data, onComplete }: Props
           helperText={currentPrompt.prompt}
         />
 
-        <div>
+        <div className="m4-activity__panel">
+          <div className="m4-activity__panel-head">
+            <div>
+              <p className="m4-activity__eyebrow">Ответ</p>
+              <h4 className="m4-activity__title">Выберите формат</h4>
+            </div>
+            <div className="m4-activity__counter">{currentIndex + 1}/{data.prompts.length}</div>
+          </div>
+
+          <p className="m4-activity__hint">
+            Ориентируйтесь на вид файла и на данные под панелью просмотра.
+          </p>
+
           <div className="m4-format-grid">
             {currentPrompt.choices.map(choice => (
               <FormatTile
@@ -97,11 +108,17 @@ export default function MediaFormatSelectionActivity({ data, onComplete }: Props
             ))}
           </div>
 
-          <p className={`m4-feedback ${previewState === 'error' ? 'is-wrong' : previewState === 'restored' ? 'is-correct' : ''}`} style={{ marginTop: '1rem' }}>
-            {feedbackText}
-          </p>
+          <div className={`m4-feedback m4-feedback--panel ${previewState === 'error' ? 'is-wrong' : previewState === 'restored' ? 'is-correct' : ''}`}>
+            <span className="m4-feedback__mark">
+              {previewState === 'error' ? '!' : previewState === 'restored' ? '✓' : '•'}
+            </span>
+            <span>{feedbackText}</span>
+          </div>
 
-          <div className="flex items-center gap-3 mt-4">
+          <div className="m4-activity__progress-row">
+            <div className="m4-activity__progress-copy">
+              Верных ответов: {correctAnswers}/{data.prompts.length}
+            </div>
             <div style={{ flex: 1 }}>
               <div className="pb">
                 <div
@@ -113,7 +130,6 @@ export default function MediaFormatSelectionActivity({ data, onComplete }: Props
                 />
               </div>
             </div>
-            <span className="text-sm text-slate-400">{Math.min(currentIndex + 1, data.prompts.length)}/{data.prompts.length}</span>
           </div>
         </div>
       </div>

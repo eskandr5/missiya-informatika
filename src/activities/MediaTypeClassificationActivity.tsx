@@ -82,7 +82,7 @@ export default function MediaTypeClassificationActivity({ data, onComplete }: Pr
   return (
     <div className="m4-activity">
       <p className="m4-activity__intro">
-        Перетащите файл в нужную зону или выберите файл и нажмите на зону. Панель просмотра слева покажет изображение, звук или таблицу.
+        Перетащите файл в нужную зону или выберите файл и нажмите на зону. Панель слева покажет, как выглядит изображение, звук или таблица.
       </p>
 
       <div className="m4-activity__layout">
@@ -98,56 +98,81 @@ export default function MediaTypeClassificationActivity({ data, onComplete }: Pr
           }
         />
 
-        <div className="m4-file-list">
-          {data.items.map(item => (
-            <MediaFileCard
-              key={item.id}
-              item={item}
-              state={getFileState(item)}
-              draggable={!assignedZones[item.id]}
-              onClick={() => {
-                if (assignedZones[item.id]) return;
-                setSelectedItemId(value => value === item.id ? null : item.id);
-                setActiveItemId(item.id);
-                setPreviewState('neutral');
-              }}
-              onMouseEnter={() => {
-                setActiveItemId(item.id);
-                if (!wrongItemId) setPreviewState(assignedZones[item.id] ? 'restored' : 'neutral');
-              }}
-              onDragStart={(draggedItem) => {
-                if (assignedZones[draggedItem.id]) return;
-                setSelectedItemId(draggedItem.id);
-                setActiveItemId(draggedItem.id);
-                setPreviewState('neutral');
-              }}
+        <div className="m4-activity__panel">
+          <div className="m4-activity__panel-head">
+            <div>
+              <p className="m4-activity__eyebrow">Шаг 1</p>
+              <h4 className="m4-activity__title">Файлы для проверки</h4>
+            </div>
+            <div className="m4-activity__counter">{correctCount}/{data.items.length}</div>
+          </div>
+
+          <div className="m4-file-list">
+            {data.items.map(item => (
+              <MediaFileCard
+                key={item.id}
+                item={item}
+                state={getFileState(item)}
+                draggable={!assignedZones[item.id]}
+                onClick={() => {
+                  if (assignedZones[item.id]) return;
+                  setSelectedItemId(value => value === item.id ? null : item.id);
+                  setActiveItemId(item.id);
+                  setPreviewState('neutral');
+                }}
+                onMouseEnter={() => {
+                  setActiveItemId(item.id);
+                  if (!wrongItemId) setPreviewState(assignedZones[item.id] ? 'restored' : 'neutral');
+                }}
+                onDragStart={(draggedItem) => {
+                  if (assignedZones[draggedItem.id]) return;
+                  setSelectedItemId(draggedItem.id);
+                  setActiveItemId(draggedItem.id);
+                  setPreviewState('neutral');
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="m4-activity__panel">
+        <div className="m4-activity__panel-head">
+          <div>
+            <p className="m4-activity__eyebrow">Шаг 2</p>
+            <h4 className="m4-activity__title">Зоны по типу файла</h4>
+          </div>
+          <p className="m4-activity__hint">Графика, звук, данные</p>
+        </div>
+
+        <div className="m4-zone-grid">
+          {data.zones.map(zone => (
+            <DataTypeZone
+              key={zone.id}
+              zone={zone}
+              items={zoneItems(zone.id)}
+              state={getZoneState(zone.id)}
+              onClick={() => assignItemToZone(zone.id)}
+              onDropItem={assignItemToZone}
+              onDragEnter={setHoverZoneId}
+              onDragLeave={() => setHoverZoneId(null)}
             />
           ))}
         </div>
       </div>
 
-      <div className="m4-zone-grid">
-        {data.zones.map(zone => (
-          <DataTypeZone
-            key={zone.id}
-            zone={zone}
-            items={zoneItems(zone.id)}
-            state={getZoneState(zone.id)}
-            onClick={() => assignItemToZone(zone.id)}
-            onDropItem={assignItemToZone}
-            onDragEnter={setHoverZoneId}
-            onDragLeave={() => setHoverZoneId(null)}
-          />
-        ))}
+      <div className={`m4-feedback m4-feedback--panel ${previewState === 'error' ? 'is-wrong' : previewState === 'restored' ? 'is-correct' : ''}`}>
+        <span className="m4-feedback__mark">
+          {previewState === 'error' ? '!' : previewState === 'restored' ? '✓' : '•'}
+        </span>
+        <span>
+          {previewState === 'error'
+            ? 'Неверная зона. Сравните вид файла и попробуйте ещё раз.'
+            : previewState === 'restored'
+              ? 'Файл определён правильно.'
+              : `Готово: ${correctCount}/${data.items.length}`}
+        </span>
       </div>
-
-      <p className={`m4-feedback ${previewState === 'error' ? 'is-wrong' : previewState === 'restored' ? 'is-correct' : ''}`}>
-        {previewState === 'error'
-          ? 'Неверная зона. Сравните вид файла и попробуйте ещё раз.'
-          : previewState === 'restored'
-            ? 'Файл определён правильно.'
-            : `Готово: ${correctCount}/${data.items.length}`}
-      </p>
     </div>
   );
 }
