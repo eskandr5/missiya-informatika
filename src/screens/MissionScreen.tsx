@@ -64,6 +64,7 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
   const stepIdx = FLOW_STEPS.indexOf(step);
   const isCheckpoint = mission.stageType === 'checkpoint';
   const ActivityComp = ACTIVITY_MAP[mission.type];
+  const procedureLabel = isCheckpoint ? 'Контрольный проход' : 'Процедура восстановления';
 
   const nextStep = () => {
     if (stepIdx < FLOW_STEPS.length - 1) setStep(FLOW_STEPS[stepIdx + 1]);
@@ -140,7 +141,7 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
                 </div>
                 <div>
                   <p className="text-xs text-blue-400 font-bold uppercase tracking-wider">
-                    {isCheckpoint ? ARCHIVE_COPY.checkpointLabel : 'Сводка'}
+                    {isCheckpoint ? ARCHIVE_COPY.checkpointLabel : 'Оперативная сводка'}
                   </p>
                   <h3 className="hf text-white font-bold text-lg">{mission.title}</h3>
                   {mod.moduleIdentity && (
@@ -149,6 +150,15 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
                 </div>
               </div>
 
+              <p
+                className="text-slate-500 text-xs mb-3"
+                style={{
+                  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                  letterSpacing: '.04em',
+                }}
+              >
+                PROC.STATE // MODE={procedureLabel.toUpperCase()} · PASS_THRESHOLD={mission.passingScore}%
+              </p>
               <p className="text-slate-300 leading-relaxed">{mission.briefing}</p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
@@ -156,14 +166,14 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
                   className="rounded-xl p-4"
                   style={{ background: 'var(--surface-soft)', border: '1px solid var(--border-color)' }}
                 >
-                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Режим</p>
+                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Контекст запуска</p>
                   <p className="text-slate-300 text-sm font-semibold">{mod.openingStyle ?? 'Стандартный ввод'}</p>
                 </div>
                 <div
                   className="rounded-xl p-4"
                   style={{ background: 'var(--surface-soft)', border: '1px solid var(--border-color)' }}
                 >
-                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Контур</p>
+                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Активный контур</p>
                   <p className="text-slate-300 text-sm font-semibold">{mod.specialMechanic ?? 'Практика по теме раздела'}</p>
                 </div>
               </div>
@@ -174,7 +184,7 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
                 </div>
                 {isCheckpoint && (
                   <div className="tag" style={{ background: 'var(--warning-soft)', color: 'var(--warning-color)' }}>
-                    Переход к следующему разделу
+                    Контроль перехода между разделами
                   </div>
                 )}
                 <div className="tag" style={{ background: 'var(--warning-soft)', color: 'var(--warning-color)' }}>
@@ -195,7 +205,7 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
               <div>
                 <p className="text-xs text-blue-400 font-bold uppercase tracking-wider">{ARCHIVE_COPY.vocabLabel}</p>
                 <h3 className="hf text-white font-bold text-xl">
-                  {isCheckpoint ? 'Краткое восстановление' : 'Ключевые термины'}
+                  {isCheckpoint ? 'Сверка терминов' : 'Термины для восстановления'}
                 </h3>
               </div>
               <span className="tag" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
@@ -219,12 +229,12 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
             <div className="mb-4">
               <p className="text-xs text-blue-400 font-bold uppercase tracking-wider">{ARCHIVE_COPY.phraseLabel}</p>
               <h3 className="hf text-white font-bold text-xl">
-                {isCheckpoint ? 'Финальная настройка перед узлом' : 'Опорные формулировки'}
+                {isCheckpoint ? 'Финальная сверка перед узлом' : 'Опорные формулировки'}
               </h3>
               <p className="text-slate-500 text-sm mt-1">
                 {isCheckpoint
-                  ? 'Проверьте знакомые команды и переходите к контрольному проходу.'
-                  : 'Эти формулировки встретятся в протоколе. Зафиксируйте их перед началом.'}
+                  ? 'Сверьте командные формулы и переходите к контрольной проверке сектора.'
+                  : 'Эти формулировки входят в рабочий контур протокола. Зафиксируйте их перед запуском.'}
               </p>
             </div>
             <div className="space-y-2 mb-6">
@@ -244,7 +254,7 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-xs text-blue-400 font-bold uppercase tracking-wider">
-                  {isCheckpoint ? ARCHIVE_COPY.checkpointLabel : ARCHIVE_MISSION_TYPE_LABELS[mission.type] ?? ARCHIVE_COPY.missionLabel}
+                  {isCheckpoint ? ARCHIVE_COPY.checkpointLabel : 'Исполнительный протокол'}
                 </p>
                 <h3 className="hf text-white font-bold text-xl">{mission.title}</h3>
                 {mod.moduleFeel && (
@@ -263,8 +273,8 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
               ) : (
                 <div className="text-center py-14">
                   <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔧</div>
-                  <h4 className="hf text-white font-bold text-lg mb-2">Раздел готовится</h4>
-                  <p className="text-slate-500 text-sm">Этот режим будет добавлен в следующем обновлении реестра.</p>
+                  <h4 className="hf text-white font-bold text-lg mb-2">Контур недоступен</h4>
+                  <p className="text-slate-500 text-sm">Исполнительный режим будет подключён в следующем обновлении реестра.</p>
                   <div className="tag mt-4" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>Скоро</div>
                 </div>
               )}

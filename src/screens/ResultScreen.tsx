@@ -40,7 +40,7 @@ export default function ResultScreen({
           className="hf text-3xl font-bold mb-1"
           style={{ color: passed ? 'var(--success-text)' : 'var(--danger-text)' }}
         >
-          {passed ? (isCheckpoint ? 'Контрольный узел закрыт' : 'Протокол завершён') : 'Порог не достигнут'}
+          {passed ? (isCheckpoint ? 'Контрольный узел подтверждён' : 'Целостность протокола подтверждена') : 'Обнаружено отклонение'}
         </h2>
         <p className="text-slate-500 text-sm mb-6">{mission.title} · {ARCHIVE_COPY.moduleLabel} {mod.id}</p>
 
@@ -72,10 +72,20 @@ export default function ResultScreen({
               }}
             >
               <span className="hf text-2xl font-bold text-white">{score}%</span>
-              <span className="text-xs text-slate-500">из 100</span>
+              <span className="text-xs text-slate-500">индекс</span>
             </div>
           </div>
         </div>
+
+        <p
+          className="text-slate-500 text-xs mb-4"
+          style={{
+            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+            letterSpacing: '.04em',
+          }}
+        >
+          VERIFY.LOG // SCORE={score}% · THRESHOLD={mission.passingScore}% · STATE={passed ? 'ACCEPTED' : 'REVIEW'}
+        </p>
 
         <div
           className="mb-5 px-4 py-2.5 rounded-xl text-sm"
@@ -85,10 +95,10 @@ export default function ResultScreen({
           }}
         >
           {passed ? (
-            <span className="text-green-300">✓ Порог выполнен ({mission.passingScore}%)</span>
+            <span className="text-green-300">✓ Данные приняты. Минимальный порог {mission.passingScore}% выполнен</span>
           ) : (
             <span className="text-red-300">
-              Требуемый порог: {mission.passingScore}% · Зафиксировано: {score}%
+              Зафиксированное значение ниже допустимого: {score}% при требуемом пороге {mission.passingScore}%
             </span>
           )}
         </div>
@@ -100,7 +110,7 @@ export default function ResultScreen({
           >
             <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Переход раздела</p>
             <p className="text-slate-300 text-sm font-semibold">
-              {mod.chapter ?? 'Первый раздел'} завершён. Реестр обновлён, можно переходить к следующему блоку.
+              {mod.chapter ?? 'Первый раздел'} закрыт без нарушений. Следующий сектор готов к активации.
             </p>
           </div>
         )}
@@ -112,7 +122,7 @@ export default function ResultScreen({
               style={{ background: 'var(--accent-soft)', border: '1px solid var(--border-accent-soft)' }}
             >
               <div className="hf text-xl font-bold text-blue-300">+{xpEarned}</div>
-              <div className="text-xs text-slate-500 mt-0.5">XP зафиксировано</div>
+              <div className="text-xs text-slate-500 mt-0.5">XP внесено в запись</div>
             </div>
             {badgeEarned && (
               <div
@@ -128,18 +138,18 @@ export default function ResultScreen({
 
         {!passed && (
           <p className="text-slate-500 text-xs mb-5">
-            Проверьте термины и формулировки, затем повторите попытку. XP фиксируется только после успешного завершения.
+            Выполните повторную сверку терминов и формулировок, затем перезапустите протокол. XP вносится только после подтверждённого результата.
           </p>
         )}
 
         <div className="flex flex-col gap-2">
           {passed && onNext && (
             <button onClick={onNext} className="btn-p w-full">
-              {isCheckpoint ? 'К следующему разделу →' : 'Следующий протокол →'}
+              {isCheckpoint ? 'Активировать следующий раздел →' : 'Открыть следующий протокол →'}
             </button>
           )}
           <div className="result-screen__actions flex gap-2">
-            <button onClick={onRetry} className="btn-s flex-1">↺ Повторить</button>
+            <button onClick={onRetry} className="btn-s flex-1">↺ Перезапуск</button>
             <button onClick={onModulePage} className="btn-g flex-1">{ARCHIVE_COPY.moduleLabel}</button>
             <button onClick={onDashboard} className="btn-g flex-1">◈ Реестр</button>
           </div>

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { MODULES } from '../data/modules';
 import { getRank, getNextRank } from '../data/ranks';
-import { ARCHIVE_COPY } from '../data/archiveTerminology';
 import ProgressBar from '../components/ui/ProgressBar';
 import Badge from '../components/ui/Badge';
 import type { Progress } from '../types/progress';
@@ -22,13 +21,15 @@ export default function ProfileScreen({ progress, onBack, onReset }: Props) {
   const startedModules = MODULES.filter(m =>
     m.missions.some(ms => progress.completedMissions.includes(ms.id)),
   ).length;
+  const totalProtocols = MODULES.reduce((sum, mod) => sum + mod.missions.length, 0);
+  const restoredPct = Math.round((progress.completedMissions.length / totalProtocols) * 100);
 
   return (
     <div className="app-page min-h-screen bg-grid" style={{ paddingBottom: '3rem' }}>
       <div className="app-shell app-shell--compact" style={{ maxWidth: '680px', margin: '0 auto', paddingBlock: '2rem' }}>
         <div className="profile-screen__header flex items-center justify-between gap-3 mb-6">
           <button onClick={onBack} className="btn-g text-sm px-3 py-1.5">← Реестр</button>
-          <h2 className="hf text-white font-bold text-xl">{ARCHIVE_COPY.profileTitle}</h2>
+          <h2 className="hf text-white font-bold text-xl">Запись оператора</h2>
           <div className="profile-screen__header-spacer" />
         </div>
 
@@ -42,30 +43,39 @@ export default function ProfileScreen({ progress, onBack, onReset }: Props) {
               {rank.icon}
             </div>
             <div>
-              <p className="text-slate-500 text-xs uppercase tracking-wider">Текущий допуск</p>
+              <p className="text-slate-500 text-xs uppercase tracking-wider">Уровень допуска</p>
               <h3 className="hf text-white font-bold text-2xl">{rank.name}</h3>
               <p className="text-blue-400 text-sm font-semibold">{progress.xp} XP</p>
             </div>
           </div>
+          <p
+            className="text-slate-500 text-xs mb-3"
+            style={{
+              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+              letterSpacing: '.04em',
+            }}
+          >
+            OPERATOR.RECORD // RESTORED={restoredPct}% · ACTIVE_SECTIONS={startedModules}
+          </p>
           {nextRank ? (
             <div>
               <div className="flex justify-between text-xs text-slate-600 mb-1.5">
-                <span>До «{nextRank.name}»</span>
+                <span>Следующий допуск: «{nextRank.name}»</span>
                 <span>{nextRank.minXP - progress.xp} XP</span>
               </div>
               <ProgressBar value={xpSince} max={range} />
             </div>
           ) : (
-            <p className="text-amber-400 text-sm font-semibold">⬡ Высший допуск подтверждён</p>
+            <p className="text-amber-400 text-sm font-semibold">⬡ Предельный уровень допуска подтверждён</p>
           )}
         </div>
 
         {/* Stats */}
         <div className="profile-screen__stats grid gap-3 mb-4 fu d2">
           {[
-            { val: progress.completedMissions.length, sub: 'Протоколов' },
+            { val: progress.completedMissions.length, sub: 'Обработано' },
             { val: progress.badges.length,            sub: 'Знаков' },
-            { val: startedModules,                    sub: 'Разделов' },
+            { val: startedModules,                    sub: 'Секторов' },
           ].map((s, i) => (
             <div key={i} className="card p-4 text-center" style={{ border: '1px solid var(--border-color)' }}>
               <div className="hf text-2xl font-bold text-white">{s.val}</div>
@@ -76,7 +86,7 @@ export default function ProfileScreen({ progress, onBack, onReset }: Props) {
 
         {/* Badges */}
         <div className="card p-5 mb-4 fu d3" style={{ border: '1px solid var(--border-color)' }}>
-          <h3 className="hf text-white font-semibold mb-4">Архивные знаки</h3>
+          <h3 className="hf text-white font-semibold mb-4">Служебные отметки</h3>
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-4">
             {MODULES.map(mod => (
               <Badge
@@ -91,7 +101,7 @@ export default function ProfileScreen({ progress, onBack, onReset }: Props) {
 
         {/* Module progress list */}
         <div className="card p-5 mb-5 fu d4" style={{ border: '1px solid var(--border-color)' }}>
-          <h3 className="hf text-white font-semibold mb-4">Прогресс по разделам</h3>
+          <h3 className="hf text-white font-semibold mb-4">Сводка по секторам</h3>
           <div className="space-y-3">
             {MODULES.map((mod) => {
               const done = mod.missions.filter(m => progress.completedMissions.includes(m.id)).length;
@@ -115,11 +125,11 @@ export default function ProfileScreen({ progress, onBack, onReset }: Props) {
             className="btn-g w-full text-sm"
             style={{ color: 'var(--danger-color)', borderColor: 'var(--danger-color)' }}
           >
-            Очистить запись прогресса
+            Очистить запись оператора
           </button>
         ) : (
           <div className="card p-4 text-center" style={{ border: '1px solid var(--danger-color)' }}>
-            <p className="text-slate-300 text-sm mb-3">Запись прогресса будет удалена. Продолжить?</p>
+            <p className="text-slate-300 text-sm mb-3">Личная запись оператора будет удалена. Продолжить?</p>
             <div className="mission-screen__step-nav justify-center">
               <button onClick={() => setConfirmReset(false)} className="btn-g">Отмена</button>
               <button
@@ -132,7 +142,7 @@ export default function ProfileScreen({ progress, onBack, onReset }: Props) {
                   cursor: 'pointer',
                 }}
               >
-                Да, очистить
+                Да, удалить запись
               </button>
             </div>
           </div>
