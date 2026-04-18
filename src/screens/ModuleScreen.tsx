@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { HiOutlineBolt, HiOutlineCheck, HiOutlineLockClosed } from 'react-icons/hi2';
 import { MODULES } from '../data/modules';
 import {
   ARCHIVE_COPY,
@@ -66,8 +67,9 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
                   </span>
                 )}
                 {doneCount === mod.missions.length && (
-                  <span className="tag" style={{ background: 'var(--success-soft)', color: 'var(--success-color)' }}>
-                    ✓ Завершён
+                  <span className="tag inline-flex items-center gap-1" style={{ background: 'var(--success-soft)', color: 'var(--success-color)' }}>
+                    <HiOutlineCheck aria-hidden="true" />
+                    Завершён
                   </span>
                 )}
               </div>
@@ -189,7 +191,7 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
                         border: `1px solid ${done ? 'var(--success-color)' : unlocked ? 'var(--accent-ring)' : 'var(--border-strong)'}`,
                       }}
                     >
-                      {done ? '✓' : unlocked ? mission.num : '🔒'}
+                      {done ? <HiOutlineCheck className="text-[1.2rem]" aria-hidden="true" /> : unlocked ? mission.num : <HiOutlineLockClosed className="text-[1.1rem]" aria-hidden="true" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="hf text-white font-bold">{mission.title}</h3>
@@ -197,7 +199,10 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
                         <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)' }}>
                           {ARCHIVE_MISSION_TYPE_LABELS[mission.type] ?? mission.type.replace(/_/g, ' ')}
                         </span>
-                        <span className="text-xs text-amber-400">⚡{mission.xpReward} XP</span>
+                        <span className="inline-flex items-center gap-1 text-xs text-amber-400">
+                          <HiOutlineBolt aria-hidden="true" />
+                          {mission.xpReward} XP
+                        </span>
                         {!mission.implemented && (
                           <span className="tag" style={{ background: 'var(--accent-softer)', color: 'var(--accent)' }}>
                             Недоступно
@@ -235,7 +240,7 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
                       border: `1px solid ${checkpointDone ? 'var(--success-color)' : checkpointUnlocked ? 'var(--warning-color)' : 'var(--border-strong)'}`,
                     }}
                   >
-                    {checkpointDone ? '✓' : checkpointUnlocked ? '◎' : '🔒'}
+                    {checkpointDone ? <HiOutlineCheck className="text-[1.2rem]" aria-hidden="true" /> : checkpointUnlocked ? '◎' : <HiOutlineLockClosed className="text-[1.1rem]" aria-hidden="true" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="hf text-white font-bold">{checkpoint.title}</h3>
@@ -246,7 +251,10 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
                       <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)' }}>
                         После модуля {checkpoint.afterModuleId}
                       </span>
-                      <span className="text-xs text-amber-400">⚡{checkpoint.xpReward} XP</span>
+                      <span className="inline-flex items-center gap-1 text-xs text-amber-400">
+                        <HiOutlineBolt aria-hidden="true" />
+                        {checkpoint.xpReward} XP
+                      </span>
                       {checkpointDone && <span className="text-xs text-green-400">Зафиксировано: {checkpointScore}%</span>}
                     </div>
                   </div>

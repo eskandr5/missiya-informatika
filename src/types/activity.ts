@@ -199,6 +199,18 @@ export interface MediaKitAssemblyData {
   scenarios: MediaKitScenario[];
 }
 
+export interface BinaryLockPrompt {
+  id: string;
+  prompt: string;
+  choices: string[];
+  correct: number;
+  helperText?: string;
+}
+
+export interface BinaryLockData {
+  prompts: BinaryLockPrompt[];
+}
+
 export type ActivityData =
   | MatchingData
   | SequenceData
@@ -213,4 +225,5 @@ export type ActivityData =
   | MediaTypeClassificationData
   | MediaFormatSelectionData
   | MediaPropertyCheckData
-  | MediaKitAssemblyData;
+  | MediaKitAssemblyData
+  | BinaryLockData;

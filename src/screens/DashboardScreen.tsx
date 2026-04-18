@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { HiOutlineBolt, HiOutlineLockClosed } from 'react-icons/hi2';
 import { MODULES } from '../data/modules';
 import { getRank, getNextRank } from '../data/ranks';
 import { ARCHIVE_COPY } from '../data/archiveTerminology';
@@ -119,7 +120,7 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
                         border: `1px solid ${unlocked ? `${mod.accent}30` : 'var(--border-strong)'}`,
                       }}
                     >
-                      {unlocked ? mod.icon : '🔒'}
+                      {unlocked ? mod.icon : <HiOutlineLockClosed className="text-[1.1rem] text-slate-500" aria-hidden="true" />}
                     </div>
                     <Badge badge={mod.badge} earned={badgeEarned} size="sm" />
                   </div>
@@ -151,7 +152,10 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
                   <div className="dashboard-module-simple__progress">
                     <div className="flex justify-between text-xs text-slate-600 mb-1.5">
                       <span>{done}/{mod.missions.length} миссий</span>
-                      <span style={{ color: mod.accent }}>⚡ {mod.xpReward} XP</span>
+                      <span className="inline-flex items-center gap-1" style={{ color: mod.accent }}>
+                        <HiOutlineBolt aria-hidden="true" />
+                        {mod.xpReward} XP
+                      </span>
                     </div>
                     <ProgressBar value={done} max={mod.missions.length} color={mod.accent} />
                   </div>

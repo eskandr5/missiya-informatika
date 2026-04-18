@@ -1,5 +1,6 @@
 import { getRank } from '../../data/ranks';
 import { ARCHIVE_COPY } from '../../data/archiveTerminology';
+import { HiOutlineMoon, HiOutlineSun } from 'react-icons/hi2';
 
 interface Props {
   xp: number;
@@ -36,7 +37,9 @@ export default function NavBar({ xp, theme, onHome, onProfile, onToggleTheme }: 
           <span className="hf text-blue-400 font-bold text-sm">{xp} XP</span>
         </div>
         <button onClick={onToggleTheme} className="theme-toggle" aria-label="Переключить тему">
-          <span className="theme-toggle__icon" aria-hidden="true">{theme === 'light' ? '☀' : '☾'}</span>
+          <span className="theme-toggle__icon inline-flex items-center justify-center text-base" aria-hidden="true">
+            {theme === 'light' ? <HiOutlineSun /> : <HiOutlineMoon />}
+          </span>
           <span className="theme-toggle__label">{theme === 'light' ? 'Light' : 'Dark'}</span>
         </button>
         <button onClick={onProfile} className="btn-g text-sm px-3 py-1.5">

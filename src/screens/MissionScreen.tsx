@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react';
 import type { ComponentType } from 'react';
+import { HiOutlineBolt } from 'react-icons/hi2';
 import type { ActivityData } from '../types/activity';
 import type { MissionType, Module, Phrase, ProgressionStage } from '../types/content';
 import { DL } from '../utils/helpers';
+import BinaryLockActivity from '../activities/BinaryLockActivity';
 import MatchingActivity from '../activities/MatchingActivity';
 import MediaKitAssemblyActivity from '../activities/MediaKitAssemblyActivity';
 import MediaPropertyCheckActivity from '../activities/MediaPropertyCheckActivity';
@@ -34,6 +36,7 @@ interface ActivityProps {
 }
 
 const ACTIVITY_MAP: Partial<Record<MissionType, ComponentType<ActivityProps>>> = {
+  binary_lock: BinaryLockActivity,
   matching: MatchingActivity,
   media_classification: MediaTypeClassificationActivity,
   media_format_selection: MediaFormatSelectionActivity,
@@ -129,7 +132,10 @@ export default function MissionScreen({ stage, module: mod, onFinish, onBack }: 
               >
                 {showEn ? 'RU+EN' : 'RU'}
               </button>
-              <span className="text-xs font-bold text-amber-400">⚡ {stage.xpReward} XP</span>
+              <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-400">
+                <HiOutlineBolt aria-hidden="true" />
+                {stage.xpReward} XP
+              </span>
             </div>
           </div>
           <StepBar steps={[...FLOW_STEPS]} current={step} />
@@ -195,8 +201,9 @@ export default function MissionScreen({ stage, module: mod, onFinish, onBack }: 
                     Переход к следующему разделу
                   </div>
                 )}
-                <div className="tag" style={{ background: 'var(--warning-soft)', color: 'var(--warning-color)' }}>
-                  ⚡ {stage.xpReward} XP
+                <div className="tag inline-flex items-center gap-1" style={{ background: 'var(--warning-soft)', color: 'var(--warning-color)' }}>
+                  <HiOutlineBolt aria-hidden="true" />
+                  {stage.xpReward} XP
                 </div>
                 <div className="tag" style={{ background: 'var(--success-soft)', color: 'var(--success-color)' }}>
                   Порог: {stage.passingScore}%
