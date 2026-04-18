@@ -13,6 +13,7 @@ export default function LandingScreen({ progress, onStart }: Props) {
   const returning = progress.completedMissions.length > 0;
   const totalModules = MODULES.length;
   const totalMissions = MODULES.reduce((sum, mod) => sum + mod.missions.length, 0);
+  const restoredPct = Math.round((progress.completedMissions.length / totalMissions) * 100);
 
   return (
     <div className="min-h-screen bg-grid" style={{ paddingBottom: '4rem' }}>
@@ -34,7 +35,7 @@ export default function LandingScreen({ progress, onStart }: Props) {
         >
           <span style={{ color: 'var(--accent)', fontSize: '.78rem' }}>●</span>
           <span className="text-blue-300 text-xs font-bold tracking-wider uppercase">
-            {ARCHIVE_COPY.appKicker}
+            Система учебного восстановления
           </span>
         </div>
 
@@ -64,34 +65,41 @@ export default function LandingScreen({ progress, onStart }: Props) {
           className="fu d2 text-slate-400 text-lg mb-4"
           style={{ maxWidth: '560px', lineHeight: 1.72 }}
         >
-          Учебный реестр для последовательного прохождения {totalModules} разделов информатики.
-          Изучайте терминологию, фиксируйте результаты и открывайте новые уровни допуска.
+          Интерфейс восстановления архивного корпуса по информатике. Разделы возвращаются в рабочее
+          состояние последовательно: через термины, формулировки и исполнительные протоколы.
         </p>
 
-        <div className="fu d3 flex flex-wrap gap-3 justify-center text-slate-500 text-sm mb-8">
+        <p className="fu d3 text-slate-500 text-sm mb-8" style={{ maxWidth: '620px', lineHeight: 1.8 }}>
+          Текущая задача: восстановить {totalModules} {ARCHIVE_COPY.moduleLabelPlural}, зафиксировать
+          результаты и расширить уровень допуска оператора по мере ввода разделов в рабочий контур.
+        </p>
+
+        <div className="fu d4 flex flex-wrap gap-3 justify-center text-slate-500 text-sm mb-8">
           <span>📚 {totalModules} {ARCHIVE_COPY.moduleLabelPlural}</span><span>·</span>
           <span>⚡ {totalMissions} {ARCHIVE_COPY.missionLabelPlural}</span><span>·</span>
           <span>◈ {ARCHIVE_COPY.rankLabel}</span><span>·</span>
           <span>🎖️ Знаки</span>
         </div>
 
-        <div className="fu d4">
+        <div className="fu d5">
           <button onClick={onStart} className="btn-p text-lg px-8 py-4 glow">
-            {returning ? 'Продолжить работу →' : 'Открыть реестр →'}
+            {returning ? 'Вернуться к восстановлению →' : 'Инициализировать доступ →'}
           </button>
         </div>
 
         {returning && (
           <div
-            className="fu d5 mt-5 px-5 py-3 rounded-xl text-sm"
+            className="fu d6 mt-5 px-5 py-3 rounded-xl text-sm"
             style={{ background: 'var(--surface-strong)', border: '1px solid var(--border-color)' }}
           >
-            <span className="text-slate-400">Статус: </span>
+            <span className="text-slate-400">Статус оператора: </span>
             <span className="hf text-blue-300 font-bold">{rank.icon} {rank.name}</span>
             <span className="text-slate-600 mx-2">·</span>
             <span className="hf text-amber-400 font-bold">{progress.xp} XP</span>
             <span className="text-slate-600 mx-2">·</span>
-            <span className="text-slate-400">{progress.completedMissions.length} {ARCHIVE_COPY.missionLabelPlural} завершено</span>
+            <span className="text-slate-400">
+              восстановлено {restoredPct}% · {progress.completedMissions.length} {ARCHIVE_COPY.missionLabelPlural}
+            </span>
           </div>
         )}
       </div>
@@ -100,9 +108,9 @@ export default function LandingScreen({ progress, onStart }: Props) {
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 1.5rem' }}>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { icon: '🗂️', t: 'Терминологические карты', d: 'Карточки с ключевыми понятиями и английскими соответствиями для каждого раздела' },
-            { icon: '◈', t: 'Исполнительные протоколы', d: 'Сопоставление, последовательности, классификация, коррекция и другие режимы' },
-            { icon: '⬡', t: 'Допуск и фиксация',       d: 'XP, уровни допуска, знаки по разделам и общая сводка прогресса' },
+            { icon: '🗂️', t: 'Архив терминов', d: 'Ключевые понятия и английские соответствия для поэтапного восстановления разделов' },
+            { icon: '◈', t: 'Исполнительные контуры', d: 'Сопоставление, последовательности, классификация, коррекция и другие рабочие режимы' },
+            { icon: '⬡', t: 'Допуск и фиксация', d: 'XP, уровни доступа, архивные знаки и сводка состояния по всему реестру' },
           ].map((f, i) => (
             <div
               key={i}
