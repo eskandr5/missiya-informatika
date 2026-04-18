@@ -1,5 +1,10 @@
 import type { Module } from '../../types/content';
-import { MODULE4_MISSION_1_DATA, MODULE4_MISSION_2_DATA } from '../module4Media';
+import {
+  MODULE4_MISSION_1_DATA,
+  MODULE4_MISSION_2_DATA,
+  MODULE4_MISSION_3_DATA,
+  MODULE4_MISSION_4_DATA,
+} from '../module4Media';
 
 const module04: Module = {
   id: 4,
@@ -55,6 +60,30 @@ const module04: Module = {
       briefing: 'Смотрите на изображение, звуковую волну или таблицу и выбирайте подходящий формат файла. После ответа панель сразу покажет правильный или неверный результат.',
       vocabSlice: [4, 12],
       activityData: MODULE4_MISSION_2_DATA,
+    },
+    {
+      id: '4-3',
+      num: 3,
+      title: 'Проверь свойства файла',
+      type: 'media_property_check',
+      xpReward: 90,
+      passingScore: 70,
+      implemented: true,
+      briefing: 'Посмотрите на файл и выберите свойство, которое подходит именно ему: разрешение, сжатие, частота дискретизации или строки и столбцы. Используйте панель просмотра как подсказку.',
+      vocabSlice: [0, 12],
+      activityData: MODULE4_MISSION_3_DATA,
+    },
+    {
+      id: '4-4',
+      num: 4,
+      title: 'Собери медианабор',
+      type: 'media_kit_assembly',
+      xpReward: 100,
+      passingScore: 70,
+      implemented: true,
+      briefing: 'Соберите подходящий набор файлов для учебной задачи. Выбирайте изображения, звук и таблицы по назначению, формату и свойствам файла.',
+      vocabSlice: [0, 12],
+      activityData: MODULE4_MISSION_4_DATA,
     },
   ],
 };

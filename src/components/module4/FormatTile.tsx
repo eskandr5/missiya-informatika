@@ -1,9 +1,7 @@
-import type { MediaFormat } from '../../types/activity';
-
 type TileState = 'idle' | 'selected' | 'correct' | 'wrong';
 
 interface Props {
-  label: MediaFormat;
+  label: string;
   state: TileState;
   onClick: () => void;
 }

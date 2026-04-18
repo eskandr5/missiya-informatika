@@ -1,6 +1,8 @@
 import type {
   MediaFormatSelectionData,
   MediaItem,
+  MediaKitAssemblyData,
+  MediaPropertyCheckData,
   MediaTypeClassificationData,
 } from '../types/activity';
 
@@ -111,6 +113,142 @@ export const MODULE4_MISSION_2_DATA: MediaFormatSelectionData = {
       choices: ['MP3', 'SVG', 'CSV', 'PNG'],
       correctFormat: 'MP3',
       helperText: 'Это аудиофайл с меньшим размером.',
+    },
+  ],
+};
+
+export const MODULE4_MISSION_3_DATA: MediaPropertyCheckData = {
+  prompts: [
+    {
+      id: 'm4-property-1',
+      prompt: 'Какое свойство лучше всего подходит для этого файла?',
+      item: MODULE4_MEDIA_ITEMS[0],
+      choices: [
+        { id: 'resolution', label: 'Графика: разрешение в пикселях' },
+        { id: 'amplitude', label: 'Звук: амплитуда волны' },
+        { id: 'table', label: 'Данные: строки и столбцы' },
+        { id: 'duration', label: 'Звук: длительность записи' },
+      ],
+      correctChoiceId: 'resolution',
+      helperText: 'Это изображение. Для него важны пиксели и разрешение.',
+      successText: 'Верно. Для изображения важно разрешение в пикселях.',
+    },
+    {
+      id: 'm4-property-2',
+      prompt: 'Выберите свойство, которое относится к этому звуковому файлу.',
+      item: MODULE4_MEDIA_ITEMS[2],
+      choices: [
+        { id: 'sampling', label: 'Звук: частота дискретизации' },
+        { id: 'vector', label: 'Графика: векторные линии' },
+        { id: 'columns', label: 'Данные: столбцы таблицы' },
+        { id: 'pixels', label: 'Графика: сетка пикселей' },
+      ],
+      correctChoiceId: 'sampling',
+      helperText: 'Это звуковой файл. Для звука важна частота дискретизации.',
+      successText: 'Верно. Частота дискретизации относится к звуку.',
+    },
+    {
+      id: 'm4-property-3',
+      prompt: 'Что подходит для таблицы с данными?',
+      item: MODULE4_MEDIA_ITEMS[4],
+      choices: [
+        { id: 'rows-columns', label: 'Данные: строки и столбцы' },
+        { id: 'wave', label: 'Звук: амплитуда волны' },
+        { id: 'transparency', label: 'Графика: прозрачность слоя' },
+        { id: 'pixels', label: 'Графика: пиксели изображения' },
+      ],
+      correctChoiceId: 'rows-columns',
+      helperText: 'На панели видна таблица. Таблица состоит из строк и столбцов.',
+      successText: 'Верно. Для таблицы важны строки и столбцы.',
+    },
+    {
+      id: 'm4-property-4',
+      prompt: 'Какое утверждение лучше всего описывает этот файл?',
+      item: MODULE4_MEDIA_ITEMS[3],
+      choices: [
+        { id: 'compression', label: 'Звук: сжатие уменьшает размер' },
+        { id: 'resolution', label: 'Данные: разрешение в пикселях' },
+        { id: 'vector', label: 'Графика: это векторный файл' },
+        { id: 'rows', label: 'Данные: только строки без столбцов' },
+      ],
+      correctChoiceId: 'compression',
+      helperText: 'Это MP3-файл меньшего размера. Здесь важно сжатие.',
+      successText: 'Верно. Сжатие помогает уменьшить размер аудиофайла.',
+    },
+    {
+      id: 'm4-property-5',
+      prompt: 'Какое описание подходит этому изображению?',
+      item: MODULE4_MEDIA_ITEMS[1],
+      choices: [
+        { id: 'raster', label: 'Графика: растровое изображение' },
+        { id: 'vector', label: 'Графика: векторная графика' },
+        { id: 'sampling', label: 'Звук: частота дискретизации' },
+        { id: 'table', label: 'Данные: строки и столбцы' },
+      ],
+      correctChoiceId: 'raster',
+      helperText: 'Файл JPG хранит изображение как сетку пикселей.',
+      successText: 'Верно. JPG обычно хранит растровое изображение.',
+    },
+  ],
+};
+
+export const MODULE4_MISSION_4_DATA: MediaKitAssemblyData = {
+  scenarios: [
+    {
+      id: 'm4-kit-1',
+      title: 'Набор для учебной презентации',
+      briefing: 'Подготовьте материалы для слайда с коротким вступлением и таблицей результатов.',
+      requirements: [
+        'Изображение для слайда 1920 × 1080',
+        'Короткое аудио-вступление до 15 секунд',
+        'Таблица с результатами',
+      ],
+      items: MODULE4_MEDIA_ITEMS,
+      requiredItemIds: ['m4-image-poster', 'm4-audio-intro', 'm4-data-table'],
+      helperText: 'Для этой задачи нужны крупное изображение, короткий звук и таблица.',
+      readyText: 'Набор готов. Его можно использовать в учебной презентации.',
+    },
+    {
+      id: 'm4-kit-2',
+      title: 'Набор для карточки курса',
+      briefing: 'Соберите компактный набор для страницы курса. Звук не нужен.',
+      requirements: [
+        'Небольшое изображение для карточки',
+        'Таблица цветов для оформления',
+        'Без аудиофайлов',
+      ],
+      items: MODULE4_MEDIA_ITEMS,
+      requiredItemIds: ['m4-image-logo', 'm4-data-report'],
+      helperText: 'Здесь нужен компактный визуальный набор без звука.',
+      readyText: 'Верно. Для карточки курса выбран аккуратный компактный набор.',
+    },
+    {
+      id: 'm4-kit-3',
+      title: 'Набор для озвученного слайда',
+      briefing: 'Подберите материалы для одного слайда с голосовым пояснением.',
+      requirements: [
+        'Основное изображение для показа',
+        'Сжатый голосовой файл',
+        'Таблица не нужна',
+      ],
+      items: MODULE4_MEDIA_ITEMS,
+      requiredItemIds: ['m4-image-poster', 'm4-audio-voice'],
+      helperText: 'Посмотрите, какой аудиофайл подходит для голосового комментария.',
+      readyText: 'Набор готов. Слайд и голосовое пояснение подходят друг к другу.',
+    },
+    {
+      id: 'm4-kit-4',
+      title: 'Набор для короткого аудиоотчёта',
+      briefing: 'Соберите материалы для отчёта с голосовым файлом и большой таблицей результатов.',
+      requirements: [
+        'Сжатый голосовой файл',
+        'Таблица с большим количеством строк',
+        'Изображение не нужно',
+      ],
+      items: MODULE4_MEDIA_ITEMS,
+      requiredItemIds: ['m4-audio-voice', 'm4-data-table'],
+      helperText: 'Сравните аудиофайлы и выберите таблицу с большим объёмом данных.',
+      readyText: 'Верно. В наборе есть голосовой файл и большая таблица результатов.',
     },
   ],
 };

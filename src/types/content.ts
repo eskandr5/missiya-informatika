@@ -16,7 +16,9 @@ export type MissionType =
   | 'logic_table'
   | 'final_mixed'
   | 'media_classification'
-  | 'media_format_selection';
+  | 'media_format_selection'
+  | 'media_property_check'
+  | 'media_kit_assembly';
 
 export type MissionStageType = 'mission' | 'checkpoint';
 

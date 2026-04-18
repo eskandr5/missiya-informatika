@@ -32,6 +32,8 @@ export const ARCHIVE_MISSION_TYPE_LABELS: Partial<Record<MissionType, string>> =
   final_mixed: 'Сводный протокол',
   media_classification: 'Типы файлов',
   media_format_selection: 'Форматы файлов',
+  media_property_check: 'Свойства файлов',
+  media_kit_assembly: 'Сборка набора',
 };
 
 export function getArchiveStageLabel(stageType: MissionStageType | undefined, missionNum: number) {

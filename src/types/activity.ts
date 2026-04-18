@@ -165,6 +165,40 @@ export interface MediaFormatSelectionData {
   prompts: MediaFormatPrompt[];
 }
 
+export interface MediaPropertyOption {
+  id: string;
+  label: string;
+}
+
+export interface MediaPropertyPrompt {
+  id: string;
+  prompt: string;
+  item: MediaItem;
+  choices: MediaPropertyOption[];
+  correctChoiceId: string;
+  helperText?: string;
+  successText?: string;
+}
+
+export interface MediaPropertyCheckData {
+  prompts: MediaPropertyPrompt[];
+}
+
+export interface MediaKitScenario {
+  id: string;
+  title: string;
+  briefing: string;
+  requirements: string[];
+  items: MediaItem[];
+  requiredItemIds: string[];
+  helperText?: string;
+  readyText?: string;
+}
+
+export interface MediaKitAssemblyData {
+  scenarios: MediaKitScenario[];
+}
+
 export type ActivityData =
   | MatchingData
   | SequenceData
@@ -177,4 +211,6 @@ export type ActivityData =
   | ClassificationData
   | ErrorCorrectionData
   | MediaTypeClassificationData
-  | MediaFormatSelectionData;
+  | MediaFormatSelectionData
+  | MediaPropertyCheckData
+  | MediaKitAssemblyData;
