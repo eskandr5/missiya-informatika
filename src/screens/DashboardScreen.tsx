@@ -14,6 +14,20 @@ interface Props {
 }
 
 const DL = ['d1','d2','d3','d4','d5','d6','d7','d8','d9','d10','d11','d12'];
+const TOPOLOGY_SLOTS = [
+  'slot-a1',
+  'slot-a2',
+  'slot-a3',
+  'slot-b1',
+  'slot-b2',
+  'slot-b3',
+  'slot-c1',
+  'slot-c2',
+  'slot-c3',
+  'slot-d1',
+  'slot-d2',
+  'slot-d3',
+] as const;
 
 export default function DashboardScreen({ progress, onSelectModule }: Props) {
   const rank      = getRank(progress.xp);
@@ -94,7 +108,7 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
 
       {/* Module grid */}
       <div className="app-shell" style={{ maxWidth: '1000px', margin: '2rem auto' }}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="dashboard-topology">
           {MODULES.map((mod, idx) => {
             const unlocked    = isModuleUnlocked(mod, progress.completedMissions, MODULES);
             const done        = mod.missions.filter(m => progress.completedMissions.includes(m.id)).length;
@@ -113,7 +127,7 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
               <div
                 key={mod.id}
                 onClick={() => unlocked && onSelectModule(mod)}
-                className={`card dashboard-module-card fu ${DL[idx] ?? ''} ${unlocked ? 'lift' : ''} ${!unlocked ? 'is-locked' : ''} ${modComplete ? 'is-restored' : ''} ${isActive ? 'is-active' : ''}`}
+                className={`card dashboard-module-card dashboard-topology__node ${TOPOLOGY_SLOTS[idx] ?? ''} fu ${DL[idx] ?? ''} ${unlocked ? 'lift' : ''} ${!unlocked ? 'is-locked' : ''} ${modComplete ? 'is-restored' : ''} ${isActive ? 'is-active' : ''}`}
                 style={{
                   '--module-accent': mod.accent,
                   opacity: unlocked ? 1 : 0.45,
