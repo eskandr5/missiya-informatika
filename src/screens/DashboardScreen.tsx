@@ -22,9 +22,9 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
   const totalMissions = MODULES.reduce((sum, mod) => sum + mod.missions.length, 0);
   const completedMissions = progress.completedMissions.length;
   const restoredPct = Math.round((completedMissions / totalMissions) * 100);
-  const unlockedModules = MODULES.filter(mod => isModuleUnlocked(mod, progress.completedMissions, MODULES)).length;
+  const unlockedModules = MODULES.filter(mod => isModuleUnlocked(mod, progress, MODULES)).length;
   const activeModule = MODULES.find((mod) => {
-    const unlocked = isModuleUnlocked(mod, progress.completedMissions, MODULES);
+    const unlocked = isModuleUnlocked(mod, progress, MODULES);
     const done = mod.missions.filter(m => progress.completedMissions.includes(m.id)).length;
     return unlocked && done < mod.missions.length;
   }) ?? null;
@@ -91,7 +91,7 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
 
           <div className="dashboard-clean__grid">
             {MODULES.map((mod, idx) => {
-              const unlocked = isModuleUnlocked(mod, progress.completedMissions, MODULES);
+              const unlocked = isModuleUnlocked(mod, progress, MODULES);
               const done = mod.missions.filter(m => progress.completedMissions.includes(m.id)).length;
               const modComplete = done === mod.missions.length;
               const badgeEarned = progress.badges.includes(mod.badge.id);

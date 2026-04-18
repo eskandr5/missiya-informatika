@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import type { ComponentType } from 'react';
 import type { ActivityData } from '../types/activity';
-import type { Mission, MissionType, Module, Phrase } from '../types/content';
+import type { MissionType, Module, Phrase, ProgressionStage } from '../types/content';
 import { DL } from '../utils/helpers';
 import MatchingActivity from '../activities/MatchingActivity';
 import SequenceActivity from '../activities/SequenceActivity';
@@ -46,25 +46,25 @@ const FLOW_STEPS = ['briefing', 'vocab', 'phrases', 'activity'] as const;
 type FlowStep = typeof FLOW_STEPS[number];
 
 interface Props {
-  mission: Mission;
+  stage: ProgressionStage;
   module: Module;
   onFinish: (score: number) => void;
   onBack: () => void;
 }
 
-export default function MissionScreen({ mission, module: mod, onFinish, onBack }: Props) {
+export default function MissionScreen({ stage, module: mod, onFinish, onBack }: Props) {
   const [step, setStep] = useState<FlowStep>('briefing');
   const [showEn, setShowEn] = useState(false);
 
   const modVocab = useMemo(() => {
-    const [a, b] = mission.vocabSlice;
-    return mod.vocab.slice(a, b);
-  }, [mission, mod]);
+    const [start, end] = stage.vocabSlice;
+    return mod.vocab.slice(start, end);
+  }, [stage, mod]);
 
   const stepIdx = FLOW_STEPS.indexOf(step);
-  const isCheckpoint = mission.stageType === 'checkpoint';
-  const ActivityComp = ACTIVITY_MAP[mission.type];
-  const procedureLabel = isCheckpoint ? 'Контрольный проход' : 'Процедура восстановления';
+  const isCheckpoint = stage.stageType === 'checkpoint';
+  const ActivityComp = ACTIVITY_MAP[stage.type];
+  const procedureLabel = isCheckpoint ? 'Контрольная точка' : 'Задание';
 
   const nextStep = () => {
     if (stepIdx < FLOW_STEPS.length - 1) setStep(FLOW_STEPS[stepIdx + 1]);
@@ -97,7 +97,7 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
                     {ARCHIVE_COPY.moduleLabel} {mod.id}
                   </span>
                   <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)' }}>
-                    {getArchiveStageLabel(mission.stageType, mission.num)}
+                    {getArchiveStageLabel(stage.stageType, stage.num)}
                   </span>
                   {mod.chapter && (
                     <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)' }}>
@@ -105,7 +105,7 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
                     </span>
                   )}
                 </div>
-                <h2 className="hf text-white font-bold text-base mt-0.5 truncate">{mission.title}</h2>
+                <h2 className="hf text-white font-bold text-base mt-0.5 truncate">{stage.title}</h2>
               </div>
             </div>
             <div className="mission-screen__actions flex items-center gap-2 flex-shrink-0">
@@ -121,7 +121,7 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
               >
                 {showEn ? 'RU+EN' : 'RU'}
               </button>
-              <span className="text-xs font-bold text-amber-400">⚡ {mission.xpReward} XP</span>
+              <span className="text-xs font-bold text-amber-400">⚡ {stage.xpReward} XP</span>
             </div>
           </div>
           <StepBar steps={[...FLOW_STEPS]} current={step} />
@@ -141,9 +141,9 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
                 </div>
                 <div>
                   <p className="text-xs text-blue-400 font-bold uppercase tracking-wider">
-                    {isCheckpoint ? ARCHIVE_COPY.checkpointLabel : 'Оперативная сводка'}
+                    {isCheckpoint ? ARCHIVE_COPY.checkpointLabel : 'Описание'}
                   </p>
-                  <h3 className="hf text-white font-bold text-lg">{mission.title}</h3>
+                  <h3 className="hf text-white font-bold text-lg">{stage.title}</h3>
                   {mod.moduleIdentity && (
                     <p className="text-slate-500 text-xs mt-1">{mod.moduleIdentity}</p>
                   )}
@@ -157,41 +157,41 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
                   letterSpacing: '.04em',
                 }}
               >
-                PROC.STATE // MODE={procedureLabel.toUpperCase()} · PASS_THRESHOLD={mission.passingScore}%
+                PROC.STATE // MODE={procedureLabel.toUpperCase()} · PASS_THRESHOLD={stage.passingScore}%
               </p>
-              <p className="text-slate-300 leading-relaxed">{mission.briefing}</p>
+              <p className="text-slate-300 leading-relaxed">{stage.briefing}</p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
                 <div
                   className="rounded-xl p-4"
                   style={{ background: 'var(--surface-soft)', border: '1px solid var(--border-color)' }}
                 >
-                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Контекст запуска</p>
+                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Формат</p>
                   <p className="text-slate-300 text-sm font-semibold">{mod.openingStyle ?? 'Стандартный ввод'}</p>
                 </div>
                 <div
                   className="rounded-xl p-4"
                   style={{ background: 'var(--surface-soft)', border: '1px solid var(--border-color)' }}
                 >
-                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Активный контур</p>
+                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Тип работы</p>
                   <p className="text-slate-300 text-sm font-semibold">{mod.specialMechanic ?? 'Практика по теме раздела'}</p>
                 </div>
               </div>
 
               <div className="mt-4 flex flex-wrap gap-3">
                 <div className="tag" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
-                  Тип: {ARCHIVE_MISSION_TYPE_LABELS[mission.type] ?? mission.type.replace(/_/g, ' ')}
+                  Тип: {ARCHIVE_MISSION_TYPE_LABELS[stage.type] ?? stage.type.replace(/_/g, ' ')}
                 </div>
                 {isCheckpoint && (
                   <div className="tag" style={{ background: 'var(--warning-soft)', color: 'var(--warning-color)' }}>
-                    Контроль перехода между разделами
+                    Переход к следующему разделу
                   </div>
                 )}
                 <div className="tag" style={{ background: 'var(--warning-soft)', color: 'var(--warning-color)' }}>
-                  ⚡ {mission.xpReward} XP
+                  ⚡ {stage.xpReward} XP
                 </div>
                 <div className="tag" style={{ background: 'var(--success-soft)', color: 'var(--success-color)' }}>
-                  Порог: {mission.passingScore}%
+                  Порог: {stage.passingScore}%
                 </div>
               </div>
             </div>
@@ -205,7 +205,7 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
               <div>
                 <p className="text-xs text-blue-400 font-bold uppercase tracking-wider">{ARCHIVE_COPY.vocabLabel}</p>
                 <h3 className="hf text-white font-bold text-xl">
-                  {isCheckpoint ? 'Сверка терминов' : 'Термины для восстановления'}
+                  {isCheckpoint ? 'Повторение терминов' : 'Ключевые слова'}
                 </h3>
               </div>
               <span className="tag" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
@@ -229,12 +229,12 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
             <div className="mb-4">
               <p className="text-xs text-blue-400 font-bold uppercase tracking-wider">{ARCHIVE_COPY.phraseLabel}</p>
               <h3 className="hf text-white font-bold text-xl">
-                {isCheckpoint ? 'Финальная сверка перед узлом' : 'Опорные формулировки'}
+                {isCheckpoint ? 'Повторение перед контрольной точкой' : 'Полезные фразы'}
               </h3>
               <p className="text-slate-500 text-sm mt-1">
                 {isCheckpoint
-                  ? 'Сверьте командные формулы и переходите к контрольной проверке сектора.'
-                  : 'Эти формулировки входят в рабочий контур протокола. Зафиксируйте их перед запуском.'}
+                  ? 'Повторите фразы и переходите к контрольной точке.'
+                  : 'Эти фразы встретятся в задании. Повторите их перед началом.'}
               </p>
             </div>
             <div className="space-y-2 mb-6">
@@ -254,9 +254,9 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-xs text-blue-400 font-bold uppercase tracking-wider">
-                  {isCheckpoint ? ARCHIVE_COPY.checkpointLabel : 'Исполнительный протокол'}
+                  {isCheckpoint ? ARCHIVE_COPY.checkpointLabel : 'Задание'}
                 </p>
-                <h3 className="hf text-white font-bold text-xl">{mission.title}</h3>
+                <h3 className="hf text-white font-bold text-xl">{stage.title}</h3>
                 {mod.moduleFeel && (
                   <p className="text-slate-500 text-sm mt-1">{mod.moduleFeel}</p>
                 )}
@@ -264,17 +264,17 @@ export default function MissionScreen({ mission, module: mod, onFinish, onBack }
               <button onClick={prevStep} className="btn-g text-sm px-3 py-1.5">← Формулировки</button>
             </div>
             <div className="card p-5" style={{ border: '1px solid var(--border-color)' }}>
-              {ActivityComp && mission.activityData ? (
+              {ActivityComp && stage.activityData ? (
                 <ActivityComp
-                  data={mission.activityData as ActivityData}
+                  data={stage.activityData as ActivityData}
                   onComplete={onFinish}
                   phrases={mod.phrases}
                 />
               ) : (
                 <div className="text-center py-14">
                   <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔧</div>
-                  <h4 className="hf text-white font-bold text-lg mb-2">Контур недоступен</h4>
-                  <p className="text-slate-500 text-sm">Исполнительный режим будет подключён в следующем обновлении реестра.</p>
+                  <h4 className="hf text-white font-bold text-lg mb-2">Скоро</h4>
+                  <p className="text-slate-500 text-sm">Это задание появится в следующем обновлении.</p>
                   <div className="tag mt-4" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>Скоро</div>
                 </div>
               )}

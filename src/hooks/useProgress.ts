@@ -8,7 +8,18 @@ const STORAGE_KEY = 'mss2_prog';
 function load(): Progress {
   try {
     const s = localStorage.getItem(STORAGE_KEY);
-    if (s) return JSON.parse(s) as Progress;
+    if (s) {
+      const parsed = JSON.parse(s) as Partial<Progress>;
+      return {
+        ...PROGRESS_INITIAL,
+        ...parsed,
+        completedMissions: parsed.completedMissions ?? [],
+        completedCheckpoints: parsed.completedCheckpoints ?? [],
+        badges: parsed.badges ?? [],
+        missionScores: parsed.missionScores ?? {},
+        checkpointScores: parsed.checkpointScores ?? {},
+      };
+    }
   } catch { /* ignore */ }
   return { ...PROGRESS_INITIAL };
 }
@@ -26,6 +37,7 @@ export function useProgress() {
       setProgress(prev => {
         const alreadyDone = prev.completedMissions.includes(missionId);
         const next: Progress = {
+          ...prev,
           xp: alreadyDone ? prev.xp : prev.xp + xpReward,
           completedMissions: alreadyDone
             ? prev.completedMissions
@@ -46,11 +58,33 @@ export function useProgress() {
     [],
   );
 
+  const completeCheckpoint = useCallback(
+    (checkpointId: string, score: number, xpReward: number) => {
+      setProgress(prev => {
+        const alreadyDone = prev.completedCheckpoints.includes(checkpointId);
+        const next: Progress = {
+          ...prev,
+          xp: alreadyDone ? prev.xp : prev.xp + xpReward,
+          completedCheckpoints: alreadyDone
+            ? prev.completedCheckpoints
+            : [...prev.completedCheckpoints, checkpointId],
+          checkpointScores: {
+            ...prev.checkpointScores,
+            [checkpointId]: Math.max(prev.checkpointScores[checkpointId] ?? 0, score),
+          },
+        };
+        save(next);
+        return next;
+      });
+    },
+    [],
+  );
+
   const reset = useCallback(() => {
     const fresh: Progress = { ...PROGRESS_INITIAL };
     save(fresh);
     setProgress(fresh);
   }, []);
 
-  return { progress, completeMission, reset };
+  return { progress, completeMission, completeCheckpoint, reset };
 }

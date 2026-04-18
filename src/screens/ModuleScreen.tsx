@@ -4,30 +4,38 @@ import {
   ARCHIVE_COPY,
   ARCHIVE_MISSION_TYPE_LABELS,
 } from '../data/archiveTerminology';
-import { isMissionUnlocked } from '../utils/progression';
+import {
+  getCheckpointAfterModule,
+  isCheckpointUnlocked,
+  isMissionUnlocked,
+} from '../utils/progression';
 import { DL } from '../utils/helpers';
 import ProgressBar from '../components/ui/ProgressBar';
 import VocabCard from '../components/mission/VocabCard';
 import PhraseRow from '../components/mission/PhraseRow';
-import type { Module, Mission } from '../types/content';
+import type { Module, ProgressionStage } from '../types/content';
 import type { Progress } from '../types/progress';
 
 interface Props {
   module: Module;
   progress: Progress;
-  onSelectMission: (m: Mission) => void;
+  onSelectStage: (stage: ProgressionStage) => void;
   onBack: () => void;
 }
 
 type Tab = 'missions' | 'vocab' | 'phrases';
 
-export default function ModuleScreen({ module: mod, progress, onSelectMission, onBack }: Props) {
+export default function ModuleScreen({ module: mod, progress, onSelectStage, onBack }: Props) {
   const [tab, setTab] = useState<Tab>('missions');
   const [showEn, setShowEn] = useState(false);
 
   const doneCount = mod.missions.filter(m => progress.completedMissions.includes(m.id)).length;
   const pct = Math.round((doneCount / mod.missions.length) * 100);
   const lockedCount = mod.missions.length - doneCount;
+  const checkpoint = getCheckpointAfterModule(mod.id);
+  const checkpointDone = checkpoint ? progress.completedCheckpoints.includes(checkpoint.id) : false;
+  const checkpointScore = checkpoint ? (progress.checkpointScores[checkpoint.id] ?? 0) : 0;
+  const checkpointUnlocked = checkpoint ? isCheckpointUnlocked(checkpoint, progress, MODULES) : false;
 
   return (
     <div className="app-page min-h-screen bg-grid" style={{ paddingBottom: '3rem' }}>
@@ -59,7 +67,7 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
                 )}
                 {doneCount === mod.missions.length && (
                   <span className="tag" style={{ background: 'var(--success-soft)', color: 'var(--success-color)' }}>
-                    ✓ Восстановлен
+                    ✓ Завершён
                   </span>
                 )}
               </div>
@@ -77,7 +85,7 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
               </p>
             </div>
             <button
-              onClick={() => setShowEn(e => !e)}
+              onClick={() => setShowEn(value => !value)}
               className="flex-shrink-0 text-xs px-3 py-1.5 rounded-lg font-semibold"
               style={{
                 background: showEn ? 'var(--accent-soft)' : 'var(--surface-soft)',
@@ -94,31 +102,31 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
             <div className="card p-4 mt-4" style={{ border: '1px solid var(--border-color)' }}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Идентификатор сектора</p>
+                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Тип модуля</p>
                   <p className="text-slate-300 text-sm font-semibold">{mod.moduleIdentity}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Входной режим</p>
+                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Начало</p>
                   <p className="text-slate-300 text-sm font-semibold">{mod.openingStyle}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Контур обработки</p>
+                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Формат работы</p>
                   <p className="text-slate-300 text-sm font-semibold">{mod.specialMechanic}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Состояние сектора</p>
+                  <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Стиль</p>
                   <p className="text-slate-300 text-sm font-semibold">{mod.moduleFeel}</p>
                 </div>
               </div>
               <div className="flex flex-wrap gap-2 mt-4">
                 {mod.rewardType && (
                   <span className="tag" style={{ background: 'var(--success-soft)', color: 'var(--success-color)' }}>
-                    Разблокировка: {mod.rewardType}
+                    Награда: {mod.rewardType}
                   </span>
                 )}
                 {mod.videoMode && (
                   <span className="tag" style={{ background: 'var(--cyan-soft)', color: 'var(--accent)' }}>
-                    Канал: {mod.videoMode}
+                    Видео: {mod.videoMode}
                   </span>
                 )}
               </div>
@@ -127,7 +135,7 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
 
           <div className="mt-4">
             <div className="flex justify-between text-xs text-slate-500 mb-1.5">
-              <span>Состояние восстановления</span>
+              <span>Прогресс модуля</span>
               <span className="hf font-semibold text-slate-400">{doneCount}/{mod.missions.length} {ARCHIVE_COPY.missionLabelPlural} · {pct}%</span>
             </div>
             <ProgressBar value={doneCount} max={mod.missions.length} color={mod.accent} />
@@ -140,34 +148,33 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
           className="module-screen__tabs mb-5 p-1 rounded-xl"
           style={{ background: 'var(--surface-strong)', border: '1px solid var(--border-color)' }}
         >
-          {(['missions', 'vocab', 'phrases'] as Tab[]).map(t => (
+          {(['missions', 'vocab', 'phrases'] as Tab[]).map(tabName => (
             <button
-              key={t}
-              onClick={() => setTab(t)}
+              key={tabName}
+              onClick={() => setTab(tabName)}
               className="px-4 py-1.5 rounded-lg text-sm font-semibold transition-all"
               style={{
-                background: tab === t ? 'var(--accent-soft)' : 'transparent',
-                color: tab === t ? 'var(--accent)' : 'var(--text-dim)',
+                background: tab === tabName ? 'var(--accent-soft)' : 'transparent',
+                color: tab === tabName ? 'var(--accent)' : 'var(--text-dim)',
                 border: 'none',
                 cursor: 'pointer',
               }}
             >
-              {t === 'missions' ? 'Протоколы' : t === 'vocab' ? 'Термины' : 'Формулировки'}
+              {tabName === 'missions' ? 'Протоколы' : tabName === 'vocab' ? 'Термины' : 'Формулировки'}
             </button>
           ))}
         </div>
 
         {tab === 'missions' && (
           <div className="space-y-3 fu">
-            {mod.missions.map((m) => {
-              const done = progress.completedMissions.includes(m.id);
-              const unlocked = isMissionUnlocked(m, mod, progress.completedMissions, MODULES);
-              const sc = progress.missionScores[m.id] ?? 0;
-              const isCheckpoint = m.stageType === 'checkpoint';
+            {mod.missions.map((mission) => {
+              const done = progress.completedMissions.includes(mission.id);
+              const unlocked = isMissionUnlocked(mission, mod, progress, MODULES);
+              const score = progress.missionScores[mission.id] ?? 0;
 
               return (
                 <div
-                  key={m.id}
+                  key={mission.id}
                   className={`card p-5 ${unlocked ? 'lift' : ''}`}
                   style={{
                     opacity: unlocked ? 1 : 0.5,
@@ -182,49 +189,87 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
                         border: `1px solid ${done ? 'var(--success-color)' : unlocked ? 'var(--accent-ring)' : 'var(--border-strong)'}`,
                       }}
                     >
-                      {done ? '✓' : unlocked ? m.num : '🔒'}
+                      {done ? '✓' : unlocked ? mission.num : '🔒'}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="hf text-white font-bold">{m.title}</h3>
+                      <h3 className="hf text-white font-bold">{mission.title}</h3>
                       <div className="flex flex-wrap items-center gap-2 mt-1">
                         <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)' }}>
-                          {ARCHIVE_MISSION_TYPE_LABELS[m.type] ?? m.type.replace(/_/g, ' ')}
+                          {ARCHIVE_MISSION_TYPE_LABELS[mission.type] ?? mission.type.replace(/_/g, ' ')}
                         </span>
-                        {isCheckpoint && (
-                          <span className="tag" style={{ background: 'var(--warning-soft)', color: 'var(--warning-color)' }}>
-                            {ARCHIVE_COPY.checkpointLabel}
-                          </span>
-                        )}
-                        <span className="text-xs text-amber-400">⚡{m.xpReward} XP</span>
-                        {!m.implemented && (
+                        <span className="text-xs text-amber-400">⚡{mission.xpReward} XP</span>
+                        {!mission.implemented && (
                           <span className="tag" style={{ background: 'var(--accent-softer)', color: 'var(--accent)' }}>
                             Недоступно
                           </span>
                         )}
-                        {done && <span className="text-xs text-green-400">Зафиксировано: {sc}%</span>}
+                        {done && <span className="text-xs text-green-400">Зафиксировано: {score}%</span>}
                       </div>
                     </div>
-                    {unlocked && m.implemented && (
+                    {unlocked && mission.implemented && (
                       <button
-                        onClick={() => onSelectMission(m)}
+                        onClick={() => onSelectStage(mission)}
                         className={`module-screen__mission-action ${done ? 'btn-s text-sm px-4 py-2' : 'btn-p text-sm px-4 py-2'}`}
                       >
-                        {done ? 'Запустить повторно' : isCheckpoint ? 'Перейти к узлу →' : 'Открыть протокол →'}
+                        {done ? 'Повторить' : 'Открыть →'}
                       </button>
                     )}
                   </div>
                 </div>
               );
             })}
+
+            {checkpoint && (
+              <div
+                className={`card p-5 ${checkpointUnlocked ? 'lift' : ''}`}
+                style={{
+                  opacity: checkpointUnlocked ? 1 : 0.5,
+                  border: `1px solid ${checkpointDone ? 'var(--success-color)' : checkpointUnlocked ? 'var(--warning-color)' : 'var(--border-strong)'}`,
+                }}
+              >
+                <div className="module-screen__mission-row flex items-center gap-4">
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center font-bold hf flex-shrink-0 text-xl"
+                    style={{
+                      background: checkpointDone ? 'var(--success-soft)' : checkpointUnlocked ? 'var(--warning-soft)' : 'var(--surface-contrast)',
+                      border: `1px solid ${checkpointDone ? 'var(--success-color)' : checkpointUnlocked ? 'var(--warning-color)' : 'var(--border-strong)'}`,
+                    }}
+                  >
+                    {checkpointDone ? '✓' : checkpointUnlocked ? '◎' : '🔒'}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="hf text-white font-bold">{checkpoint.title}</h3>
+                    <div className="flex flex-wrap items-center gap-2 mt-1">
+                      <span className="tag" style={{ background: 'var(--warning-soft)', color: 'var(--warning-color)' }}>
+                        {ARCHIVE_COPY.checkpointLabel}
+                      </span>
+                      <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)' }}>
+                        После модуля {checkpoint.afterModuleId}
+                      </span>
+                      <span className="text-xs text-amber-400">⚡{checkpoint.xpReward} XP</span>
+                      {checkpointDone && <span className="text-xs text-green-400">Зафиксировано: {checkpointScore}%</span>}
+                    </div>
+                  </div>
+                  {checkpointUnlocked && checkpoint.implemented && (
+                    <button
+                      onClick={() => onSelectStage(checkpoint)}
+                      className={`module-screen__mission-action ${checkpointDone ? 'btn-s text-sm px-4 py-2' : 'btn-p text-sm px-4 py-2'}`}
+                    >
+                      {checkpointDone ? 'Повторить' : 'Открыть контрольную точку →'}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
         {tab === 'vocab' && (
           <div className="fu">
-            <p className="text-slate-500 text-sm mb-4">{mod.vocab.length} терминов · Выберите карточку для просмотра зафиксированного определения</p>
+            <p className="text-slate-500 text-sm mb-4">{mod.vocab.length} терминов · Выберите карточку для просмотра определения</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {mod.vocab.map((w, i) => (
-                <VocabCard key={w.id} word={w} showEn={showEn} delay={DL[i] ?? ''} />
+              {mod.vocab.map((word, index) => (
+                <VocabCard key={word.id} word={word} showEn={showEn} delay={DL[index] ?? ''} />
               ))}
             </div>
           </div>
@@ -232,8 +277,8 @@ export default function ModuleScreen({ module: mod, progress, onSelectMission, o
 
         {tab === 'phrases' && (
           <div className="fu space-y-2">
-            {mod.phrases.map((ph, i) => (
-              <PhraseRow key={i} phrase={ph} showEn={showEn} delay={DL[i] ?? ''} />
+            {mod.phrases.map((phrase, index) => (
+              <PhraseRow key={index} phrase={phrase} showEn={showEn} delay={DL[index] ?? ''} />
             ))}
           </div>
         )}

@@ -1,9 +1,9 @@
-import type { Mission, Module, BadgeDef } from '../types/content';
+import type { BadgeDef, Module, ProgressionStage } from '../types/content';
 import { ARCHIVE_COPY } from '../data/archiveTerminology';
 
 interface Props {
   score: number;
-  mission: Mission;
+  stage: ProgressionStage;
   module: Module;
   passed: boolean;
   xpEarned: number;
@@ -15,12 +15,20 @@ interface Props {
 }
 
 export default function ResultScreen({
-  score, mission, module: mod, passed, xpEarned, badgeEarned,
-  onRetry, onNext, onModulePage, onDashboard,
+  score,
+  stage,
+  module: mod,
+  passed,
+  xpEarned,
+  badgeEarned,
+  onRetry,
+  onNext,
+  onModulePage,
+  onDashboard,
 }: Props) {
   const ringColor = passed ? 'var(--success-color)' : score >= 50 ? 'var(--warning-color)' : 'var(--danger-color)';
-  const circumference = 289; // 2π × 46
-  const isCheckpoint = mission.stageType === 'checkpoint';
+  const circumference = 289;
+  const isCheckpoint = stage.stageType === 'checkpoint';
 
   return (
     <div className="app-page result-screen min-h-screen bg-grid flex items-center justify-center p-6">
@@ -40,9 +48,9 @@ export default function ResultScreen({
           className="hf text-3xl font-bold mb-1"
           style={{ color: passed ? 'var(--success-text)' : 'var(--danger-text)' }}
         >
-          {passed ? (isCheckpoint ? 'Контрольный узел подтверждён' : 'Целостность протокола подтверждена') : 'Обнаружено отклонение'}
+          {passed ? (isCheckpoint ? 'Контрольная точка пройдена' : 'Задание выполнено') : 'Результат ниже порога'}
         </h2>
-        <p className="text-slate-500 text-sm mb-6">{mission.title} · {ARCHIVE_COPY.moduleLabel} {mod.id}</p>
+        <p className="text-slate-500 text-sm mb-6">{stage.title} · {ARCHIVE_COPY.moduleLabel} {mod.id}</p>
 
         <div className="flex justify-center mb-5">
           <div className="relative" style={{ width: '112px', height: '112px' }}>
@@ -84,7 +92,7 @@ export default function ResultScreen({
             letterSpacing: '.04em',
           }}
         >
-          VERIFY.LOG // SCORE={score}% · THRESHOLD={mission.passingScore}% · STATE={passed ? 'ACCEPTED' : 'REVIEW'}
+          VERIFY.LOG // SCORE={score}% · THRESHOLD={stage.passingScore}% · STATE={passed ? 'ACCEPTED' : 'REVIEW'}
         </p>
 
         <div
@@ -95,10 +103,10 @@ export default function ResultScreen({
           }}
         >
           {passed ? (
-            <span className="text-green-300">✓ Данные приняты. Минимальный порог {mission.passingScore}% выполнен</span>
+            <span className="text-green-300">✓ Минимальный порог {stage.passingScore}% выполнен</span>
           ) : (
             <span className="text-red-300">
-              Зафиксированное значение ниже допустимого: {score}% при требуемом пороге {mission.passingScore}%
+              Ваш результат: {score}% · Нужно: {stage.passingScore}%
             </span>
           )}
         </div>
@@ -110,7 +118,7 @@ export default function ResultScreen({
           >
             <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Переход раздела</p>
             <p className="text-slate-300 text-sm font-semibold">
-              {mod.chapter ?? 'Первый раздел'} закрыт без нарушений. Следующий сектор готов к активации.
+              {mod.chapter ?? 'Первый раздел'} завершён. Можно переходить дальше.
             </p>
           </div>
         )}
@@ -138,18 +146,18 @@ export default function ResultScreen({
 
         {!passed && (
           <p className="text-slate-500 text-xs mb-5">
-            Выполните повторную сверку терминов и формулировок, затем перезапустите протокол. XP вносится только после подтверждённого результата.
+            Повторите слова и фразы, затем попробуйте снова. XP начисляется только после успешного прохождения.
           </p>
         )}
 
         <div className="flex flex-col gap-2">
           {passed && onNext && (
             <button onClick={onNext} className="btn-p w-full">
-              {isCheckpoint ? 'Активировать следующий раздел →' : 'Открыть следующий протокол →'}
+              {isCheckpoint ? 'К следующему разделу →' : 'Следующее задание →'}
             </button>
           )}
           <div className="result-screen__actions flex gap-2">
-            <button onClick={onRetry} className="btn-s flex-1">↺ Перезапуск</button>
+            <button onClick={onRetry} className="btn-s flex-1">↺ Повторить</button>
             <button onClick={onModulePage} className="btn-g flex-1">{ARCHIVE_COPY.moduleLabel}</button>
             <button onClick={onDashboard} className="btn-g flex-1">◈ Реестр</button>
           </div>

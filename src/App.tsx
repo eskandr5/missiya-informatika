@@ -1,17 +1,19 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import './styles/global.css';
 
-import { useProgress }       from './hooks/useProgress';
+import { useProgress } from './hooks/useProgress';
+import { MODULES } from './data/modules';
+import { getCheckpointAfterModule } from './utils/progression';
 
-import NavBar          from './components/ui/NavBar';
-import LandingScreen   from './screens/LandingScreen';
+import NavBar from './components/ui/NavBar';
+import LandingScreen from './screens/LandingScreen';
 import DashboardScreen from './screens/DashboardScreen';
-import ModuleScreen    from './screens/ModuleScreen';
-import MissionScreen   from './screens/MissionScreen';
-import ResultScreen    from './screens/ResultScreen';
-import ProfileScreen   from './screens/ProfileScreen';
+import ModuleScreen from './screens/ModuleScreen';
+import MissionScreen from './screens/MissionScreen';
+import ResultScreen from './screens/ResultScreen';
+import ProfileScreen from './screens/ProfileScreen';
 
-import type { Module, Mission, BadgeDef } from './types/content';
+import type { BadgeDef, Module, ProgressionStage } from './types/content';
 
 type View = 'landing' | 'dashboard' | 'module' | 'mission' | 'result' | 'profile';
 type Theme = 'light' | 'dark';
@@ -29,7 +31,7 @@ function loadTheme(): Theme {
 
 interface LastResult {
   score: number;
-  mission: Mission;
+  stage: ProgressionStage;
   module: Module;
   passed: boolean;
   xpEarned: number;
@@ -37,68 +39,108 @@ interface LastResult {
 }
 
 export default function App() {
-  const { progress, completeMission, reset } = useProgress();
+  const { progress, completeMission, completeCheckpoint, reset } = useProgress();
 
-  const [theme,         setTheme]         = useState<Theme>(loadTheme);
-  const [view,          setView]          = useState<View>('landing');
-  const [activeMod,     setActiveMod]     = useState<Module | null>(null);
-  const [activeMission, setActiveMission] = useState<Mission | null>(null);
-  const [lastResult,    setLastResult]    = useState<LastResult | null>(null);
+  const [theme, setTheme] = useState<Theme>(loadTheme);
+  const [view, setView] = useState<View>('landing');
+  const [activeMod, setActiveMod] = useState<Module | null>(null);
+  const [activeStage, setActiveStage] = useState<ProgressionStage | null>(null);
+  const [lastResult, setLastResult] = useState<LastResult | null>(null);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme]);
 
-  const goHome    = () => { setView('dashboard'); setActiveMod(null); setActiveMission(null); };
+  const goHome = () => {
+    setView('dashboard');
+    setActiveMod(null);
+    setActiveStage(null);
+  };
+
   const goProfile = () => setView('profile');
   const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
 
-  // ── Called by MissionScreen once the activity reports a score ──
-  const handleMissionFinish = useCallback((score: number) => {
-    if (!activeMission || !activeMod) return;
-    const passed = score >= activeMission.passingScore;
+  const handleStageFinish = useCallback((score: number) => {
+    if (!activeStage || !activeMod) return;
+
+    const passed = score >= activeStage.passingScore;
     let badgeAwarded: BadgeDef | null = null;
 
     if (passed) {
-      const allModDone = activeMod.missions.every(m =>
-        m.id === activeMission.id ? true : progress.completedMissions.includes(m.id),
-      );
-      if (allModDone) badgeAwarded = activeMod.badge;
-      completeMission(activeMission.id, score, activeMission.xpReward, badgeAwarded);
+      if (activeStage.stageType === 'checkpoint') {
+        completeCheckpoint(activeStage.id, score, activeStage.xpReward);
+      } else {
+        const allModDone = activeMod.missions.every(mission =>
+          mission.id === activeStage.id ? true : progress.completedMissions.includes(mission.id),
+        );
+        if (allModDone) badgeAwarded = activeMod.badge;
+        completeMission(activeStage.id, score, activeStage.xpReward, badgeAwarded);
+      }
     }
 
     setLastResult({
       score,
-      mission: activeMission,
-      module:  activeMod,
+      stage: activeStage,
+      module: activeMod,
       passed,
-      xpEarned: passed ? activeMission.xpReward : 0,
+      xpEarned: passed ? activeStage.xpReward : 0,
       badge: badgeAwarded,
     });
     setView('result');
-  }, [activeMission, activeMod, progress.completedMissions, completeMission]);
+  }, [activeMod, activeStage, completeCheckpoint, completeMission, progress.completedMissions]);
 
-  // ── Advance to the next implemented mission if it exists ──
   const handleNext = useCallback(() => {
     if (!lastResult) return;
-    const mod  = lastResult.module;
-    const idx  = mod.missions.findIndex(m => m.id === lastResult.mission.id);
-    const next = mod.missions[idx + 1];
-    if (next) {
-      setActiveMission(next);
-      setView('mission');
-    } else {
-      setView('module');
+    const { stage } = lastResult;
+
+    if ('beforeModuleId' in stage) {
+      const nextModule = MODULES.find(module => module.id === stage.beforeModuleId);
+      if (nextModule) {
+        setActiveMod(nextModule);
+        setActiveStage(null);
+        setView('module');
+        return;
+      }
+
+      goHome();
+      return;
     }
+
+    const module = lastResult.module;
+    const stageIndex = module.missions.findIndex(mission => mission.id === stage.id);
+    const nextMission = module.missions[stageIndex + 1];
+
+    if (nextMission?.implemented) {
+      setActiveStage(nextMission);
+      setView('mission');
+      return;
+    }
+
+    const nextCheckpoint = getCheckpointAfterModule(module.id);
+    if (nextCheckpoint?.implemented) {
+      setActiveStage(nextCheckpoint);
+      setView('mission');
+      return;
+    }
+
+    setView('module');
   }, [lastResult]);
 
   const hasNext = useMemo(() => {
     if (!lastResult?.passed) return false;
-    const mod  = lastResult.module;
-    const idx  = mod.missions.findIndex(m => m.id === lastResult.mission.id);
-    const next = mod.missions[idx + 1];
-    return !!(next?.implemented);
+    const { stage } = lastResult;
+
+    if ('beforeModuleId' in stage) {
+      return MODULES.some(module => module.id === stage.beforeModuleId);
+    }
+
+    const module = lastResult.module;
+    const stageIndex = module.missions.findIndex(mission => mission.id === stage.id);
+    const nextMission = module.missions[stageIndex + 1];
+
+    if (nextMission?.implemented) return true;
+    return !!getCheckpointAfterModule(module.id)?.implemented;
   }, [lastResult]);
 
   return (
@@ -120,7 +162,10 @@ export default function App() {
       {view === 'dashboard' && (
         <DashboardScreen
           progress={progress}
-          onSelectModule={mod => { setActiveMod(mod); setView('module'); }}
+          onSelectModule={module => {
+            setActiveMod(module);
+            setView('module');
+          }}
         />
       )}
 
@@ -128,16 +173,19 @@ export default function App() {
         <ModuleScreen
           module={activeMod}
           progress={progress}
-          onSelectMission={m => { setActiveMission(m); setView('mission'); }}
+          onSelectStage={stage => {
+            setActiveStage(stage);
+            setView('mission');
+          }}
           onBack={goHome}
         />
       )}
 
-      {view === 'mission' && activeMission && activeMod && (
+      {view === 'mission' && activeStage && activeMod && (
         <MissionScreen
-          mission={activeMission}
+          stage={activeStage}
           module={activeMod}
-          onFinish={handleMissionFinish}
+          onFinish={handleStageFinish}
           onBack={() => setView('module')}
         />
       )}
@@ -145,7 +193,7 @@ export default function App() {
       {view === 'result' && lastResult && (
         <ResultScreen
           score={lastResult.score}
-          mission={lastResult.mission}
+          stage={lastResult.stage}
           module={lastResult.module}
           passed={lastResult.passed}
           xpEarned={lastResult.xpEarned}
@@ -161,7 +209,10 @@ export default function App() {
         <ProfileScreen
           progress={progress}
           onBack={goHome}
-          onReset={() => { reset(); goHome(); }}
+          onReset={() => {
+            reset();
+            goHome();
+          }}
         />
       )}
     </>

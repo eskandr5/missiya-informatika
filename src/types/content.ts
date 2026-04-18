@@ -46,12 +46,11 @@ export interface BadgeDef {
   icon: string;
 }
 
-export interface Mission {
+export interface ProgressionStageBase {
   id: string;
   num: number;
   title: string;
   type: MissionType;
-  stageType?: MissionStageType;
   xpReward: number;
   passingScore: number;
   implemented: boolean;
@@ -60,6 +59,18 @@ export interface Mission {
   activityData: ActivityData | null;
   videoUrl?: string | null;
 }
+
+export interface Mission extends ProgressionStageBase {
+  stageType?: 'mission';
+}
+
+export interface Checkpoint extends ProgressionStageBase {
+  stageType: 'checkpoint';
+  afterModuleId: number;
+  beforeModuleId: number;
+}
+
+export type ProgressionStage = Mission | Checkpoint;
 
 export interface Module {
   id: number;
