@@ -30,6 +30,8 @@ export const ARCHIVE_MISSION_TYPE_LABELS: Partial<Record<MissionType, string>> =
   video_quiz: 'Видеорежим',
   logic_table: 'Логическая схема',
   final_mixed: 'Сводный протокол',
+  media_classification: 'Типы файлов',
+  media_format_selection: 'Форматы файлов',
 };
 
 export function getArchiveStageLabel(stageType: MissionStageType | undefined, missionNum: number) {

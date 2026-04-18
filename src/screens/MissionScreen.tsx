@@ -4,6 +4,8 @@ import type { ActivityData } from '../types/activity';
 import type { MissionType, Module, Phrase, ProgressionStage } from '../types/content';
 import { DL } from '../utils/helpers';
 import MatchingActivity from '../activities/MatchingActivity';
+import MediaFormatSelectionActivity from '../activities/MediaFormatSelectionActivity';
+import MediaTypeClassificationActivity from '../activities/MediaTypeClassificationActivity';
 import SequenceActivity from '../activities/SequenceActivity';
 import MultipleChoiceActivity from '../activities/MultipleChoiceActivity';
 import PhraseOrderingActivity from '../activities/PhraseOrderingActivity';
@@ -31,6 +33,8 @@ interface ActivityProps {
 
 const ACTIVITY_MAP: Partial<Record<MissionType, ComponentType<ActivityProps>>> = {
   matching: MatchingActivity,
+  media_classification: MediaTypeClassificationActivity,
+  media_format_selection: MediaFormatSelectionActivity,
   sequence: SequenceActivity,
   multiple_choice: MultipleChoiceActivity,
   phrase_ordering: PhraseOrderingActivity,

@@ -120,6 +120,51 @@ export interface ErrorCorrectionData {
   statements: ErrorStatement[];
 }
 
+export type MediaFileType = 'image' | 'audio' | 'data';
+export type MediaFormat = 'PNG' | 'JPG' | 'SVG' | 'MP3' | 'WAV' | 'CSV';
+export type MediaPreviewKind = 'pixel' | 'waveform' | 'data';
+export type MediaPreviewState = 'neutral' | 'corrupted' | 'restored' | 'error';
+
+export interface MediaItem {
+  id: string;
+  name: string;
+  fileType: MediaFileType;
+  format: MediaFormat;
+  previewKind: MediaPreviewKind;
+  previewState?: MediaPreviewState;
+  sizeLabel?: string;
+  resolutionLabel?: string;
+  durationLabel?: string;
+  rowsLabel?: string;
+  columnsLabel?: string;
+  accent?: string;
+}
+
+export interface MediaTypeZone {
+  id: MediaFileType;
+  label: string;
+  desc: string;
+  color: string;
+}
+
+export interface MediaTypeClassificationData {
+  items: MediaItem[];
+  zones: MediaTypeZone[];
+}
+
+export interface MediaFormatPrompt {
+  id: string;
+  prompt: string;
+  item: MediaItem;
+  choices: MediaFormat[];
+  correctFormat: MediaFormat;
+  helperText?: string;
+}
+
+export interface MediaFormatSelectionData {
+  prompts: MediaFormatPrompt[];
+}
+
 export type ActivityData =
   | MatchingData
   | SequenceData
@@ -130,4 +175,6 @@ export type ActivityData =
   | ListenAndMatchData
   | DragDropData
   | ClassificationData
-  | ErrorCorrectionData;
+  | ErrorCorrectionData
+  | MediaTypeClassificationData
+  | MediaFormatSelectionData;

@@ -14,7 +14,9 @@ export type MissionType =
   | 'audio_quiz'
   | 'video_quiz'
   | 'logic_table'
-  | 'final_mixed';
+  | 'final_mixed'
+  | 'media_classification'
+  | 'media_format_selection';
 
 export type MissionStageType = 'mission' | 'checkpoint';
 
