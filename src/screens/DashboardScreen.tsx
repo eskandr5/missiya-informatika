@@ -28,6 +28,19 @@ const TOPOLOGY_SLOTS = [
   'slot-d2',
   'slot-d3',
 ] as const;
+const PATHWAYS = [
+  { id: 'p1', from: 1, to: 2, d: 'M 212 214 C 290 170, 408 118, 522 98' },
+  { id: 'p2', from: 2, to: 3, d: 'M 518 110 C 470 184, 366 254, 302 346' },
+  { id: 'p3', from: 3, to: 4, d: 'M 334 352 C 400 350, 472 350, 540 350' },
+  { id: 'p4', from: 4, to: 5, d: 'M 548 380 C 548 416, 548 452, 548 486' },
+  { id: 'p5', from: 5, to: 6, d: 'M 590 486 C 654 458, 724 404, 822 346' },
+  { id: 'p6', from: 6, to: 7, d: 'M 826 370 C 804 486, 520 518, 356 638' },
+  { id: 'p7', from: 7, to: 8, d: 'M 402 646 C 470 646, 556 646, 648 646' },
+  { id: 'p8', from: 8, to: 9, d: 'M 688 630 C 812 604, 912 390, 1026 214' },
+  { id: 'p9', from: 9, to: 10, d: 'M 1016 248 C 978 340, 930 412, 892 486' },
+  { id: 'p10', from: 10, to: 11, d: 'M 926 486 C 968 530, 1000 580, 1038 634' },
+  { id: 'p11', from: 11, to: 12, d: 'M 1030 676 C 1010 728, 986 754, 944 782' },
+] as const;
 const CHAPTERS = [
   { id: 1, short: 'ГЛАВА I', title: 'ГЛАВА I — ОСНОВЫ', range: 'Модули 1–4', zoneClass: 'zone-i', delay: 'd1' },
   { id: 2, short: 'ГЛАВА II', title: 'ГЛАВА II — ВЫЧИСЛЕНИЯ', range: 'Модули 5–8', zoneClass: 'zone-ii', delay: 'd2' },
@@ -46,6 +59,12 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
     const done = mod.missions.filter(m => progress.completedMissions.includes(m.id)).length;
     return unlocked && done < mod.missions.length;
   }) ?? null;
+  const completedByModule = Object.fromEntries(
+    MODULES.map((mod) => [
+      mod.id,
+      mod.missions.every(m => progress.completedMissions.includes(m.id)),
+    ]),
+  ) as Record<number, boolean>;
   const restoredPct = Math.round((doneM / totalM) * 100);
   const systemState = doneM === 0
     ? 'INITIAL_SYNC'
@@ -114,6 +133,27 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
       {/* Module grid */}
       <div className="app-shell" style={{ maxWidth: '1000px', margin: '2rem auto' }}>
         <div className="dashboard-topology">
+          <svg
+            className="dashboard-topology__conduits"
+            viewBox="0 0 1200 860"
+            aria-hidden="true"
+            preserveAspectRatio="none"
+          >
+            {PATHWAYS.map((pathway) => {
+              const routeState = pathway.to === activeModule?.id
+                ? 'is-active'
+                : completedByModule[pathway.from]
+                ? 'is-restored'
+                : 'is-inactive';
+              return (
+                <path
+                  key={pathway.id}
+                  d={pathway.d}
+                  className={`dashboard-topology__conduit ${routeState}`}
+                />
+              );
+            })}
+          </svg>
           {CHAPTERS.map((chapter) => (
             <div
               key={chapter.id}
