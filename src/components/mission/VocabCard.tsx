@@ -18,8 +18,8 @@ export default function VocabCard({ word, showEn, delay = '' }: Props) {
       onClick={() => setFlipped(f => !f)}
       className={`fu ${delay} card lift vocab-card${isPlaying ? ' is-speaking' : ''}`}
       style={{
-        padding: '1.1rem',
-        minHeight: '7.6rem',
+        padding: '1rem',
+        minHeight: '7rem',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -35,7 +35,7 @@ export default function VocabCard({ word, showEn, delay = '' }: Props) {
                 background: 'var(--cyan-soft)',
                 color: 'var(--accent)',
                 flexShrink: 0,
-                fontSize: '.68rem',
+                fontSize: '.64rem',
               }}
             >
               {word.en}

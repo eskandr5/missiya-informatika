@@ -44,12 +44,12 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
         style={{
           background: 'var(--surface-header)',
           borderBottom: '1px solid var(--border-color)',
-          padding: '2rem 1.5rem',
+          padding: '1.8rem 1.5rem',
         }}
       >
         <div className="app-shell app-shell--narrow app-shell--flush" style={{ maxWidth: '900px', margin: '0 auto' }}>
           <button onClick={onBack} className="btn-g text-sm px-3 py-1.5 mb-4">← {ARCHIVE_COPY.dashboardTitle}</button>
-          <div className="module-screen__hero flex items-start gap-4">
+          <div className="module-screen__hero flex items-start gap-3">
             <div
               className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
               style={{ background: `${mod.accent}15`, border: `1px solid ${mod.accent}35` }}
@@ -88,7 +88,7 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
             </div>
             <button
               onClick={() => setShowEn(value => !value)}
-              className="flex-shrink-0 text-xs px-3 py-1.5 rounded-lg font-semibold"
+              className="flex-shrink-0 text-xs px-3 py-1 rounded-lg font-semibold"
               style={{
                 background: showEn ? 'var(--accent-soft)' : 'var(--surface-soft)',
                 border: '1px solid var(--border-accent-soft)',
@@ -154,7 +154,7 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
             <button
               key={tabName}
               onClick={() => setTab(tabName)}
-              className="px-4 py-1.5 rounded-lg text-sm font-semibold transition-all"
+              className="px-4 py-1 rounded-lg text-sm font-semibold transition-all"
               style={{
                 background: tab === tabName ? 'var(--accent-soft)' : 'transparent',
                 color: tab === tabName ? 'var(--accent)' : 'var(--text-dim)',

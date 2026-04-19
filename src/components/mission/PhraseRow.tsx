@@ -13,7 +13,7 @@ export default function PhraseRow({ phrase, showEn, delay = '' }: Props) {
 
   return (
     <div
-      className={`fu ${delay} phrase-row flex items-start justify-between gap-3 px-4 py-3 rounded-xl${isPlaying ? ' is-speaking' : ''}`}
+      className={`fu ${delay} phrase-row flex items-start justify-between gap-3 px-4 py-2.5 rounded-xl${isPlaying ? ' is-speaking' : ''}`}
       style={{
         background: 'var(--accent-softer)',
         border: '1px solid var(--border-accent-soft)',
