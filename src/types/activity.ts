@@ -211,6 +211,23 @@ export interface BinaryLockData {
   prompts: BinaryLockPrompt[];
 }
 
+export interface NumberMissionPrompt {
+  id: string;
+  stepLabel: string;
+  prompt: string;
+  choices: string[];
+  correct: number;
+  helperText?: string;
+  successText?: string;
+}
+
+export interface NumberMissionData {
+  title?: string;
+  intro?: string;
+  completeText?: string;
+  prompts: NumberMissionPrompt[];
+}
+
 export type ActivityData =
   | MatchingData
   | SequenceData
@@ -226,4 +243,5 @@ export type ActivityData =
   | MediaFormatSelectionData
   | MediaPropertyCheckData
   | MediaKitAssemblyData
-  | BinaryLockData;
+  | BinaryLockData
+  | NumberMissionData;

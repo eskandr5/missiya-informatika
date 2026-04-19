@@ -7,14 +7,16 @@ interface Props {
 }
 
 export default function Badge({ badge, earned, size = 'md' }: Props) {
-  const sz = size === 'sm' ? 'w-9 h-9 text-lg' : 'w-14 h-14 text-3xl';
+  const sizeClass = size === 'sm' ? 'w-10 h-10 text-xl' : 'w-16 h-16 text-3xl';
+
   return (
-    <div className={`flex flex-col items-center gap-1 ${!earned ? 'badge-locked' : ''}`}>
+    <div className={`flex flex-col items-center gap-1.5 ${!earned ? 'badge-locked' : ''}`}>
       <div
-        className={`${sz} rounded-xl flex items-center justify-center ${earned ? 'pop' : ''}`}
+        className={`${sizeClass} rounded-2xl flex items-center justify-center ${earned ? 'pop' : ''}`}
         style={{
           background: earned ? 'var(--accent-soft)' : 'var(--surface-contrast)',
           border: `1px solid ${earned ? 'var(--accent-ring)' : 'var(--border-strong)'}`,
+          boxShadow: earned ? '0 8px 18px rgba(37, 99, 235, .1)' : 'none',
         }}
       >
         {badge.icon}

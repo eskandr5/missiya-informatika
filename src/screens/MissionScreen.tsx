@@ -19,6 +19,7 @@ import ListenAndMatchActivity from '../activities/ListenAndMatchActivity';
 import DragDropActivity from '../activities/DragDropActivity';
 import ClassificationActivity from '../activities/ClassificationActivity';
 import ErrorCorrectionActivity from '../activities/ErrorCorrectionActivity';
+import NumberMissionActivity from '../activities/NumberMissionActivity';
 import {
   ARCHIVE_COPY,
   ARCHIVE_MISSION_TYPE_LABELS,
@@ -51,6 +52,7 @@ const ACTIVITY_MAP: Partial<Record<MissionType, ComponentType<ActivityProps>>> =
   drag_drop: DragDropActivity,
   classification: ClassificationActivity,
   error_correction: ErrorCorrectionActivity,
+  number_mission: NumberMissionActivity,
 };
 
 const FLOW_STEPS = ['briefing', 'vocab', 'phrases', 'activity'] as const;

@@ -17,6 +17,7 @@ export default function AudioButton({ isPlaying, isDisabled = false, label, onCl
       type="button"
       className={`audio-trigger${isPlaying ? ' is-playing' : ''}`}
       aria-label={actionLabel}
+      aria-pressed={isPlaying}
       title={actionLabel}
       onClick={onClick}
       disabled={isDisabled}

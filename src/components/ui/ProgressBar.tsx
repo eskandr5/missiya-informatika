@@ -6,6 +6,7 @@ interface Props {
 
 export default function ProgressBar({ value, max, color = 'var(--accent)' }: Props) {
   const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0;
+
   return (
     <div className="pb">
       <div

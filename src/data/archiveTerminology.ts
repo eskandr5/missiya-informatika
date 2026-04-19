@@ -35,6 +35,7 @@ export const ARCHIVE_MISSION_TYPE_LABELS: Partial<Record<MissionType, string>> =
   media_property_check: 'Свойства файлов',
   media_kit_assembly: 'Сборка набора',
   binary_lock: 'Бинарный замок',
+  number_mission: 'Числовая миссия',
 };
 
 export function getArchiveStageLabel(stageType: MissionStageType | undefined, missionNum: number) {

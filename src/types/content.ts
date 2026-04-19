@@ -19,7 +19,8 @@ export type MissionType =
   | 'media_format_selection'
   | 'media_property_check'
   | 'media_kit_assembly'
-  | 'binary_lock';
+  | 'binary_lock'
+  | 'number_mission';
 
 export type MissionStageType = 'mission' | 'checkpoint';
 
