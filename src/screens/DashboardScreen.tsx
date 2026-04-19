@@ -11,7 +11,6 @@ import { getRank, getNextRank } from '../data/ranks';
 import { ARCHIVE_COPY } from '../data/archiveTerminology';
 import { isModuleUnlocked } from '../utils/progression';
 import ProgressBar from '../components/ui/ProgressBar';
-import Badge from '../components/ui/Badge';
 import type { Progress } from '../types/progress';
 import type { Module } from '../types/content';
 
@@ -155,7 +154,6 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
                 const unlocked = isModuleUnlocked(mod, progress, MODULES);
                 const done = mod.missions.filter(m => progress.completedMissions.includes(m.id)).length;
                 const modComplete = done === mod.missions.length;
-                const badgeEarned = progress.badges.includes(mod.badge.id);
                 const hasImpl = mod.missions.some(m => m.implemented);
                 const isActive = activeModule?.id === mod.id;
 
@@ -223,7 +221,6 @@ export default function DashboardScreen({ progress, onSelectModule }: Props) {
                             {stateLabel}
                           </span>
                         )}
-                        <Badge badge={mod.badge} earned={badgeEarned} size="sm" showName={false} />
                       </div>
                     </div>
 

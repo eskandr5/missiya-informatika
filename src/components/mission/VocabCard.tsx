@@ -15,33 +15,27 @@ export default function VocabCard({ word, showEn, delay = '' }: Props) {
 
   return (
     <div
-      onClick={() => setFlipped(f => !f)}
-      className={`fu ${delay} card lift vocab-card${isPlaying ? ' is-speaking' : ''}`}
-      style={{
-        padding: '1rem',
-        minHeight: '7rem',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
+      onClick={() => setFlipped(value => !value)}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          setFlipped(value => !value);
+        }
       }}
+      role="button"
+      tabIndex={0}
+      className={`fu ${delay} card lift vocab-card text-left${isPlaying ? ' is-speaking' : ''}`}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-start gap-2 min-w-0" style={{ flexWrap: 'wrap' }}>
-          <span className="hf font-bold text-white text-sm leading-snug">{word.ru}</span>
+      <div className="vocab-card__head">
+        <div className="vocab-card__copy">
+          <p className="vocab-card__term hf">{word.ru}</p>
           {showEn && (
-            <span
-              className="tag"
-              style={{
-                background: 'var(--cyan-soft)',
-                color: 'var(--accent)',
-                flexShrink: 0,
-                fontSize: '.64rem',
-              }}
-            >
+            <span className="vocab-card__gloss">
               {word.en}
             </span>
           )}
         </div>
+
         <AudioButton
           isPlaying={isPlaying}
           isDisabled={!isSupported}
@@ -52,10 +46,14 @@ export default function VocabCard({ word, showEn, delay = '' }: Props) {
           }}
         />
       </div>
+
       {flipped ? (
-        <p className="text-slate-300 text-xs mt-2 leading-relaxed">{word.def}</p>
+        <p className="vocab-card__definition">{word.def}</p>
       ) : (
-        <p className="text-slate-600 text-xs mt-2">Нажмите, чтобы увидеть определение</p>
+        <div className="vocab-card__hint">
+          <span className="vocab-card__hint-label">Определение</span>
+          <span>Нажмите, чтобы открыть карточку</span>
+        </div>
       )}
     </div>
   );
