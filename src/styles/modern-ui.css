@@ -1,0 +1,344 @@
+/* =========================================================
+   MODERN EDUCATION UI — Professional & Clean Styling
+   ========================================================= */
+
+/* ── Hero Section ───────────────────────────────────────── */
+.landing-hero,
+.module-screen__header,
+.mission-screen__header {
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 50%, #f59e0b 100%);
+  color: white;
+  padding: 3rem 0;
+  border-radius: 0;
+  box-shadow: 0 4px 20px rgba(30, 64, 175, .15);
+}
+
+.landing-hero__title,
+.module-screen__title,
+.mission-screen__title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.landing-hero__lead,
+.landing-hero__text {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, .95);
+  max-width: 600px;
+}
+
+/* ── Dashboard Overview ─────────────────────────────────── */
+.dashboard-overview {
+  margin-bottom: 2rem;
+}
+
+.dashboard-overview__title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: .5rem;
+}
+
+.dashboard-overview__text {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.dashboard-overview__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-overview__stat {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.dashboard-overview__stat-icon {
+  font-size: 1.8rem;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+}
+
+.dashboard-overview__stat-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.dashboard-overview__stat-label {
+  font-size: .85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-weight: 600;
+}
+
+/* ── Module Cards ────────────────────────────────────────– */
+.dashboard-module-simple {
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  background: var(--surface-card);
+  transition: all .25s cubic-bezier(.22, 1, .36, 1);
+  text-decoration: none;
+  display: block;
+}
+
+.dashboard-module-simple:hover:not(.is-locked) {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: 0 12px 32px rgba(30, 64, 175, .15);
+}
+
+.dashboard-module-simple.is-locked {
+  opacity: .55;
+  cursor: not-allowed;
+  background: var(--surface-soft);
+}
+
+.dashboard-module-simple.is-restored {
+  border-color: var(--success-color);
+  background: linear-gradient(135deg, rgba(34, 197, 94, .03), rgba(34, 197, 94, .01));
+}
+
+.dashboard-module-simple__header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dashboard-module-simple__icon {
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  color: var(--accent);
+}
+
+.dashboard-module-simple__number {
+  font-size: .75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+}
+
+.dashboard-module-simple__title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.dashboard-module-simple__progress {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.dashboard-module-simple__progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--progress-track);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.dashboard-module-simple__progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width .6s ease;
+}
+
+.dashboard-module-simple__status-copy {
+  font-size: .85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── Mission Cards ─────────────────────────────────────── */
+.module-screen__mission-card {
+  border: 1px solid var(--border-color);
+  background: var(--surface-card);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  transition: all .25s ease;
+  cursor: pointer;
+}
+
+.module-screen__mission-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(30, 64, 175, .12);
+}
+
+.module-screen__mission-number {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 800;
+  font-size: .9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: .5rem;
+}
+
+.module-screen__mission-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: .5rem;
+}
+
+.module-screen__mission-type {
+  font-size: .85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-weight: 600;
+  margin-bottom: .75rem;
+}
+
+/* ── Buttons ────────────────────────────────────────────── */
+.btn-p {
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all .25s ease;
+  box-shadow: 0 4px 12px rgba(30, 64, 175, .25);
+}
+
+.btn-p:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(30, 64, 175, .35);
+}
+
+.btn-p:active {
+  transform: scale(.98);
+}
+
+/* ── Progress Indicators ────────────────────────────────– */
+.progress-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: conic-gradient(var(--accent) var(--progress, 0%), var(--progress-track) 0%);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+/* ── Cards with enhanced style ──────────────────────────– */
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  transition: all .25s ease;
+}
+
+.card:hover {
+  border-color: var(--border-accent-soft);
+  box-shadow: var(--shadow-lift);
+}
+
+.card.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* ── Text Utilities ─────────────────────────────────────– */
+.text-success {
+  color: var(--success-color);
+  font-weight: 600;
+}
+
+.text-warning {
+  color: var(--warning-color);
+  font-weight: 600;
+}
+
+.text-danger {
+  color: var(--danger-color);
+  font-weight: 600;
+}
+
+/* ── Badge Styles ───────────────────────────────────────– */
+.badge-earned {
+  opacity: 1;
+}
+
+.badge-locked {
+  opacity: .4;
+  filter: grayscale(100%);
+}
+
+.badge-progress {
+  opacity: .7;
+}
+
+/* ── Activity States ────────────────────────────────────– */
+.activity-correct {
+  color: var(--success-color);
+  font-weight: 700;
+}
+
+.activity-wrong {
+  color: var(--danger-color);
+  font-weight: 700;
+}
+
+.activity-pending {
+  color: var(--text-muted);
+}
+
+/* ── Responsive adjustments ────────────────────────────– */
+@media (max-width: 768px) {
+  .landing-hero__title,
+  .module-screen__title {
+    font-size: 1.8rem;
+  }
+
+  .dashboard-overview__title {
+    font-size: 1.6rem;
+  }
+
+  .dashboard-overview__stats {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .dashboard-module-simple__header {
+    gap: .75rem;
+  }
+
+  .dashboard-module-simple__icon {
+    font-size: 1.5rem;
+  }
+}

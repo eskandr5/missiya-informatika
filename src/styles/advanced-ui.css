@@ -1,0 +1,301 @@
+/* =========================================================
+   ADVANCED MODERN UI — Premium Cards, Shadows & Typography
+   ========================================================= */
+
+/* ── Navigation Bar ─────────────────────────────────────– */
+.app-nav {
+  background: var(--surface-nav);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+  backdrop-filter: blur(12px);
+}
+
+.app-nav__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  height: var(--nav-height);
+}
+
+/* ── Page Shell ────────────────────────────────────────– */
+.app-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.app-shell--narrow {
+  max-width: 920px;
+}
+
+/* ── Badge Styling ──────────────────────────────────────– */
+.badge-elem {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-soft);
+  border: 2px solid var(--border-color);
+  font-size: 1.8rem;
+  font-weight: 700;
+  transition: all .25s ease;
+}
+
+.badge-elem.earned {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(30, 64, 175, .15);
+}
+
+/* ── Mission Card Enhancements ──────────────────────────– */
+.mission-item {
+  background: var(--surface-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  transition: all .25s cubic-bezier(.22, 1, .36, 1);
+  cursor: pointer;
+}
+
+.mission-item:hover:not(.is-locked) {
+  transform: translateX(4px);
+  border-color: var(--accent);
+  box-shadow: 0 8px 20px rgba(30, 64, 175, .12);
+}
+
+.mission-item.completed {
+  background: linear-gradient(135deg, rgba(34, 197, 94, .04), rgba(34, 197, 94, .02));
+  border-color: var(--success-color);
+}
+
+.mission-item.is-locked {
+  opacity: .5;
+  cursor: not-allowed;
+  background: var(--surface-soft);
+}
+
+/* ── Step Bar / Progress ────────────────────────────────– */
+.step-bar {
+  display: flex;
+  gap: .5rem;
+  margin: 1.5rem 0;
+}
+
+.step {
+  flex: 1;
+  height: 6px;
+  background: var(--progress-track);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.step.active,
+.step.completed {
+  background: var(--accent);
+  box-shadow: 0 2px 8px rgba(30, 64, 175, .25);
+}
+
+.step.completed::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .3));
+  animation: shimmer 1.5s ease-in-out 2;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* ── Result Screen ──────────────────────────────────────– */
+.result-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
+
+.result-screen__card {
+  max-width: 520px;
+  width: 100%;
+}
+
+.result-screen__icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  animation: bounce .6s ease-out;
+}
+
+@keyframes bounce {
+  0% { transform: scale(.5) translateY(-20px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* ── Activity Grid ──────────────────────────────────────– */
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.activity-item {
+  background: var(--surface-card);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all .25s ease;
+}
+
+.activity-item:hover:not(.disabled) {
+  transform: scale(1.04);
+  border-color: var(--accent);
+  box-shadow: 0 6px 16px rgba(30, 64, 175, .15);
+}
+
+.activity-item.selected {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.activity-item.correct {
+  border-color: var(--success-color);
+  background: var(--success-soft);
+}
+
+.activity-item.wrong {
+  border-color: var(--danger-color);
+  background: var(--danger-soft);
+}
+
+.activity-item.disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/* ── Text Hierarchy ────────────────────────────────────– */
+h1, .h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -.02em; }
+h2, .h2 { font-size: 2rem; font-weight: 700; letter-spacing: -.015em; }
+h3, .h3 { font-size: 1.5rem; font-weight: 700; letter-spacing: -.01em; }
+h4, .h4 { font-size: 1.25rem; font-weight: 700; }
+h5, .h5 { font-size: 1.1rem; font-weight: 700; }
+h6, .h6 { font-size: 1rem; font-weight: 700; letter-spacing: .05em; }
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* ── Input Styles ──────────────────────────────────────– */
+input,
+textarea,
+select {
+  background: var(--surface-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: .75rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  transition: all .25s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+/* ── Utility Classes for Modern Style ───────────────────– */
+.gradient-text {
+  background: var(--hero-title-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.shadow-elevated {
+  box-shadow: 0 8px 32px rgba(30, 64, 175, .15);
+}
+
+.shadow-subtle {
+  box-shadow: var(--shadow-soft);
+}
+
+.border-accent {
+  border: 2px solid var(--accent) !important;
+}
+
+.bg-accent-subtle {
+  background: var(--accent-soft) !important;
+}
+
+/* ── Responsive Enhancements ────────────────────────────– */
+@media (max-width: 768px) {
+  .app-shell {
+    padding: 0 1rem;
+  }
+
+  h1, .h1 { font-size: 1.875rem; }
+  h2, .h2 { font-size: 1.5rem; }
+  h3, .h3 { font-size: 1.25rem; }
+  
+  .activity-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: .75rem;
+  }
+}
+
+/* ── Smooth Transitions ────────────────────────────────– */
+* {
+  transition: background-color .18s ease, color .18s ease;
+}
+
+button, .lift, a, [role="button"] {
+  transition: all .22s ease;
+}
+
+/* ── Accessibility ──────────────────────────────────────– */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ── Print Styles ────────────────────────────────────────– */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+}

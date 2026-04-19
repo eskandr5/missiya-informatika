@@ -5,10 +5,10 @@ const module10: Module = {
   title: 'Алгоритмический язык',
   subtitle: 'Псевдокод и запись',
   desc: 'Алгоритмический язык: ключевые слова, структуры управления, запись алгоритмов.',
-  icon: '📝',
+  icon: '◢',  // Code module
   accent: '#84cc16',
   xpReward: 150,
-  badge: { id: 'coder', name: 'Кодировщик', icon: '📝' },
+  badge: { id: 'coder', name: 'Кодировщик', icon: '◢' },
   vocab: [
     { id: 'va1', ru: 'переменная',  en: 'variable',   def: 'именованная ячейка памяти для хранения данных' },
     { id: 'va2', ru: 'присваивание',en: 'assignment', def: 'операция записи значения в переменную' },

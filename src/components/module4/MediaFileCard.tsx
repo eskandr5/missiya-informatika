@@ -35,7 +35,7 @@ export default function MediaFileCard({
       className={`m4-file-card is-${state}`}
     >
       <div className="m4-file-card__head">
-        <span className="m4-file-card__icon">{item.fileType === 'image' ? '▣' : item.fileType === 'audio' ? '◉' : '▤'}</span>
+        <span className="m4-file-card__icon">{item.fileType === 'image' ? '◼' : item.fileType === 'audio' ? '◉' : '≡'}</span>
         <span className="m4-file-card__format">{item.format}</span>
       </div>
       <h4 className="m4-file-card__title">{item.name}</h4>

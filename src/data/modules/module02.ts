@@ -5,10 +5,10 @@ const module02: Module = {
   title: 'Компьютер и устройства',
   subtitle: 'Аппаратное обеспечение',
   desc: 'Компоненты компьютера: устройства ввода и вывода, периферия, классификация оборудования.',
-  icon: '🖥️',
+  icon: '⚙',  // Engineering module
   accent: '#06b6d4',
   xpReward: 150,
-  badge: { id: 'engineer', name: 'Инженер', icon: '⚙️' },
+  badge: { id: 'engineer', name: 'Инженер', icon: '⚙' },
   vocab: [
     { id: 'v21', ru: 'монитор', en: 'monitor', def: 'устройство визуального отображения информации' },
     { id: 'v22', ru: 'экран', en: 'screen', def: 'поверхность отображения монитора или телефона' },
@@ -44,12 +44,12 @@ const module02: Module = {
       vocabSlice: [0, 6],
       activityData: {
         items: [
-          { id: 'di1', label: 'Монитор', icon: '🖥️', correctZone: 'station' },
-          { id: 'di2', label: 'Клавиатура', icon: '⌨️', correctZone: 'station' },
-          { id: 'di3', label: 'Мышь', icon: '🖱️', correctZone: 'station' },
-          { id: 'di4', label: 'Принтер', icon: '🖨️', correctZone: 'station' },
-          { id: 'di5', label: 'Наушники', icon: '🎧', correctZone: 'station' },
-          { id: 'di6', label: 'Микрофон', icon: '🎤', correctZone: 'station' },
+          { id: 'di1', label: 'Монитор', icon: '◻', correctZone: 'station' },
+          { id: 'di2', label: 'Клавиатура', icon: '⌨', correctZone: 'station' },
+          { id: 'di3', label: 'Мышь', icon: '◈', correctZone: 'station' },
+          { id: 'di4', label: 'Принтер', icon: '⊞', correctZone: 'station' },
+          { id: 'di5', label: 'Наушники', icon: '◎', correctZone: 'station' },
+          { id: 'di6', label: 'Микрофон', icon: '◉', correctZone: 'station' },
           { id: 'di7', label: 'Телевизор', icon: '📺', correctZone: 'extra' },
           { id: 'di8', label: 'Холодильник', icon: '🧊', correctZone: 'extra' },
           { id: 'di9', label: 'Книга', icon: '📚', correctZone: 'extra' },

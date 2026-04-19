@@ -5,10 +5,10 @@ const module09: Module = {
   title: 'Графический язык алгоритмов',
   subtitle: 'Блок-схемы',
   desc: 'Блок-схемы: элементы, правила построения, типовые структуры управления.',
-  icon: '📊',
+  icon: '▦',  // Design module
   accent: '#0ea5e9',
   xpReward: 150,
-  badge: { id: 'designer', name: 'Схематик', icon: '📊' },
+  badge: { id: 'designer', name: 'Схематик', icon: '▦' },
   vocab: [
     { id: 'v91', ru: 'блок-схема',          en: 'flowchart',          def: 'графическое представление алгоритма с помощью символов' },
     { id: 'v92', ru: 'блок начала/конца',   en: 'terminal',           def: 'овал — обозначает начало или конец алгоритма' },

@@ -72,7 +72,7 @@ export default function MatchingActivity({ data, onComplete }: Props) {
                 >
                   {pairs[idx].term}
                   {isDone && (
-                    <span className="float-right text-green-400 checkIn" style={{ display: 'inline-block' }}>✓</span>
+                    <span className="float-right text-green-600 checkIn text-sm font-semibold" style={{ display: 'inline-block' }}>✓</span>
                   )}
                 </button>
               );
@@ -100,7 +100,7 @@ export default function MatchingActivity({ data, onComplete }: Props) {
                     cursor: used ? 'default' : canPick ? 'pointer' : 'default',
                   }}
                 >
-                  {def.def} {used && <span className="float-right text-green-400">✓</span>}
+                  {def.def} {used && <span className="float-right text-green-600 text-sm">✓</span>}
                 </button>
               );
             })}

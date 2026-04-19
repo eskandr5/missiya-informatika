@@ -115,8 +115,8 @@ export default function ClassificationActivity({ data, onComplete }: Props) {
                       }}
                     >
                       <span>{it.icon}</span><span>{it.label}</span>
-                      {ok  && <span className="text-xs">✓</span>}
-                      {err && <span className="text-xs">✗</span>}
+                      {ok  && <span className="text-green-600 text-xs font-semibold">✓</span>}
+                      {err && <span className="text-red-600 text-xs font-semibold">✗</span>}
                     </button>
                   );
                 })}

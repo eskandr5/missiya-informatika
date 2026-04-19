@@ -103,7 +103,7 @@ export default function MissionScreen({ stage, module: mod, onFinish, onBack }: 
         <div className="app-shell app-shell--narrow app-shell--flush" style={{ maxWidth: '880px', margin: '0 auto' }}>
           <div className="mission-screen__topbar flex items-center justify-between gap-3">
             <div className="mission-screen__actions flex items-center gap-3 min-w-0">
-              <button onClick={prevStep} className="btn-g text-sm px-3 py-1.5 flex-shrink-0">← Назад</button>
+              <button onClick={prevStep} className="btn-g text-sm px-3 py-1.5 shrink-0">← Назад</button>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="tag" style={{ background: 'var(--cyan-soft)', color: 'var(--accent)' }}>
@@ -121,7 +121,7 @@ export default function MissionScreen({ stage, module: mod, onFinish, onBack }: 
                 <h2 className="hf text-white font-bold text-base mt-0.5 truncate">{stage.title}</h2>
               </div>
             </div>
-            <div className="mission-screen__actions flex items-center gap-2 flex-shrink-0">
+            <div className="mission-screen__actions flex items-center gap-2 shrink-0">
               <button
                 onClick={() => setShowEn(value => !value)}
                 className="text-xs px-3 py-1.5 rounded-lg font-semibold"
@@ -150,10 +150,10 @@ export default function MissionScreen({ stage, module: mod, onFinish, onBack }: 
             <div className="card p-6 mb-5" style={{ border: '1px solid var(--border-accent-soft)' }}>
               <div className="flex items-start gap-3 mb-4">
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+                  className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
                   style={{ background: 'var(--accent-soft)', border: '1px solid var(--accent-ring)' }}
                 >
-                  {isCheckpoint ? '🏁' : mod.icon}
+                  {isCheckpoint ? <span>⊙</span> : mod.icon}
                 </div>
                 <div>
                   <p className="text-xs text-blue-400 font-bold uppercase tracking-wider">

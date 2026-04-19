@@ -57,7 +57,7 @@ export default function ErrorCorrectionActivity({ data, onComplete }: Props) {
               <p className="text-slate-200 text-sm mb-3 leading-relaxed">«{stmt.text}»</p>
               <div className="flex gap-2 mb-2">
                 {(['correct', 'wrong'] as UserAnswer[]).map(val => {
-                  const label    = val === 'correct' ? '✓ Верно' : '✗ Ошибка';
+                  const label    = val === 'correct' ? '✓ صحيح' : '✗ خطأ';
                   const active   = ans === val;
                   const btnColor = val === 'correct' ? 'var(--success-color)' : 'var(--danger-color)';
                   return (

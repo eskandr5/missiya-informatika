@@ -117,7 +117,7 @@ export default function MediaPropertyCheckActivity({ data, onComplete }: Props) 
 
           <div className={`m4-feedback m4-feedback--panel ${previewState === 'error' ? 'is-wrong' : previewState === 'restored' ? 'is-correct' : ''}`}>
             <span className="m4-feedback__mark">
-              {previewState === 'error' ? '!' : previewState === 'restored' ? '✓' : '•'}
+              {previewState === 'error' ? '✗' : previewState === 'restored' ? '✓' : '—'}
             </span>
             <span>{feedbackText}</span>
           </div>

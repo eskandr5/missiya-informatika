@@ -189,7 +189,7 @@ export default function ListenAndMatchActivity({ data, onComplete }: Props) {
                   }}
                 >
                   {option.matchText}
-                  {used && <span className="float-right text-green-400">✓</span>}
+                  {used && <span className="float-right text-green-600 text-sm">✓</span>}
                 </button>
               );
             })}

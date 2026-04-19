@@ -88,7 +88,7 @@ export default function BinaryLockActivity({ data, onComplete }: Props) {
               key={index}
               className={`m5-lock__segment is-${segmentState}`}
             >
-              <span>{segmentState === 'open' ? '✓' : segmentState === 'error' ? '!' : index + 1}</span>
+              <span>{segmentState === 'open' ? '✓' : segmentState === 'error' ? '!' : (index + 1)}</span>
             </div>
           ))}
         </div>
@@ -149,7 +149,7 @@ export default function BinaryLockActivity({ data, onComplete }: Props) {
 
       <div className={`m5-lock__feedback is-${status === 'idle' ? 'neutral' : status}`}>
         <span className="m5-lock__feedback-mark">
-          {status === 'correct' ? '✓' : status === 'wrong' ? '!' : '•'}
+          {status === 'correct' ? '✓' : status === 'wrong' ? '✗' : '—'}
         </span>
         <span>{feedbackText}</span>
       </div>

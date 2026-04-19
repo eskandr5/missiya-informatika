@@ -5,10 +5,10 @@ const module12: Module = {
   title: 'Ветвления, циклы и финальная миссия',
   subtitle: 'Итоговый модуль',
   desc: 'Финальный модуль: ветвления, циклы и итоговое повторение всего курса.',
-  icon: '🏆',
+  icon: '⬡',  // Specialist module
   accent: '#f59e0b',
   xpReward: 200,
-  badge: { id: 'graduate', name: 'Специалист', icon: '🏆' },
+  badge: { id: 'graduate', name: 'Специалист', icon: '⬡' },
   vocab: [
     { id: 'vc1', ru: 'ветвление',      en: 'branching',       def: 'выбор пути выполнения программы' },
     { id: 'vc2', ru: 'цикл',           en: 'loop',            def: 'повторяющийся блок команд' },

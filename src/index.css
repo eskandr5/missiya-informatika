@@ -1,5 +1,5 @@
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html {
@@ -14,3 +14,9 @@ body {
 #root {
   min-height: 100vh;
 }
+
+/* Import modern professional styling */
+@import './styles/global.css';
+@import './styles/modern-ui.css';
+@import './styles/advanced-ui.css';
+

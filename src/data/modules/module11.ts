@@ -5,10 +5,10 @@ const module11: Module = {
   title: 'Языки программирования',
   subtitle: 'Обзор и классификация',
   desc: 'История и виды языков программирования. Компиляция vs интерпретация.',
-  icon: '💻',
+  icon: '◇',  // Programming module
   accent: '#7c3aed',
   xpReward: 150,
-  badge: { id: 'programmer', name: 'Программист', icon: '💻' },
+  badge: { id: 'programmer', name: 'Программист', icon: '◇' },
   vocab: [
     { id: 'vb1', ru: 'язык программирования', en: 'programming language', def: 'формальный язык для записи алгоритмов' },
     { id: 'vb2', ru: 'компилятор',            en: 'compiler',             def: 'программа перевода в машинный код целиком' },

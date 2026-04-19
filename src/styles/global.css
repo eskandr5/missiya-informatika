@@ -1,15 +1,15 @@
 /* =========================================================
-   VERDANT FOCUS — Identity System v2.0
-   Primary:   Emerald  (#059669 / dark: #34d399)
-   Secondary: Blue     (#2563eb / dark: #60a5fa) — functional
-   Surfaces:  Warm neutral / Warm dark green-black
+   MODERN EDUCATION SYSTEM — Clean & Professional v1.0
+   Primary:   Deep Blue  (#1e40af)
+   Accent:    Warm Gold  (#f59e0b)
+   Surfaces:  Pure White & Clean Grays
    Type:      Manrope (headings & key UI) · Inter (body & content)
    Radius:    4 / 6 / 10 / 14 / 20 / 9999
    ========================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap');
 
-/* ── Tokens: Light mode ─────────────────────────────────── */
+/* ── Tokens: Light mode (Primary) ───────────────────────── */
 :root {
   color-scheme: light;
 
@@ -38,129 +38,129 @@
   --radius-xl:   20px;
   --radius-full: 9999px;
 
-  /* Primary accent — Emerald */
-  --accent:        #059669;
-  --accent-strong: #047857;
-  --accent-soft:   rgba(5, 150, 105, .10);
-  --accent-softer: rgba(5, 150, 105, .06);
-  --accent-ring:   rgba(5, 150, 105, .28);
-  --accent-glow:   rgba(5, 150, 105, .18);
+  /* Primary accent — Deep Blue */
+  --accent:        #1e40af;
+  --accent-strong: #1e3a8a;
+  --accent-soft:   rgba(30, 64, 175, .08);
+  --accent-softer: rgba(30, 64, 175, .04);
+  --accent-ring:   rgba(30, 64, 175, .24);
+  --accent-glow:   rgba(30, 64, 175, .12);
 
-  /* Secondary accent — Blue (functional: progress, audio, links, selection) */
-  --blue:        #2563eb;
-  --blue-strong: #1d4ed8;
-  --blue-soft:   rgba(37, 99, 235, .09);
-  --blue-softer: rgba(37, 99, 235, .05);
-  --blue-ring:   rgba(37, 99, 235, .26);
+  /* Secondary accent — Warm Gold (functional: highlights, success) */
+  --blue:        #f59e0b;
+  --blue-strong: #d97706;
+  --blue-soft:   rgba(245, 158, 11, .08);
+  --blue-softer: rgba(245, 158, 11, .04);
+  --blue-ring:   rgba(245, 158, 11, .22);
 
-  /* Backwards-compat alias used by vocab gloss */
-  --cyan-soft: rgba(37, 99, 235, .08);
+  /* Backwards-compat alias */
+  --cyan-soft: rgba(30, 64, 175, .06);
 
   /* Semantic */
-  --warning-soft:  rgba(180,  83,   9, .09);
-  --success-soft:  rgba(  5, 150, 105, .10);
-  --danger-soft:   rgba(185,  28,  28, .09);
-  --success-color: #059669;
-  --warning-color: #b45309;
-  --danger-color:  #c62828;
-  --success-text:  #065f46;
-  --warning-text:  #92400e;
-  --danger-text:   #991b1b;
-
-  /* Text — warm green-black scale */
-  --text-primary:   #1a2410;
-  --text-secondary: #3d4a30;
-  --text-muted:     #6b7a5e;
-  --text-dim:       #9aaa8c;
-  --text-inverse:   #ffffff;
-
-  /* Surfaces — warm neutral */
-  --surface-base:     #f5f4f0;
-  --surface-grid:     #f5f4f0;
-  --surface-card:     #ffffff;
-  --surface-soft:     #eceae3;
-  --surface-strong:   #e4e1d8;
-  --surface-contrast: rgba(26, 36, 16, .055);
-  --surface-header:   #f0efe9;
-  --surface-nav:      rgba(245, 244, 240, .94);
-
-  /* Borders */
-  --border-color:       rgba(160, 150, 130, .34);
-  --border-strong:      rgba(140, 130, 110, .52);
-  --border-accent-soft: rgba(5, 150, 105, .22);
-
-  /* Shadows — warm toned, two-layer */
-  --shadow-soft:   0 1px 3px rgba(26, 36, 16, .05), 0 2px 8px rgba(26, 36, 16, .04);
-  --shadow-card:   0 1px 4px rgba(26, 36, 16, .06), 0 4px 18px rgba(26, 36, 16, .07);
-  --shadow-lift:   0 4px 12px rgba(26, 36, 16, .08), 0 14px 36px rgba(26, 36, 16, .10);
-  --shadow-button: 0 2px 6px rgba(5, 150, 105, .22), 0 6px 16px rgba(5, 150, 105, .14);
-
-  /* Progress */
-  --progress-track: rgba(200, 195, 180, .55);
-  --scroll-track:   #e8e5dc;
-  --scroll-thumb:   #a8c09a;
-
-  /* Hero gradient: emerald → blue */
-  --hero-title-gradient: linear-gradient(135deg, #059669 15%, #2563eb 100%);
-}
-
-/* ── Tokens: Dark mode ──────────────────────────────────── */
-[data-theme='dark'] {
-  color-scheme: dark;
-
-  --accent:        #34d399;
-  --accent-strong: #6ee7b7;
-  --accent-soft:   rgba(52, 211, 153, .12);
-  --accent-softer: rgba(52, 211, 153, .07);
-  --accent-ring:   rgba(52, 211, 153, .30);
-  --accent-glow:   rgba(52, 211, 153, .18);
-
-  --blue:        #60a5fa;
-  --blue-strong: #93c5fd;
-  --blue-soft:   rgba(96, 165, 250, .12);
-  --blue-softer: rgba(96, 165, 250, .07);
-  --blue-ring:   rgba(96, 165, 250, .30);
-  --cyan-soft:   rgba(96, 165, 250, .10);
-
-  --warning-soft:  rgba(245, 158,  11, .11);
-  --success-soft:  rgba( 52, 211, 153, .10);
-  --danger-soft:   rgba(239,  68,  68, .12);
-  --success-color: #34d399;
+  --warning-soft:  rgba(245, 158, 11, .08);
+  --success-soft:  rgba(34, 197, 94, .08);
+  --danger-soft:   rgba(239, 68, 68, .08);
+  --success-color: #22c55e;
   --warning-color: #f59e0b;
   --danger-color:  #ef4444;
-  --success-text:  #6ee7b7;
-  --warning-text:  #fcd34d;
-  --danger-text:   #fca5a5;
+  --success-text:  #166534;
+  --warning-text:  #b45309;
+  --danger-text:   #991b1b;
 
-  --text-primary:   #f0f5ec;
-  --text-secondary: #c8d4be;
-  --text-muted:     #8a9e7e;
-  --text-dim:       #5a6e50;
-  --text-inverse:   #0d1410;
+  /* Text — professional dark scale */
+  --text-primary:   #0f172a;
+  --text-secondary: #334155;
+  --text-muted:     #64748b;
+  --text-dim:       #94a3b8;
+  --text-inverse:   #ffffff;
 
-  --surface-base:     #0d1410;
-  --surface-grid:     #0d1410;
-  --surface-card:     #141e17;
-  --surface-soft:     #1b2a1f;
-  --surface-strong:   #1f3024;
-  --surface-contrast: rgba(0, 0, 0, .45);
-  --surface-header:   #111c14;
-  --surface-nav:      rgba(13, 20, 16, .92);
+  /* Surfaces — pure white & clean grays */
+  --surface-base:     #ffffff;
+  --surface-grid:     #f8fafc;
+  --surface-card:     #ffffff;
+  --surface-soft:     #f1f5f9;
+  --surface-strong:   #e2e8f0;
+  --surface-contrast: rgba(15, 23, 42, .04);
+  --surface-header:   #ffffff;
+  --surface-nav:      rgba(255, 255, 255, .96);
 
-  --border-color:       rgba(80, 110, 80, .28);
-  --border-strong:      rgba(90, 120, 90, .46);
-  --border-accent-soft: rgba(52, 211, 153, .18);
+  /* Borders — subtle and professional */
+  --border-color:       rgba(30, 64, 175, .12);
+  --border-strong:      rgba(30, 64, 175, .20);
+  --border-accent-soft: rgba(30, 64, 175, .16);
 
-  --shadow-soft:   0 1px 3px rgba(0, 0, 0, .20), 0 2px 8px rgba(0, 0, 0, .16);
-  --shadow-card:   0 1px 4px rgba(0, 0, 0, .26), 0 4px 18px rgba(0, 0, 0, .22);
-  --shadow-lift:   0 4px 12px rgba(0, 0, 0, .34), 0 14px 36px rgba(0, 0, 0, .28);
-  --shadow-button: 0 2px 6px rgba(52, 211, 153, .18), 0 6px 16px rgba(52, 211, 153, .10);
+  /* Shadows — clean and minimal */
+  --shadow-soft:   0 1px 2px rgba(15, 23, 42, .05), 0 1px 4px rgba(15, 23, 42, .06);
+  --shadow-card:   0 1px 3px rgba(15, 23, 42, .10), 0 1px 8px rgba(15, 23, 42, .08);
+  --shadow-lift:   0 4px 6px rgba(15, 23, 42, .10), 0 10px 24px rgba(15, 23, 42, .12);
+  --shadow-button: 0 2px 8px rgba(30, 64, 175, .18), 0 4px 12px rgba(30, 64, 175, .12);
 
-  --progress-track: rgba(30, 50, 36, .80);
-  --scroll-track:   #111c14;
-  --scroll-thumb:   #3a6040;
+  /* Progress */
+  --progress-track: #e2e8f0;
+  --scroll-track:   #f1f5f9;
+  --scroll-thumb:   #cbd5e1;
 
-  --hero-title-gradient: linear-gradient(135deg, #34d399 15%, #60a5fa 100%);
+  /* Hero gradient: blue → gold */
+  --hero-title-gradient: linear-gradient(135deg, #1e40af 15%, #f59e0b 100%);
+}
+
+/* ── Tokens: Dark mode (Light alternative) ──────────────── */
+[data-theme='dark'] {
+  color-scheme: light;
+
+  --accent:        #1e40af;
+  --accent-strong: #1e3a8a;
+  --accent-soft:   rgba(30, 64, 175, .08);
+  --accent-softer: rgba(30, 64, 175, .04);
+  --accent-ring:   rgba(30, 64, 175, .24);
+  --accent-glow:   rgba(30, 64, 175, .12);
+
+  --blue:        #f59e0b;
+  --blue-strong: #d97706;
+  --blue-soft:   rgba(245, 158, 11, .08);
+  --blue-softer: rgba(245, 158, 11, .04);
+  --blue-ring:   rgba(245, 158, 11, .22);
+  --cyan-soft:   rgba(30, 64, 175, .06);
+
+  --warning-soft:  rgba(245, 158, 11, .08);
+  --success-soft:  rgba(34, 197, 94, .08);
+  --danger-soft:   rgba(239, 68, 68, .08);
+  --success-color: #22c55e;
+  --warning-color: #f59e0b;
+  --danger-color:  #ef4444;
+  --success-text:  #166534;
+  --warning-text:  #b45309;
+  --danger-text:   #991b1b;
+
+  --text-primary:   #0f172a;
+  --text-secondary: #334155;
+  --text-muted:     #64748b;
+  --text-dim:       #94a3b8;
+  --text-inverse:   #ffffff;
+
+  --surface-base:     #ffffff;
+  --surface-grid:     #f8fafc;
+  --surface-card:     #ffffff;
+  --surface-soft:     #f1f5f9;
+  --surface-strong:   #e2e8f0;
+  --surface-contrast: rgba(15, 23, 42, .04);
+  --surface-header:   #ffffff;
+  --surface-nav:      rgba(255, 255, 255, .96);
+
+  --border-color:       rgba(30, 64, 175, .12);
+  --border-strong:      rgba(30, 64, 175, .20);
+  --border-accent-soft: rgba(30, 64, 175, .16);
+
+  --shadow-soft:   0 1px 2px rgba(15, 23, 42, .05), 0 1px 4px rgba(15, 23, 42, .06);
+  --shadow-card:   0 1px 3px rgba(15, 23, 42, .10), 0 1px 8px rgba(15, 23, 42, .08);
+  --shadow-lift:   0 4px 6px rgba(15, 23, 42, .10), 0 10px 24px rgba(15, 23, 42, .12);
+  --shadow-button: 0 2px 8px rgba(30, 64, 175, .18), 0 4px 12px rgba(30, 64, 175, .12);
+
+  --progress-track: #e2e8f0;
+  --scroll-track:   #f1f5f9;
+  --scroll-thumb:   #cbd5e1;
+
+  --hero-title-gradient: linear-gradient(135deg, #1e40af 15%, #f59e0b 100%);
 }
 
 /* ── Reset ─────────────────────────────────────────────── */
@@ -201,17 +201,18 @@ svg { display: block; max-width: 100%; }
 /* Heading font — Manrope */
 .hf { font-family: 'Manrope', system-ui, sans-serif; }
 
-/* ── Page background — clean warm field, no grid noise ── */
+/* ── Page background — clean white field, subtle gradient ── */
 .bg-grid {
   background-color: var(--surface-grid);
-  /* Subtle top-center emerald bloom — calm, premium, not noisy */
+  /* Subtle gradient: pure white with minimal professional touch */
   background-image:
-    radial-gradient(ellipse 110% 55% at 50% -5%,
-      rgba(5, 150, 105, .065) 0%,
-      transparent 68%),
-    radial-gradient(ellipse 55% 35% at 92% 10%,
-      rgba(37, 99, 235, .035) 0%,
+    radial-gradient(ellipse 120% 60% at 50% -10%,
+      rgba(30, 64, 175, .04) 0%,
+      transparent 65%),
+    radial-gradient(ellipse 60% 40% at 95% 15%,
+      rgba(245, 158, 11, .03) 0%,
       transparent 60%);
+  background-attachment: fixed;
 }
 
 /* ── Animations — one-shot only, no decorative infinite loops ── */
@@ -275,7 +276,6 @@ svg { display: block; max-width: 100%; }
 .d12 { animation-delay: .48s; }
 
 /* Kept for backwards compat — now just a no-op */
-.glow {}
 
 @media (prefers-reduced-motion: reduce) {
   *,

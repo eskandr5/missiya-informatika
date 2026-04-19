@@ -5,10 +5,10 @@ const module05: Module = {
   title: 'Системы счисления: основы',
   subtitle: 'Числа в разных системах',
   desc: 'Познакомьтесь с десятичной системой, разрядами и записью чисел, а затем переходите к другим системам счисления.',
-  icon: '🔢',
+  icon: '◆',  // Mathematics module
   accent: '#f59e0b',
   xpReward: 150,
-  badge: { id: 'mathematician', name: 'Математик', icon: '🔢' },
+  badge: { id: 'mathematician', name: 'Математик', icon: '◆' },
   vocab: [
     { id: 'v51', ru: 'число', en: 'number', def: 'запись количества или значения с помощью цифр' },
     { id: 'v52', ru: 'цифра', en: 'digit', def: 'символ для записи числа' },
@@ -106,14 +106,14 @@ const module05: Module = {
       vocabSlice: [6, 9],
       activityData: {
         items: [
-          { id: 'm5-c1', label: '101', icon: '🔢', category: 'binary' },
-          { id: 'm5-c2', label: '0110', icon: '🔢', category: 'binary' },
-          { id: 'm5-c3', label: '11001', icon: '🔢', category: 'binary' },
-          { id: 'm5-c4', label: '1001', icon: '🔢', category: 'binary' },
-          { id: 'm5-c5', label: '25', icon: '🔢', category: 'not-binary' },
-          { id: 'm5-c6', label: '38', icon: '🔢', category: 'not-binary' },
-          { id: 'm5-c7', label: '207', icon: '🔢', category: 'not-binary' },
-          { id: 'm5-c8', label: '91', icon: '🔢', category: 'not-binary' },
+          { id: 'm5-c1', label: '101', icon: '≠', category: 'binary' },
+          { id: 'm5-c2', label: '0110', icon: '≠', category: 'binary' },
+          { id: 'm5-c3', label: '11001', icon: '≠', category: 'binary' },
+          { id: 'm5-c4', label: '1001', icon: '≠', category: 'binary' },
+          { id: 'm5-c5', label: '25', icon: '≠', category: 'not-binary' },
+          { id: 'm5-c6', label: '38', icon: '≠', category: 'not-binary' },
+          { id: 'm5-c7', label: '207', icon: '≠', category: 'not-binary' },
+          { id: 'm5-c8', label: '91', icon: '≠', category: 'not-binary' },
         ],
         categories: [
           {

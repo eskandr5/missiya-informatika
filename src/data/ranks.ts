@@ -9,7 +9,7 @@ export interface Rank {
 export const RANKS: Rank[] = [
   { name: 'ОПЕРАТОР-1', en: 'Operator-1', minXP: 0,   icon: '◈', col: '#64748b' },
   { name: 'ОПЕРАТОР-2', en: 'Operator-2', minXP: 150, icon: '⌘', col: '#3b82f6' },
-  { name: 'Аналитик',   en: 'Analyst',    minXP: 400, icon: '📊', col: '#8b5cf6' },
+  { name: 'Аналitik',   en: 'Analyst',    minXP: 400, icon: '◆', col: '#8b5cf6' },
   { name: 'Архивист',   en: 'Archivist',  minXP: 900, icon: '⬡', col: '#f59e0b' },
 ];
 

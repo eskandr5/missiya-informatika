@@ -41,7 +41,7 @@ export default function ResultScreen({
         }}
       >
         <div style={{ fontSize: '3.5rem', marginBottom: '.75rem' }} className="pop">
-          {passed ? (isCheckpoint ? '🏁' : '🎯') : '🔁'}
+          {passed ? (isCheckpoint ? '⊙' : '→') : '↻'}
         </div>
 
         <h2
@@ -103,7 +103,7 @@ export default function ResultScreen({
           }}
         >
           {passed ? (
-            <span className="text-green-300">✓ Минимальный порог {stage.passingScore}% выполнен</span>
+            <span className="text-green-600 font-semibold">✓ مستوى كافٍ: {stage.passingScore}% تم تحقيقه</span>
           ) : (
             <span className="text-red-300">
               Ваш результат: {score}% · Нужно: {stage.passingScore}%
