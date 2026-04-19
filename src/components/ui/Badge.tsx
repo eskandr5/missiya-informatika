@@ -4,9 +4,10 @@ interface Props {
   badge: BadgeDef;
   earned: boolean;
   size?: 'sm' | 'md';
+  showName?: boolean;
 }
 
-export default function Badge({ badge, earned, size = 'md' }: Props) {
+export default function Badge({ badge, earned, size = 'md', showName = true }: Props) {
   const sizeClass = size === 'sm' ? 'w-10 h-10 text-xl' : 'w-16 h-16 text-3xl';
 
   return (
@@ -21,7 +22,7 @@ export default function Badge({ badge, earned, size = 'md' }: Props) {
       >
         {badge.icon}
       </div>
-      {badge.name && (
+      {showName && badge.name && (
         <span className="badge-name text-xs text-slate-500 text-center">{badge.name}</span>
       )}
     </div>
