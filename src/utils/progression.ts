@@ -4,7 +4,7 @@ import type { Progress } from '../types/progress';
 
 // Temporary developer override for QA/review sessions.
 // Set to false to restore normal progression gates.
-const UNLOCK_ALL_FOR_TESTING = false;
+const UNLOCK_ALL_FOR_TESTING = true;
 
 export function getCheckpointAfterModule(moduleId: number): Checkpoint | undefined {
   return CHECKPOINTS.find(checkpoint => checkpoint.afterModuleId === moduleId);
