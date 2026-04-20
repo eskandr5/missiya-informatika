@@ -28,7 +28,7 @@ export default function ProfileScreen({ progress, onBack, onReset }: Props) {
     <div className="app-page min-h-screen bg-grid" style={{ paddingBottom: '3rem' }}>
       <div className="app-shell app-shell--compact" style={{ maxWidth: '680px', margin: '0 auto', paddingBlock: '2rem' }}>
         <div className="profile-screen__header flex items-center justify-between gap-3 mb-6">
-          <button onClick={onBack} className="btn-g text-sm px-3 py-1.5">← Реестр</button>
+          <button onClick={onBack} className="btn-g text-sm px-3 py-1.5">← К разделам</button>
           <h2 className="hf text-white font-bold text-xl">Профиль</h2>
           <div className="profile-screen__header-spacer" />
         </div>
@@ -55,7 +55,7 @@ export default function ProfileScreen({ progress, onBack, onReset }: Props) {
               letterSpacing: '.04em',
             }}
           >
-            OPERATOR.RECORD // RESTORED={restoredPct}% · ACTIVE_SECTIONS={startedModules}
+            ПРОФИЛЬ // ОСВОЕНО={restoredPct}% · АКТИВНЫЕ_РАЗДЕЛЫ={startedModules}
           </p>
           {nextRank ? (
             <div>
@@ -73,7 +73,7 @@ export default function ProfileScreen({ progress, onBack, onReset }: Props) {
         {/* Stats */}
         <div className="profile-screen__stats grid gap-3 mb-4 fu d2">
           {[
-            { val: progress.completedMissions.length, sub: 'Миссий' },
+            { val: progress.completedMissions.length, sub: 'Заданий' },
             { val: progress.badges.length,            sub: 'Знаков' },
             { val: startedModules,                    sub: 'Модулей' },
           ].map((s, i) => (

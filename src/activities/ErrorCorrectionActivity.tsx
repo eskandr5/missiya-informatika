@@ -11,9 +11,9 @@ interface ResultEntry { isRight: boolean }
 
 export default function ErrorCorrectionActivity({ data, onComplete }: Props) {
   const { context, statements } = data;
-  const [answers,   setAnswers]   = useState<Record<string, UserAnswer>>({});
+  const [answers, setAnswers] = useState<Record<string, UserAnswer>>({});
   const [submitted, setSubmitted] = useState(false);
-  const [results,   setResults]   = useState<Record<string, ResultEntry>>({});
+  const [results, setResults] = useState<Record<string, ResultEntry>>({});
   const allAnswered = Object.keys(answers).length === statements.length;
 
   const mark = (id: string, val: UserAnswer) => {
@@ -26,7 +26,7 @@ export default function ErrorCorrectionActivity({ data, onComplete }: Props) {
     const r: Record<string, ResultEntry> = {};
     statements.forEach(s => {
       const userSaysOk = answers[s.id] === 'correct';
-      const isRight    = userSaysOk === s.isCorrect;
+      const isRight = userSaysOk === s.isCorrect;
       r[s.id] = { isRight };
       if (isRight) c++;
     });
@@ -41,10 +41,10 @@ export default function ErrorCorrectionActivity({ data, onComplete }: Props) {
       {context && <p className="text-slate-400 text-sm mb-4 px-1">{context}</p>}
       <div className="space-y-3 mb-4">
         {statements.map(stmt => {
-          const ans     = answers[stmt.id];
-          const res     = results[stmt.id];
+          const ans = answers[stmt.id];
+          const res = results[stmt.id];
           const correct = submitted && res?.isRight;
-          const wrong   = submitted && res && !res.isRight;
+          const wrong = submitted && res && !res.isRight;
           return (
             <div
               key={stmt.id}
@@ -57,8 +57,8 @@ export default function ErrorCorrectionActivity({ data, onComplete }: Props) {
               <p className="text-slate-200 text-sm mb-3 leading-relaxed">«{stmt.text}»</p>
               <div className="flex gap-2 mb-2">
                 {(['correct', 'wrong'] as UserAnswer[]).map(val => {
-                  const label    = val === 'correct' ? '✓ صحيح' : '✗ خطأ';
-                  const active   = ans === val;
+                  const label = val === 'correct' ? '✓ صحيح' : '✗ خطأ';
+                  const active = ans === val;
                   const btnColor = val === 'correct' ? 'var(--success-color)' : 'var(--danger-color)';
                   return (
                     <button

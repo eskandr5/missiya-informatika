@@ -320,6 +320,7 @@
 
 /* ── Responsive adjustments ────────────────────────────– */
 @media (max-width: 768px) {
+
   .landing-hero__title,
   .module-screen__title {
     font-size: 1.8rem;

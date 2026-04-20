@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import './styles/global.css';
 
 import { useProgress } from './hooks/useProgress';
 import { MODULES } from './data/modules';
 import { getCheckpointAfterModule } from './utils/progression';
 
-import NavBar from './components/ui/NavBar';
+import ModernNavBar from './components/ui/ModernNavBar';
 import LandingScreen from './screens/LandingScreen';
-import DashboardScreen from './screens/DashboardScreen';
+import DashboardScreenNew from './screens/DashboardScreenNew';
 import ModuleScreen from './screens/ModuleScreen';
 import MissionScreen from './screens/MissionScreen';
 import ResultScreen from './screens/ResultScreen';
@@ -58,8 +57,11 @@ export default function App() {
     setActiveStage(null);
   };
 
-  const goProfile = () => setView('profile');
-  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  const navView = useMemo(() => {
+    if (view === 'profile') return 'profile';
+    if (view === 'module' || view === 'mission' || view === 'result') return 'modules';
+    return 'dashboard';
+  }, [view]);
 
   const handleStageFinish = useCallback((score: number) => {
     if (!activeStage || !activeMod) return;
@@ -144,77 +146,85 @@ export default function App() {
   }, [lastResult]);
 
   return (
-    <>
-      {view !== 'landing' && (
-        <NavBar
-          xp={progress.xp}
+    <div className="app-container">
+      <div className="app-main">
+        <ModernNavBar
+          progress={progress}
+          currentView={navView}
           theme={theme}
-          onHome={goHome}
-          onProfile={goProfile}
-          onToggleTheme={toggleTheme}
-        />
-      )}
-
-      {view === 'landing' && (
-        <LandingScreen progress={progress} onStart={() => setView('dashboard')} />
-      )}
-
-      {view === 'dashboard' && (
-        <DashboardScreen
-          progress={progress}
-          onSelectModule={module => {
-            setActiveMod(module);
-            setView('module');
+          onNavigateDashboard={goHome}
+          onNavigateModules={() => {
+            if (activeMod) setView('module');
+            else setView('dashboard');
           }}
+          onNavigateProfile={() => setView('profile')}
+          onThemeChange={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
         />
-      )}
 
-      {view === 'module' && activeMod && (
-        <ModuleScreen
-          module={activeMod}
-          progress={progress}
-          onSelectStage={stage => {
-            setActiveStage(stage);
-            setView('mission');
-          }}
-          onBack={goHome}
-        />
-      )}
+        <div className="app-content">
+          {view === 'landing' && (
+            <LandingScreen progress={progress} onStart={() => setView('dashboard')} />
+          )}
 
-      {view === 'mission' && activeStage && activeMod && (
-        <MissionScreen
-          stage={activeStage}
-          module={activeMod}
-          onFinish={handleStageFinish}
-          onBack={() => setView('module')}
-        />
-      )}
+          {view === 'dashboard' && (
+            <DashboardScreenNew
+              progress={progress}
+              onSelectModule={module => {
+                setActiveMod(module);
+                setView('module');
+              }}
+            />
+          )}
 
-      {view === 'result' && lastResult && (
-        <ResultScreen
-          score={lastResult.score}
-          stage={lastResult.stage}
-          module={lastResult.module}
-          passed={lastResult.passed}
-          xpEarned={lastResult.xpEarned}
-          badgeEarned={lastResult.badge}
-          onRetry={() => setView('mission')}
-          onNext={hasNext ? handleNext : null}
-          onModulePage={() => setView('module')}
-          onDashboard={goHome}
-        />
-      )}
+          {view === 'module' && activeMod && (
+            <ModuleScreen
+              module={activeMod}
+              progress={progress}
+              onSelectStage={stage => {
+                setActiveStage(stage);
+                setView('mission');
+              }}
+              onBack={goHome}
+            />
+          )}
 
-      {view === 'profile' && (
-        <ProfileScreen
-          progress={progress}
-          onBack={goHome}
-          onReset={() => {
-            reset();
-            goHome();
-          }}
-        />
-      )}
-    </>
+          {view === 'mission' && activeStage && activeMod && (
+            <MissionScreen
+              stage={activeStage}
+              module={activeMod}
+              onFinish={handleStageFinish}
+              onBack={() => setView('module')}
+            />
+          )}
+
+          {view === 'result' && lastResult && (
+            <ResultScreen
+              score={lastResult.score}
+              stage={lastResult.stage}
+              module={lastResult.module}
+              passed={lastResult.passed}
+              xpEarned={lastResult.xpEarned}
+              badgeEarned={lastResult.badge}
+              progress={progress}
+              onRetry={() => setView('mission')}
+              onNext={hasNext ? handleNext : null}
+              onModulePage={() => setView('module')}
+              onDashboard={goHome}
+            />
+          )}
+
+          {view === 'profile' && (
+            <ProfileScreen
+              progress={progress}
+              onBack={goHome}
+              onReset={() => {
+                reset();
+                goHome();
+              }}
+            />
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

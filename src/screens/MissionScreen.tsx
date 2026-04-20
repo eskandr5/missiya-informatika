@@ -132,7 +132,7 @@ export default function MissionScreen({ stage, module: mod, onFinish, onBack }: 
                   cursor: 'pointer',
                 }}
               >
-                {showEn ? 'RU+EN' : 'RU'}
+                {showEn ? 'РУС + EN' : 'РУС'}
               </button>
               <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-400">
                 <HiOutlineBolt aria-hidden="true" />
@@ -153,7 +153,7 @@ export default function MissionScreen({ stage, module: mod, onFinish, onBack }: 
                   className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
                   style={{ background: 'var(--accent-soft)', border: '1px solid var(--accent-ring)' }}
                 >
-                  {isCheckpoint ? <span>⊙</span> : mod.icon}
+                  {isCheckpoint ? <span>◎</span> : mod.icon}
                 </div>
                 <div>
                   <p className="text-xs text-blue-400 font-bold uppercase tracking-wider">
@@ -173,7 +173,7 @@ export default function MissionScreen({ stage, module: mod, onFinish, onBack }: 
                   letterSpacing: '.04em',
                 }}
               >
-                PROC.STATE // MODE={procedureLabel.toUpperCase()} · PASS_THRESHOLD={stage.passingScore}%
+                РЕЖИМ // ТИП={procedureLabel.toLocaleUpperCase('ru-RU')} · ПОРОГ={stage.passingScore}%
               </p>
               <p className="text-slate-300 leading-relaxed">{stage.briefing}</p>
 
@@ -183,7 +183,7 @@ export default function MissionScreen({ stage, module: mod, onFinish, onBack }: 
                   style={{ background: 'var(--surface-soft)', border: '1px solid var(--border-color)' }}
                 >
                   <p className="text-xs text-blue-400 font-bold uppercase tracking-wider mb-1">Формат</p>
-                  <p className="text-slate-300 text-sm font-semibold">{mod.openingStyle ?? 'Стандартный ввод'}</p>
+                  <p className="text-slate-300 text-sm font-semibold">{mod.openingStyle ?? 'Стандартный режим'}</p>
                 </div>
                 <div
                   className="rounded-xl p-4"
@@ -261,7 +261,7 @@ export default function MissionScreen({ stage, module: mod, onFinish, onBack }: 
             </div>
             <div className="mission-screen__step-nav">
               <button onClick={prevStep} className="btn-g">← Назад</button>
-              <button onClick={nextStep} className="btn-p">{isCheckpoint ? 'К узлу →' : 'К протоколу →'}</button>
+              <button onClick={nextStep} className="btn-p">{isCheckpoint ? 'К контрольной точке →' : 'К заданию →'}</button>
             </div>
           </div>
         )}
@@ -278,7 +278,7 @@ export default function MissionScreen({ stage, module: mod, onFinish, onBack }: 
                   <p className="text-slate-500 text-sm mt-1">{mod.moduleFeel}</p>
                 )}
               </div>
-              <button onClick={prevStep} className="btn-g text-sm px-3 py-1.5">← Формулировки</button>
+              <button onClick={prevStep} className="btn-g text-sm px-3 py-1.5">← К формулировкам</button>
             </div>
             <div className="card p-5" style={{ border: '1px solid var(--border-color)' }}>
               {ActivityComp && stage.activityData ? (
@@ -289,7 +289,7 @@ export default function MissionScreen({ stage, module: mod, onFinish, onBack }: 
                 />
               ) : (
                 <div className="text-center py-14">
-                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔧</div>
+                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>◌</div>
                   <h4 className="hf text-white font-bold text-lg mb-2">Скоро</h4>
                   <p className="text-slate-500 text-sm">Это задание появится в следующем обновлении.</p>
                   <div className="tag mt-4" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>Скоро</div>

@@ -17,7 +17,6 @@ import {
   isMissionUnlocked,
 } from '../utils/progression';
 import { DL } from '../utils/helpers';
-import ProgressBar from '../components/ui/ProgressBar';
 import VocabCard from '../components/mission/VocabCard';
 import PhraseRow from '../components/mission/PhraseRow';
 import type { Module, ProgressionStage } from '../types/content';
@@ -42,130 +41,176 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
   const [tab, setTab] = useState<Tab>('missions');
   const [showEn, setShowEn] = useState(false);
 
-  const doneCount = mod.missions.filter(m => progress.completedMissions.includes(m.id)).length;
+  const doneCount = mod.missions.filter(mission => progress.completedMissions.includes(mission.id)).length;
   const pct = Math.round((doneCount / mod.missions.length) * 100);
   const lockedCount = mod.missions.length - doneCount;
+  const availableCount = mod.missions.filter(
+    mission => mission.implemented && isMissionUnlocked(mission, mod, progress, MODULES),
+  ).length;
+
   const checkpoint = getCheckpointAfterModule(mod.id);
   const checkpointDone = checkpoint ? progress.completedCheckpoints.includes(checkpoint.id) : false;
   const checkpointScore = checkpoint ? (progress.checkpointScores[checkpoint.id] ?? 0) : 0;
   const checkpointUnlocked = checkpoint ? isCheckpointUnlocked(checkpoint, progress, MODULES) : false;
 
   return (
-    <div className="app-page module-screen min-h-screen bg-grid" style={{ paddingBottom: '3rem' }}>
-      <header className="module-screen__header">
-        <div className="app-shell app-shell--narrow app-shell--flush" style={{ maxWidth: '900px', margin: '0 auto' }}>
-          <button type="button" onClick={onBack} className="btn-g text-sm module-screen__back">
-            <HiOutlineArrowLeft aria-hidden="true" />
-            <span>{ARCHIVE_COPY.dashboardTitle}</span>
-          </button>
+    <div className="app-page module-detail">
+      <div className="module-detail__toolbar">
+        <button type="button" onClick={onBack} className="btn btn-secondary module-detail__toolbar-btn">
+          <HiOutlineArrowLeft aria-hidden="true" />
+          <span>{ARCHIVE_COPY.dashboardTitle}</span>
+        </button>
 
-          <div className="module-screen__hero-shell">
-            <div className="module-screen__hero">
-              <div
-                className="module-screen__hero-icon"
-                style={{ background: `${mod.accent}15`, border: `1px solid ${mod.accent}35` }}
-              >
-                {mod.icon}
-              </div>
+        <button
+          type="button"
+          onClick={() => setShowEn(value => !value)}
+          className={`btn ${showEn ? 'btn-primary' : 'btn-ghost'} module-detail__toolbar-btn`}
+        >
+          <HiOutlineLanguage aria-hidden="true" />
+          <span>{showEn ? 'РУС + EN' : 'РУС'}</span>
+        </button>
+      </div>
 
-              <div className="module-screen__hero-main">
-                <div className="module-screen__hero-top">
-                  <div className="module-screen__hero-tags">
-                    <span className="tag" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
-                      {ARCHIVE_COPY.moduleLabel} {mod.id}
-                    </span>
-                    {mod.chapter && (
-                      <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)' }}>
-                        {mod.chapter}
-                      </span>
-                    )}
-                    {doneCount === mod.missions.length && (
-                      <span
-                        className="tag inline-flex items-center gap-1"
-                        style={{ background: 'var(--success-soft)', color: 'var(--success-color)' }}
-                      >
-                        <HiOutlineCheck aria-hidden="true" />
-                        Завершён
-                      </span>
-                    )}
-                  </div>
+      <section
+        className="module-detail__hero"
+        style={{ background: `linear-gradient(135deg, ${mod.accent} 0%, #1e3a8a 62%, #f59e0b 100%)` }}
+      >
+        <div className="module-detail__hero-main">
+          <div className="module-detail__pill-row">
+            <span className="module-detail__pill module-detail__pill--light">
+              {ARCHIVE_COPY.moduleLabel} {mod.id}
+            </span>
+            {mod.chapter && (
+              <span className="module-detail__pill module-detail__pill--soft">{mod.chapter}</span>
+            )}
+            {doneCount === mod.missions.length && (
+              <span className="module-detail__pill module-detail__pill--success">
+                <HiOutlineCheck aria-hidden="true" />
+                Завершён
+              </span>
+            )}
+          </div>
 
-                  <button
-                    type="button"
-                    onClick={() => setShowEn(value => !value)}
-                    className={`module-screen__lang-toggle${showEn ? ' is-active' : ''}`}
-                  >
-                    <HiOutlineLanguage aria-hidden="true" />
-                    <span>{showEn ? 'RU + EN' : 'RU'}</span>
-                  </button>
-                </div>
-
-                <h1 className="module-screen__title hf">{mod.title}</h1>
-                <p className="module-screen__subtitle">{mod.subtitle}</p>
-                <p className="module-screen__description">{mod.desc}</p>
-                <p className="module-screen__status-line">
-                  SECTION.STATUS // RESTORED={pct}% · OPEN_PROTOCOLS={lockedCount}
-                </p>
-              </div>
+          <div className="module-detail__headline">
+            <div className="module-detail__hero-icon" aria-hidden="true">
+              {mod.icon}
             </div>
 
-            {(mod.moduleIdentity || mod.openingStyle || mod.specialMechanic) && (
-              <section className="module-screen__info-card card">
-                <div className="module-screen__info-grid">
-                  <div className="module-screen__info-item">
-                    <p className="module-screen__info-label">Тип модуля</p>
-                    <p className="module-screen__info-value">{mod.moduleIdentity}</p>
-                  </div>
-                  <div className="module-screen__info-item">
-                    <p className="module-screen__info-label">Начало</p>
-                    <p className="module-screen__info-value">{mod.openingStyle}</p>
-                  </div>
-                  <div className="module-screen__info-item">
-                    <p className="module-screen__info-label">Формат работы</p>
-                    <p className="module-screen__info-value">{mod.specialMechanic}</p>
-                  </div>
-                  <div className="module-screen__info-item">
-                    <p className="module-screen__info-label">Стиль</p>
-                    <p className="module-screen__info-value">{mod.moduleFeel}</p>
-                  </div>
-                </div>
-
-                <div className="module-screen__info-tags">
-                  {mod.rewardType && (
-                    <span className="tag" style={{ background: 'var(--success-soft)', color: 'var(--success-color)' }}>
-                      Награда: {mod.rewardType}
-                    </span>
-                  )}
-                  {mod.videoMode && (
-                    <span className="tag" style={{ background: 'var(--cyan-soft)', color: 'var(--accent)' }}>
-                      Видео: {mod.videoMode}
-                    </span>
-                  )}
-                </div>
-              </section>
-            )}
-
-            <div className="module-screen__progress">
-              <div className="module-screen__progress-head">
-                <span>Прогресс модуля</span>
-                <span className="module-screen__progress-value hf">
-                  {doneCount}/{mod.missions.length} {ARCHIVE_COPY.missionLabelPlural} · {pct}%
-                </span>
-              </div>
-              <ProgressBar value={doneCount} max={mod.missions.length} color={mod.accent} />
+            <div>
+              <h1 className="module-detail__title">{mod.title}</h1>
+              <p className="module-detail__subtitle">{mod.subtitle}</p>
             </div>
           </div>
-        </div>
-      </header>
 
-      <div className="app-shell app-shell--narrow module-screen__content" style={{ maxWidth: '900px', margin: '0 auto' }}>
-        <div className="module-screen__tabs">
+          <p className="module-detail__description">{mod.desc}</p>
+          <p className="module-detail__status-line">
+            СТАТУС_РАЗДЕЛА // ОСВОЕНО={pct}% · ОСТАЛОСЬ_ЗАДАНИЙ={lockedCount}
+          </p>
+        </div>
+
+        <aside className="module-detail__hero-side">
+          <div className="module-detail__hero-card">
+            <p className="module-detail__hero-card-label">Прогресс раздела</p>
+            <div className="module-detail__hero-card-value">{pct}%</div>
+            <p className="module-detail__hero-card-copy">
+              {doneCount} из {mod.missions.length} {ARCHIVE_COPY.missionLabelPlural} уже завершены.
+            </p>
+            <div className="module-card__progress-bar">
+              <div className="module-card__progress-fill" style={{ width: `${pct}%` }} />
+            </div>
+          </div>
+
+          {checkpoint && (
+            <div className="module-detail__hero-card module-detail__hero-card--secondary">
+              <p className="module-detail__hero-card-label">{ARCHIVE_COPY.checkpointLabel}</p>
+              <div className="module-detail__hero-card-value">
+                {checkpointDone ? `${checkpointScore}%` : checkpointUnlocked ? 'Открыт' : 'Закрыт'}
+              </div>
+              <p className="module-detail__hero-card-copy">
+                {checkpointDone
+                  ? 'Контрольная точка уже зафиксирована в вашем прогрессе.'
+                  : checkpointUnlocked
+                    ? 'Узел готов к прохождению после завершения основных миссий.'
+                    : `Сначала завершите задания до контрольной точки после модуля ${checkpoint.afterModuleId}.`}
+              </p>
+            </div>
+          )}
+        </aside>
+      </section>
+
+      <div className="grid grid--4 module-detail__stats">
+        <div className="stats-card">
+          <div className="stats-card__icon">{mod.icon}</div>
+          <div className="stats-card__value">{doneCount}</div>
+          <div className="stats-card__label">Протоколов закрыто</div>
+        </div>
+
+        <div className="stats-card">
+          <div className="stats-card__icon">⚡</div>
+          <div className="stats-card__value">{availableCount}</div>
+          <div className="stats-card__label">Доступно сейчас</div>
+        </div>
+
+        <div className="stats-card">
+          <div className="stats-card__icon">🏁</div>
+          <div className="stats-card__value">{mod.xpReward}</div>
+          <div className="stats-card__label">XP за раздел</div>
+        </div>
+
+        <div className="stats-card">
+          <div className="stats-card__icon">📘</div>
+          <div className="stats-card__value">{mod.vocab.length}</div>
+          <div className="stats-card__label">Терминов в подборке</div>
+        </div>
+      </div>
+
+      {(mod.moduleIdentity || mod.openingStyle || mod.specialMechanic) && (
+        <section className="module-detail__overview">
+          <div className="module-detail__overview-grid">
+            <div className="module-detail__overview-item">
+              <p className="module-detail__overview-label">Тип модуля</p>
+              <p className="module-detail__overview-value">{mod.moduleIdentity}</p>
+            </div>
+
+            <div className="module-detail__overview-item">
+              <p className="module-detail__overview-label">Старт сценария</p>
+              <p className="module-detail__overview-value">{mod.openingStyle}</p>
+            </div>
+
+            <div className="module-detail__overview-item">
+              <p className="module-detail__overview-label">Механика</p>
+              <p className="module-detail__overview-value">{mod.specialMechanic}</p>
+            </div>
+
+            <div className="module-detail__overview-item">
+              <p className="module-detail__overview-label">Тон модуля</p>
+              <p className="module-detail__overview-value">{mod.moduleFeel}</p>
+            </div>
+          </div>
+
+          <div className="module-detail__pill-row">
+            {mod.rewardType && (
+              <span className="module-detail__pill module-detail__pill--success">
+                Награда: {mod.rewardType}
+              </span>
+            )}
+            {mod.videoMode && (
+              <span className="module-detail__pill module-detail__pill--soft">
+                Видео: {mod.videoMode}
+              </span>
+            )}
+          </div>
+        </section>
+      )}
+
+      <section className="module-detail__workspace">
+        <div className="module-detail__tabs">
           {(['missions', 'vocab', 'phrases'] as Tab[]).map(tabName => (
             <button
               key={tabName}
               type="button"
               onClick={() => setTab(tabName)}
-              className={`module-screen__tab${tab === tabName ? ' is-active' : ''}`}
+              className={`module-detail__tab${tab === tabName ? ' is-active' : ''}`}
             >
               {TAB_LABELS[tabName]}
             </button>
@@ -173,57 +218,47 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
         </div>
 
         {tab === 'missions' && (
-          <div className="space-y-3 fu">
+          <div className="module-detail__list">
             {mod.missions.map((mission) => {
               const done = progress.completedMissions.includes(mission.id);
               const unlocked = isMissionUnlocked(mission, mod, progress, MODULES);
               const score = progress.missionScores[mission.id] ?? 0;
 
               return (
-                <div
+                <article
                   key={mission.id}
-                  className={`card module-screen__mission-card ${unlocked ? 'lift' : ''}`}
-                  style={{
-                    opacity: unlocked ? 1 : 0.56,
-                    border: `1px solid ${done ? 'var(--success-color)' : unlocked ? 'var(--border-accent-soft)' : 'var(--border-strong)'}`,
-                  }}
+                  className={`module-detail__stage-card${
+                    done ? ' is-complete' : unlocked ? ' is-open' : ' is-locked'
+                  }`}
                 >
-                  <div className="module-screen__mission-row">
-                    <div
-                      className="module-screen__mission-state"
-                      style={{
-                        background: done ? 'var(--success-soft)' : unlocked ? 'var(--accent-soft)' : 'var(--surface-contrast)',
-                        border: `1px solid ${done ? 'var(--success-color)' : unlocked ? 'var(--accent-ring)' : 'var(--border-strong)'}`,
-                      }}
-                    >
+                  <div className="module-detail__stage-main">
+                    <div className="module-detail__stage-index" aria-hidden="true">
                       {done ? (
-                        <HiOutlineCheck className="text-[1.05rem]" aria-hidden="true" />
+                        <HiOutlineCheck aria-hidden="true" />
                       ) : unlocked ? (
                         mission.num
                       ) : (
-                        <HiOutlineLockClosed className="text-[1rem]" aria-hidden="true" />
+                        <HiOutlineLockClosed aria-hidden="true" />
                       )}
                     </div>
 
-                    <div className="module-screen__mission-body">
-                      <h3 className="module-screen__mission-title hf">{mission.title}</h3>
-                      <div className="module-screen__mission-meta">
-                        <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)' }}>
+                    <div className="module-detail__stage-copy">
+                      <h3 className="module-detail__stage-title">{mission.title}</h3>
+                      <div className="module-detail__stage-meta">
+                        <span className="module-detail__stage-label">
                           {ARCHIVE_MISSION_TYPE_LABELS[mission.type] ?? mission.type.replace(/_/g, ' ')}
                         </span>
-                        <span className="module-screen__mission-xp">
+                        <span className="module-detail__stage-xp">
                           <HiOutlineBolt aria-hidden="true" />
                           {mission.xpReward} XP
                         </span>
                         {!mission.implemented && (
-                          <span className="tag" style={{ background: 'var(--accent-softer)', color: 'var(--accent)' }}>
-                            Недоступно
+                          <span className="module-detail__stage-label module-detail__stage-label--soft">
+                            Скоро
                           </span>
                         )}
                         {done && (
-                          <span className="module-screen__mission-score">
-                            Зафиксировано: {score}%
-                          </span>
+                          <span className="module-detail__stage-score">Результат: {score}%</span>
                         )}
                       </div>
                     </div>
@@ -232,58 +267,48 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
                       <button
                         type="button"
                         onClick={() => onSelectStage(mission)}
-                        className={`module-screen__mission-action ${done ? 'btn-s' : 'btn-p'}`}
+                        className={`btn ${done ? 'btn-secondary' : 'btn-primary'} module-detail__stage-action`}
                       >
                         {done ? 'Повторить' : 'Открыть'}
                       </button>
                     )}
                   </div>
-                </div>
+                </article>
               );
             })}
 
             {checkpoint && (
-              <div
-                className={`card module-screen__mission-card ${checkpointUnlocked ? 'lift' : ''}`}
-                style={{
-                  opacity: checkpointUnlocked ? 1 : 0.56,
-                  border: `1px solid ${checkpointDone ? 'var(--success-color)' : checkpointUnlocked ? 'var(--warning-color)' : 'var(--border-strong)'}`,
-                }}
+              <article
+                className={`module-detail__stage-card${
+                  checkpointDone ? ' is-complete' : checkpointUnlocked ? ' is-open' : ' is-locked'
+                }`}
               >
-                <div className="module-screen__mission-row">
-                  <div
-                    className="module-screen__mission-state"
-                    style={{
-                      background: checkpointDone ? 'var(--success-soft)' : checkpointUnlocked ? 'var(--warning-soft)' : 'var(--surface-contrast)',
-                      border: `1px solid ${checkpointDone ? 'var(--success-color)' : checkpointUnlocked ? 'var(--warning-color)' : 'var(--border-strong)'}`,
-                    }}
-                  >
+                <div className="module-detail__stage-main">
+                  <div className="module-detail__stage-index" aria-hidden="true">
                     {checkpointDone ? (
-                      <HiOutlineCheck className="text-[1.05rem]" aria-hidden="true" />
+                      <HiOutlineCheck aria-hidden="true" />
                     ) : checkpointUnlocked ? (
                       '◎'
                     ) : (
-                      <HiOutlineLockClosed className="text-[1rem]" aria-hidden="true" />
+                      <HiOutlineLockClosed aria-hidden="true" />
                     )}
                   </div>
 
-                  <div className="module-screen__mission-body">
-                    <h3 className="module-screen__mission-title hf">{checkpoint.title}</h3>
-                    <div className="module-screen__mission-meta">
-                      <span className="tag" style={{ background: 'var(--warning-soft)', color: 'var(--warning-color)' }}>
+                  <div className="module-detail__stage-copy">
+                    <h3 className="module-detail__stage-title">{checkpoint.title}</h3>
+                    <div className="module-detail__stage-meta">
+                      <span className="module-detail__stage-label module-detail__stage-label--warning">
                         {ARCHIVE_COPY.checkpointLabel}
                       </span>
-                      <span className="tag" style={{ background: 'var(--surface-strong)', color: 'var(--text-dim)' }}>
+                      <span className="module-detail__stage-label">
                         После модуля {checkpoint.afterModuleId}
                       </span>
-                      <span className="module-screen__mission-xp">
+                      <span className="module-detail__stage-xp">
                         <HiOutlineBolt aria-hidden="true" />
                         {checkpoint.xpReward} XP
                       </span>
                       {checkpointDone && (
-                        <span className="module-screen__mission-score">
-                          Зафиксировано: {checkpointScore}%
-                        </span>
+                        <span className="module-detail__stage-score">Результат: {checkpointScore}%</span>
                       )}
                     </div>
                   </div>
@@ -292,23 +317,24 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
                     <button
                       type="button"
                       onClick={() => onSelectStage(checkpoint)}
-                      className={`module-screen__mission-action ${checkpointDone ? 'btn-s' : 'btn-p'}`}
+                      className={`btn ${checkpointDone ? 'btn-secondary' : 'btn-primary'} module-detail__stage-action`}
                     >
-                      {checkpointDone ? 'Повторить' : 'Открыть контрольную точку'}
+                      {checkpointDone ? 'Повторить' : 'Открыть узел'}
                     </button>
                   )}
                 </div>
-              </div>
+              </article>
             )}
           </div>
         )}
 
         {tab === 'vocab' && (
-          <div className="fu">
-            <p className="module-screen__library-copy">
-              {mod.vocab.length} терминов · Выберите карточку для просмотра определения
+          <div className="module-detail__library">
+            <p className="module-detail__library-copy">
+              {mod.vocab.length} терминов. Нажмите на карточку, чтобы открыть определение, а при
+              необходимости включите английские подсказки.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid--3 module-detail__library-grid">
               {mod.vocab.map((word, index) => (
                 <VocabCard key={word.id} word={word} showEn={showEn} delay={DL[index] ?? ''} />
               ))}
@@ -317,16 +343,19 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
         )}
 
         {tab === 'phrases' && (
-          <div className="fu space-y-2">
-            <p className="module-screen__library-copy">
-              Короткие формулировки по теме модуля. Русская фраза остаётся основной, английская версия помогает ориентироваться в терминах.
+          <div className="module-detail__library">
+            <p className="module-detail__library-copy">
+              Короткие формулировки помогают быстро закрепить язык раздела. Русская версия остаётся
+              основной, а английская включается как дополнительная опора.
             </p>
-            {mod.phrases.map((phrase, index) => (
-              <PhraseRow key={index} phrase={phrase} showEn={showEn} delay={DL[index] ?? ''} />
-            ))}
+            <div className="module-detail__phrases">
+              {mod.phrases.map((phrase, index) => (
+                <PhraseRow key={index} phrase={phrase} showEn={showEn} delay={DL[index] ?? ''} />
+              ))}
+            </div>
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }
