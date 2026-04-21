@@ -5,6 +5,7 @@ import {
   HiOutlineCheckCircle,
   HiOutlineShieldCheck,
 } from 'react-icons/hi2';
+
 import { MODULES } from '../data/modules';
 import type { Module } from '../types/content';
 import type { Progress } from '../types/progress';
@@ -14,23 +15,6 @@ interface Props {
   progress: Progress;
   onSelectModule: (module: Module) => void;
 }
-
-const MODULE_COLORS = [
-  '#5b94f6',
-  '#ffb228',
-  '#9b6cf0',
-  '#37c59a',
-  '#e75aa5',
-  '#32bad7',
-  '#6b72f2',
-  '#36c5bd',
-  '#ff8a39',
-  '#9ddb34',
-  '#d95af1',
-  '#38aaf0',
-];
-
-const MODULE_ICONS = ['🔧', '🎯', '⚡'] as const;
 
 export default function DashboardScreenNew({ progress, onSelectModule }: Props) {
   const unlockedModules = MODULES.filter(module => isModuleUnlocked(module, progress, MODULES));
@@ -130,12 +114,10 @@ export default function DashboardScreenNew({ progress, onSelectModule }: Props) 
         </div>
 
         <div className="grid grid--3 dashboard-latest__grid">
-          {MODULES.map((module, idx) => {
+          {MODULES.map((module) => {
             const unlocked = isModuleUnlocked(module, progress, MODULES);
             const completed = module.missions.every(m => progress.completedMissions.includes(m.id));
             const done = module.missions.filter(m => progress.completedMissions.includes(m.id)).length;
-            const color = MODULE_COLORS[idx % MODULE_COLORS.length];
-            const visual = MODULE_ICONS[idx % MODULE_ICONS.length];
             const isActive = module.id === activeModule.id;
 
             return (
@@ -154,9 +136,14 @@ export default function DashboardScreenNew({ progress, onSelectModule }: Props) 
               >
                 <div
                   className="module-card__image"
-                  style={{ background: `linear-gradient(135deg, ${color} 0%, ${color}dd 100%)` }}
+                  style={{
+                    backgroundColor: module.accent,
+                    backgroundImage: module.coverImage ? `url(${module.coverImage})` : undefined,
+                    backgroundPosition: module.coverPosition ?? 'center',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'cover',
+                  }}
                 >
-                  <div style={{ fontSize: '3.4rem', zIndex: 2 }}>{visual}</div>
                   <div className="module-card__number">{String(module.id).padStart(2, '0')}</div>
 
                   {completed && (
