@@ -1,10 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   HiOutlineArrowLeft,
   HiOutlineBolt,
   HiOutlineCheck,
+  HiOutlineCheckCircle,
+  HiOutlineChevronLeft,
+  HiOutlineChevronRight,
   HiOutlineLanguage,
   HiOutlineLockClosed,
+  HiOutlineQueueList,
+  HiOutlineViewColumns,
 } from 'react-icons/hi2';
 import { MODULES } from '../data/modules';
 import {
@@ -17,8 +22,11 @@ import {
   isMissionUnlocked,
 } from '../utils/progression';
 import { DL } from '../utils/helpers';
+import { useRussianSpeech } from '../hooks/useRussianSpeech';
 import VocabCard from '../components/mission/VocabCard';
+import VocabListItem from '../components/mission/VocabListItem';
 import PhraseRow from '../components/mission/PhraseRow';
+import AudioButton from '../components/ui/AudioButton';
 import type { Module, ProgressionStage } from '../types/content';
 import type { Progress } from '../types/progress';
 
@@ -30,6 +38,7 @@ interface Props {
 }
 
 type Tab = 'missions' | 'vocab' | 'phrases';
+type VocabView = 'cards' | 'list';
 
 const TAB_LABELS: Record<Tab, string> = {
   missions: 'Протоколы',
@@ -40,6 +49,11 @@ const TAB_LABELS: Record<Tab, string> = {
 export default function ModuleScreen({ module: mod, progress, onSelectStage, onBack }: Props) {
   const [tab, setTab] = useState<Tab>('missions');
   const [showEn, setShowEn] = useState(false);
+  const [vocabView, setVocabView] = useState<VocabView>('cards');
+  const [vocabQuery, setVocabQuery] = useState('');
+  const [revealedWords, setRevealedWords] = useState<string[]>([]);
+  const [reviewedWords, setReviewedWords] = useState<string[]>([]);
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
   const doneCount = mod.missions.filter(mission => progress.completedMissions.includes(mission.id)).length;
   const pct = Math.round((doneCount / mod.missions.length) * 100);
@@ -53,6 +67,61 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
   const checkpointScore = checkpoint ? (progress.checkpointScores[checkpoint.id] ?? 0) : 0;
   const checkpointUnlocked = checkpoint ? isCheckpointUnlocked(checkpoint, progress, MODULES) : false;
 
+  const normalizedQuery = vocabQuery.trim().toLowerCase();
+  const filteredWords = mod.vocab.filter((word) => {
+    if (!normalizedQuery) return true;
+    return [word.ru, word.en, word.def].some(value => value.toLowerCase().includes(normalizedQuery));
+  });
+
+  useEffect(() => {
+    if (filteredWords.length === 0) {
+      setCurrentWordIndex(0);
+      return;
+    }
+
+    if (currentWordIndex > filteredWords.length - 1) {
+      setCurrentWordIndex(filteredWords.length - 1);
+    }
+  }, [currentWordIndex, filteredWords]);
+
+  const currentWord = filteredWords[currentWordIndex] ?? null;
+  const isCurrentRevealed = currentWord ? revealedWords.includes(currentWord.id) : false;
+  const isCurrentCompleted = currentWord ? reviewedWords.includes(currentWord.id) : false;
+  const reviewedCount = reviewedWords.filter(wordId => mod.vocab.some(word => word.id === wordId)).length;
+  const reviewedPct = mod.vocab.length > 0 ? Math.round((reviewedCount / mod.vocab.length) * 100) : 0;
+  const { isPlaying, isSupported, togglePlayback } = useRussianSpeech(
+    `vocab-bank:${currentWord?.id ?? 'empty'}`,
+    currentWord?.ru ?? '',
+  );
+
+  const toggleWord = (wordId: string) => {
+    setRevealedWords((current) => (
+      current.includes(wordId)
+        ? current.filter(id => id !== wordId)
+        : [...current, wordId]
+    ));
+  };
+
+  const toggleCompleted = (wordId: string) => {
+    setReviewedWords((current) => (
+      current.includes(wordId)
+        ? current.filter(id => id !== wordId)
+        : [...current, wordId]
+    ));
+  };
+
+  const goPrevWord = () => {
+    setCurrentWordIndex((current) => (
+      filteredWords.length === 0 ? 0 : (current - 1 + filteredWords.length) % filteredWords.length
+    ));
+  };
+
+  const goNextWord = () => {
+    setCurrentWordIndex((current) => (
+      filteredWords.length === 0 ? 0 : (current + 1) % filteredWords.length
+    ));
+  };
+
   return (
     <div className="app-page module-detail">
       <div className="module-detail__toolbar">
@@ -61,14 +130,16 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
           <span>{ARCHIVE_COPY.dashboardTitle}</span>
         </button>
 
-        <button
-          type="button"
-          onClick={() => setShowEn(value => !value)}
-          className={`btn ${showEn ? 'btn-primary' : 'btn-ghost'} module-detail__toolbar-btn`}
-        >
-          <HiOutlineLanguage aria-hidden="true" />
-          <span>{showEn ? 'РУС + EN' : 'РУС'}</span>
-        </button>
+        {tab === 'phrases' && (
+          <button
+            type="button"
+            onClick={() => setShowEn(value => !value)}
+            className={`btn ${showEn ? 'btn-primary' : 'btn-ghost'} module-detail__toolbar-btn`}
+          >
+            <HiOutlineLanguage aria-hidden="true" />
+            <span>{showEn ? 'РУС + EN' : 'РУС'}</span>
+          </button>
+        )}
       </div>
 
       <section
@@ -288,7 +359,7 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
                     {checkpointDone ? (
                       <HiOutlineCheck aria-hidden="true" />
                     ) : checkpointUnlocked ? (
-                      '◎'
+                      '◍'
                     ) : (
                       <HiOutlineLockClosed aria-hidden="true" />
                     )}
@@ -329,16 +400,146 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
         )}
 
         {tab === 'vocab' && (
-          <div className="module-detail__library">
-            <p className="module-detail__library-copy">
-              {mod.vocab.length} терминов. Нажмите на карточку, чтобы открыть определение, а при
-              необходимости включите английские подсказки.
-            </p>
-            <div className="grid grid--3 module-detail__library-grid">
-              {mod.vocab.map((word, index) => (
-                <VocabCard key={word.id} word={word} showEn={showEn} delay={DL[index] ?? ''} />
-              ))}
+          <div className="module-detail__library vocab-bank">
+            <div className="vocab-bank__top">
+              <div className="vocab-bank__title-block">
+                <p className="vocab-bank__eyebrow">Словарный банк</p>
+                <h2 className="vocab-bank__title">Термины и понятия</h2>
+              </div>
+
+              <div className="vocab-bank__view-switch" role="tablist" aria-label="Режим отображения словаря">
+                <button
+                  type="button"
+                  onClick={() => setVocabView('cards')}
+                  className={`vocab-bank__view-btn${vocabView === 'cards' ? ' is-active' : ''}`}
+                >
+                  <HiOutlineViewColumns aria-hidden="true" />
+                  <span>Карточки</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setVocabView('list')}
+                  className={`vocab-bank__view-btn${vocabView === 'list' ? ' is-active' : ''}`}
+                >
+                  <HiOutlineQueueList aria-hidden="true" />
+                  <span>Список</span>
+                </button>
+              </div>
             </div>
+
+            <div className="vocab-bank__progress-card">
+              <div className="vocab-bank__progress-head">
+                <span>Изучено</span>
+                <strong>{reviewedCount} / {mod.vocab.length}</strong>
+                <em>{reviewedPct}%</em>
+              </div>
+              <div className="vocab-bank__progress-track" aria-hidden="true">
+                <span className="vocab-bank__progress-fill" style={{ width: `${reviewedPct}%` }} />
+              </div>
+            </div>
+
+            <label className="vocab-bank__search">
+              <span className="vocab-bank__search-label">Поиск</span>
+              <input
+                type="search"
+                value={vocabQuery}
+                onChange={(event) => setVocabQuery(event.target.value)}
+                placeholder="Найти термин..."
+                aria-label="Найти термин"
+              />
+            </label>
+
+            {filteredWords.length > 0 && vocabView === 'cards' && currentWord && (
+              <>
+                <div className="vocab-bank__carousel-head">
+                  <div className="vocab-bank__dots" aria-hidden="true">
+                    {filteredWords.map((word, index) => (
+                      <button
+                        key={word.id}
+                        type="button"
+                        className={`vocab-bank__dot${index === currentWordIndex ? ' is-active' : ''}`}
+                        onClick={() => setCurrentWordIndex(index)}
+                      />
+                    ))}
+                  </div>
+                  <span className="vocab-bank__counter">
+                    {currentWordIndex + 1} / {filteredWords.length}
+                  </span>
+                </div>
+
+                <div className="vocab-bank__single-card">
+                  <VocabCard
+                    key={currentWord.id}
+                    word={currentWord}
+                    isRevealed={isCurrentRevealed}
+                    onToggle={() => toggleWord(currentWord.id)}
+                    categoryLabel={mod.chapter ?? 'Базовые понятия'}
+                  />
+                </div>
+
+                <div className="vocab-bank__controls">
+                  <button type="button" className="vocab-bank__icon-btn" onClick={goPrevWord} aria-label="Предыдущее слово">
+                    <HiOutlineChevronLeft aria-hidden="true" />
+                  </button>
+
+                  <button
+                    type="button"
+                    className="vocab-bank__flip-btn"
+                    onClick={() => toggleWord(currentWord.id)}
+                  >
+                    {isCurrentRevealed ? '← Термин' : 'Перевод →'}
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`vocab-bank__icon-btn vocab-bank__icon-btn--complete${isCurrentCompleted ? ' is-active' : ''}`}
+                    onClick={() => toggleCompleted(currentWord.id)}
+                    aria-pressed={isCurrentCompleted}
+                    aria-label={isCurrentCompleted ? 'Снять отметку изучено' : 'Отметить изученным'}
+                  >
+                    <HiOutlineCheckCircle aria-hidden="true" />
+                  </button>
+
+                  <AudioButton
+                    isPlaying={isPlaying}
+                    isDisabled={!isSupported}
+                    label={currentWord.ru}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      togglePlayback();
+                    }}
+                  />
+
+                  <button type="button" className="vocab-bank__icon-btn" onClick={goNextWord} aria-label="Следующее слово">
+                    <HiOutlineChevronRight aria-hidden="true" />
+                  </button>
+                </div>
+
+                <p className="vocab-bank__hint">
+                  Нажмите на карточку, чтобы перевернуть · ✓ отмечает слово как изученное
+                </p>
+              </>
+            )}
+
+            {filteredWords.length > 0 && vocabView === 'list' && (
+              <div className="vocab-bank__list">
+                {filteredWords.map((word) => (
+                  <VocabListItem
+                    key={word.id}
+                    word={word}
+                    isRevealed={revealedWords.includes(word.id)}
+                    isCompleted={reviewedWords.includes(word.id)}
+                    onToggle={() => toggleWord(word.id)}
+                    onToggleComplete={() => toggleCompleted(word.id)}
+                    categoryLabel={mod.chapter ?? 'Базовые понятия'}
+                  />
+                ))}
+              </div>
+            )}
+
+            {filteredWords.length === 0 && (
+              <p className="vocab-bank__empty">По этому запросу ничего не найдено.</p>
+            )}
           </div>
         )}
 

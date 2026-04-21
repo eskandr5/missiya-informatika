@@ -1,60 +1,47 @@
-import { useState } from 'react';
 import type { VocabWord } from '../../types/content';
-import { useRussianSpeech } from '../../hooks/useRussianSpeech';
-import AudioButton from '../ui/AudioButton';
 
 interface Props {
   word: VocabWord;
-  showEn: boolean;
+  isRevealed: boolean;
+  onToggle: () => void;
+  categoryLabel?: string;
   delay?: string;
 }
 
-export default function VocabCard({ word, showEn, delay = '' }: Props) {
-  const [flipped, setFlipped] = useState(false);
-  const { isPlaying, isSupported, togglePlayback } = useRussianSpeech(`vocab:${word.id}`, word.ru);
-
+export default function VocabCard({
+  word,
+  isRevealed,
+  onToggle,
+  categoryLabel = 'Базовые понятия',
+  delay = '',
+}: Props) {
   return (
-    <div
-      onClick={() => setFlipped(value => !value)}
-      onKeyDown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          setFlipped(value => !value);
-        }
-      }}
-      role="button"
-      tabIndex={0}
-      className={`fu ${delay} card lift vocab-card text-left${isPlaying ? ' is-speaking' : ''}`}
+    <button
+      type="button"
+      onClick={onToggle}
+      className={`fu ${delay} vocab-card vocab-card--bank${isRevealed ? ' is-revealed' : ''}`}
     >
-      <div className="vocab-card__head">
-        <div className="vocab-card__copy">
-          <p className="vocab-card__term hf">{word.ru}</p>
-          {showEn && (
-            <span className="vocab-card__gloss">
-              {word.en}
-            </span>
-          )}
+      <div className="vocab-card__flip">
+        <div className="vocab-card__face vocab-card__face--front">
+          <span className="vocab-card__eyebrow">{categoryLabel}</span>
+          <div className="vocab-card__body">
+            <div className="vocab-card__copy">
+              <p className="vocab-card__term hf">{word.ru}</p>
+              <span className="vocab-card__hint-copy">Нажмите, чтобы увидеть перевод</span>
+            </div>
+          </div>
         </div>
 
-        <AudioButton
-          isPlaying={isPlaying}
-          isDisabled={!isSupported}
-          label={word.ru}
-          onClick={(event) => {
-            event.stopPropagation();
-            togglePlayback();
-          }}
-        />
+        <div className="vocab-card__face vocab-card__face--back">
+          <span className="vocab-card__eyebrow">Перевод и определение</span>
+          <div className="vocab-card__body">
+            <div className="vocab-card__copy">
+              <p className="vocab-card__term hf">{word.en}</p>
+              <span className="vocab-card__hint-copy">{word.def}</span>
+            </div>
+          </div>
+        </div>
       </div>
-
-      {flipped ? (
-        <p className="vocab-card__definition">{word.def}</p>
-      ) : (
-        <div className="vocab-card__hint">
-          <span className="vocab-card__hint-label">Определение</span>
-          <span>Нажмите, чтобы открыть карточку</span>
-        </div>
-      )}
-    </div>
+    </button>
   );
 }

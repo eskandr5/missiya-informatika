@@ -68,6 +68,7 @@ interface Props {
 export default function MissionScreen({ stage, module: mod, onFinish, onBack }: Props) {
   const [step, setStep] = useState<FlowStep>('briefing');
   const [showEn, setShowEn] = useState(false);
+  const [revealedWords, setRevealedWords] = useState<string[]>([]);
 
   const modVocab = useMemo(() => {
     const [start, end] = stage.vocabSlice;
@@ -231,7 +232,20 @@ export default function MissionScreen({ stage, module: mod, onFinish, onBack }: 
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-5">
               {modVocab.map((word, index) => (
-                <VocabCard key={word.id} word={word} showEn={showEn} delay={DL[index] ?? ''} />
+                <VocabCard
+                  key={word.id}
+                  word={word}
+                  isRevealed={revealedWords.includes(word.id)}
+                  onToggle={() => {
+                    setRevealedWords((current) => (
+                      current.includes(word.id)
+                        ? current.filter(id => id !== word.id)
+                        : [...current, word.id]
+                    ));
+                  }}
+                  categoryLabel={mod.chapter ?? 'Базовые понятия'}
+                  delay={DL[index] ?? ''}
+                />
               ))}
             </div>
             <div className="mission-screen__step-nav">
