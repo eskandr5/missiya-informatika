@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   HiOutlineArrowLeft,
@@ -181,10 +181,10 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [direction, setDirection] = useState<1 | -1>(1);
+  const workspaceRef = useRef<HTMLElement | null>(null);
 
   const doneCount = mod.missions.filter(mission => progress.completedMissions.includes(mission.id)).length;
   const pct = Math.round((doneCount / mod.missions.length) * 100);
-  const lockedCount = mod.missions.length - doneCount;
   const availableCount = mod.missions.filter(
     mission => mission.implemented && isMissionUnlocked(mission, mod, progress, MODULES),
   ).length;
@@ -205,6 +205,8 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
   const learnedCount = Array.from(learnedWords).filter(wordId => mod.vocab.some(word => word.id === wordId)).length;
   const learnedPct = mod.vocab.length > 0 ? Math.round((learnedCount / mod.vocab.length) * 100) : 0;
   const isCurrentLearned = currentWord ? learnedWords.has(currentWord.id) : false;
+  const moduleStatus = doneCount === mod.missions.length ? 'Завершен' : availableCount > 0 ? 'Активный раздел' : 'В ожидании';
+  const moduleProgressLabel = `${doneCount}/${mod.missions.length} миссий · ${pct}%`;
   const { isPlaying, isSupported, togglePlayback } = useRussianSpeech(
     `vocab-bank:${currentWord?.id ?? 'empty'}`,
     currentWord?.ru ?? '',
@@ -263,6 +265,17 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
     setCurrentWordIndex(index);
   };
 
+  const handleTabChange = (nextTab: Tab) => {
+    setTab(nextTab);
+
+    window.requestAnimationFrame(() => {
+      workspaceRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    });
+  };
+
   return (
     <div className="app-page module-detail">
       <div className="module-detail__toolbar">
@@ -285,143 +298,125 @@ export default function ModuleScreen({ module: mod, progress, onSelectStage, onB
 
       <section
         className="module-detail__hero"
-        style={{ background: `linear-gradient(135deg, ${mod.accent} 0%, #1e3a8a 62%, #f59e0b 100%)` }}
+        style={{
+          background: 'linear-gradient(135deg, #16213f 0%, #1b2c54 58%, #203868 100%)',
+          padding: '1.9rem 2rem',
+          minHeight: 'auto',
+        }}
       >
-        <div className="module-detail__hero-main">
-          <div className="module-detail__pill-row">
-            <span className="module-detail__pill module-detail__pill--light">
-              {ARCHIVE_COPY.moduleLabel} {mod.id}
-            </span>
-            {mod.chapter && (
-              <span className="module-detail__pill module-detail__pill--soft">{mod.chapter}</span>
-            )}
-            {doneCount === mod.missions.length && (
-              <span className="module-detail__pill module-detail__pill--success">
-                <HiOutlineCheck aria-hidden="true" />
-                Завершён
+        <div
+          style={{
+            width: '100%',
+            display: 'grid',
+            gap: '1.2rem',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1rem',
+              flexWrap: 'wrap',
+            }}
+          >
+            <div className="module-detail__pill-row" style={{ marginBottom: 0 }}>
+              <span className="module-detail__pill module-detail__pill--success">{moduleStatus}</span>
+              <span className="module-detail__pill module-detail__pill--light">
+                {ARCHIVE_COPY.moduleLabel} {mod.id}
               </span>
-            )}
+              {mod.chapter && (
+                <span className="module-detail__pill module-detail__pill--soft">{mod.chapter}</span>
+              )}
+            </div>
+
+            <div
+              style={{
+                padding: '0.85rem 1rem',
+                borderRadius: '1rem',
+                background: 'rgba(88, 108, 158, 0.24)',
+                border: '1px solid rgba(140, 156, 180, 0.16)',
+                minWidth: '12rem',
+              }}
+            >
+              <div style={{ fontSize: '1.7rem', fontWeight: 900, color: '#fff', lineHeight: 1 }}>{pct}%</div>
+              <div style={{ fontSize: '0.76rem', fontWeight: 700, color: 'rgba(255,255,255,0.72)', marginTop: '0.25rem' }}>
+                {moduleProgressLabel}
+              </div>
+            </div>
           </div>
 
-          <div className="module-detail__headline">
-            <div className="module-detail__hero-icon" aria-hidden="true">
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1rem',
+            }}
+          >
+            <div
+              className="module-detail__hero-icon"
+              aria-hidden="true"
+              style={{
+                width: '4rem',
+                height: '4rem',
+                borderRadius: '1.1rem',
+                background: 'linear-gradient(180deg, rgba(98, 147, 255, 0.4), rgba(84, 118, 204, 0.22))',
+                boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.12)',
+                flexShrink: 0,
+              }}
+            >
               {mod.icon}
             </div>
 
-            <div>
-              <h1 className="module-detail__title">{mod.title}</h1>
-              <p className="module-detail__subtitle">{mod.subtitle}</p>
+            <div style={{ minWidth: 0 }}>
+              <h1 className="module-detail__title" style={{ marginBottom: '0.3rem' }}>{mod.title}</h1>
+              <p className="module-detail__subtitle" style={{ marginBottom: 0 }}>{mod.subtitle}</p>
             </div>
           </div>
 
-          <p className="module-detail__description">{mod.desc}</p>
-          <p className="module-detail__status-line">
-            СТАТУС_РАЗДЕЛА // ОСВОЕНО={pct}% · ОСТАЛОСЬ_ЗАДАНИЙ={lockedCount}
+          <p
+            className="module-detail__description"
+            style={{
+              margin: 0,
+              maxWidth: '46rem',
+              color: 'rgba(255,255,255,0.82)',
+            }}
+          >
+            {mod.desc}
           </p>
-        </div>
 
-        <aside className="module-detail__hero-side">
-          <div className="module-detail__hero-card">
-            <p className="module-detail__hero-card-label">Прогресс раздела</p>
-            <div className="module-detail__hero-card-value">{pct}%</div>
-            <p className="module-detail__hero-card-copy">
-              {doneCount} из {mod.missions.length} {ARCHIVE_COPY.missionLabelPlural} уже завершены.
-            </p>
-            <div className="module-card__progress-bar">
-              <div className="module-card__progress-fill" style={{ width: `${pct}%` }} />
+          <div style={{ maxWidth: '28rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: '1rem',
+                marginBottom: '0.45rem',
+                color: 'rgba(255,255,255,0.76)',
+                fontSize: '0.82rem',
+                fontWeight: 700,
+              }}
+            >
+              <span>Прогресс раздела</span>
+              <span>{moduleProgressLabel}</span>
+            </div>
+            <div className="module-card__progress-bar dashboard-latest__spotlight-bar">
+              <div
+                className="module-card__progress-fill dashboard-latest__spotlight-fill"
+                style={{ width: `${pct}%` }}
+              />
             </div>
           </div>
-
-          {checkpoint && (
-            <div className="module-detail__hero-card module-detail__hero-card--secondary">
-              <p className="module-detail__hero-card-label">{ARCHIVE_COPY.checkpointLabel}</p>
-              <div className="module-detail__hero-card-value">
-                {checkpointDone ? `${checkpointScore}%` : checkpointUnlocked ? 'Открыт' : 'Закрыт'}
-              </div>
-              <p className="module-detail__hero-card-copy">
-                {checkpointDone
-                  ? 'Контрольная точка уже зафиксирована в вашем прогрессе.'
-                  : checkpointUnlocked
-                    ? 'Узел готов к прохождению после завершения основных миссий.'
-                    : `Сначала завершите задания до контрольной точки после модуля ${checkpoint.afterModuleId}.`}
-              </p>
-            </div>
-          )}
-        </aside>
+        </div>
       </section>
 
-      <div className="grid grid--4 module-detail__stats">
-        <div className="stats-card">
-          <div className="stats-card__icon">{mod.icon}</div>
-          <div className="stats-card__value">{doneCount}</div>
-          <div className="stats-card__label">Протоколов закрыто</div>
-        </div>
-
-        <div className="stats-card">
-          <div className="stats-card__icon">⚡</div>
-          <div className="stats-card__value">{availableCount}</div>
-          <div className="stats-card__label">Доступно сейчас</div>
-        </div>
-
-        <div className="stats-card">
-          <div className="stats-card__icon">🏁</div>
-          <div className="stats-card__value">{mod.xpReward}</div>
-          <div className="stats-card__label">XP за раздел</div>
-        </div>
-
-        <div className="stats-card">
-          <div className="stats-card__icon">📘</div>
-          <div className="stats-card__value">{mod.vocab.length}</div>
-          <div className="stats-card__label">Терминов в подборке</div>
-        </div>
-      </div>
-
-      {(mod.moduleIdentity || mod.openingStyle || mod.specialMechanic) && (
-        <section className="module-detail__overview">
-          <div className="module-detail__overview-grid">
-            <div className="module-detail__overview-item">
-              <p className="module-detail__overview-label">Тип модуля</p>
-              <p className="module-detail__overview-value">{mod.moduleIdentity}</p>
-            </div>
-
-            <div className="module-detail__overview-item">
-              <p className="module-detail__overview-label">Старт сценария</p>
-              <p className="module-detail__overview-value">{mod.openingStyle}</p>
-            </div>
-
-            <div className="module-detail__overview-item">
-              <p className="module-detail__overview-label">Механика</p>
-              <p className="module-detail__overview-value">{mod.specialMechanic}</p>
-            </div>
-
-            <div className="module-detail__overview-item">
-              <p className="module-detail__overview-label">Тон модуля</p>
-              <p className="module-detail__overview-value">{mod.moduleFeel}</p>
-            </div>
-          </div>
-
-          <div className="module-detail__pill-row">
-            {mod.rewardType && (
-              <span className="module-detail__pill module-detail__pill--success">
-                Награда: {mod.rewardType}
-              </span>
-            )}
-            {mod.videoMode && (
-              <span className="module-detail__pill module-detail__pill--soft">
-                Видео: {mod.videoMode}
-              </span>
-            )}
-          </div>
-        </section>
-      )}
-
-      <section className="module-detail__workspace">
+      <section ref={workspaceRef} className="module-detail__workspace">
         <div className="module-detail__tabs">
           {(['missions', 'vocab', 'phrases'] as Tab[]).map(tabName => (
             <button
               key={tabName}
               type="button"
-              onClick={() => setTab(tabName)}
+              onClick={() => handleTabChange(tabName)}
               className={`module-detail__tab${tab === tabName ? ' is-active' : ''}`}
             >
               {TAB_LABELS[tabName]}
