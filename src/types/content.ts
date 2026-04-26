@@ -85,7 +85,6 @@ export interface Module {
   desc: string;
   icon: string;
   coverImage?: string;
-  coverPosition?: string;
   accent: string;
   xpReward: number;
   badge: BadgeDef;

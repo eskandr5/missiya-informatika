@@ -788,7 +788,7 @@
   margin-top: 1rem;
 }
 
-.landing-page__inline-stats > span {
+.landing-page__inline-stats>span {
   padding: 0.85rem 0.9rem;
   border-radius: 1rem;
   background: var(--surface-soft);
@@ -797,7 +797,7 @@
   gap: 0.22rem;
 }
 
-.landing-page__panel--glass .landing-page__inline-stats > span {
+.landing-page__panel--glass .landing-page__inline-stats>span {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.14);
 }
@@ -1924,9 +1924,7 @@
   0% {
     opacity: 0;
     transform:
-      translate3d(calc(var(--confetti-dx) * -0.35), calc(2.8rem + var(--confetti-dy)), 0)
-      scale(0.35)
-      rotate(calc(var(--piece-rotate) - 24deg));
+      translate3d(calc(var(--confetti-dx) * -0.35), calc(2.8rem + var(--confetti-dy)), 0) scale(0.35) rotate(calc(var(--piece-rotate) - 24deg));
   }
 
   18% {
@@ -1936,25 +1934,19 @@
   58% {
     opacity: 0.96;
     transform:
-      translate3d(calc(var(--confetti-dx) * 0.85), calc(-2.4rem - var(--confetti-dy)), 0)
-      scale(1)
-      rotate(calc(var(--piece-rotate) + 18deg));
+      translate3d(calc(var(--confetti-dx) * 0.85), calc(-2.4rem - var(--confetti-dy)), 0) scale(1) rotate(calc(var(--piece-rotate) + 18deg));
   }
 
   78% {
     opacity: 0.65;
     transform:
-      translate3d(calc(var(--confetti-dx) * 0.45), calc(-0.65rem - (var(--confetti-dy) * 0.18)), 0)
-      scale(0.96)
-      rotate(calc(var(--piece-rotate) + 10deg));
+      translate3d(calc(var(--confetti-dx) * 0.45), calc(-0.65rem - (var(--confetti-dy) * 0.18)), 0) scale(0.96) rotate(calc(var(--piece-rotate) + 10deg));
   }
 
   100% {
     opacity: 0;
     transform:
-      translate3d(calc(var(--confetti-dx) * 0.35), calc(0.45rem + (var(--confetti-dy) * 0.1)), 0)
-      scale(0.78)
-      rotate(calc(var(--piece-rotate) + 6deg));
+      translate3d(calc(var(--confetti-dx) * 0.35), calc(0.45rem + (var(--confetti-dy) * 0.1)), 0) scale(0.78) rotate(calc(var(--piece-rotate) + 6deg));
   }
 }
 
@@ -2924,6 +2916,20 @@
   border-bottom: 1px solid var(--landing-border);
 }
 
+.landing-v2__section--support {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at left bottom, rgba(5, 150, 105, 0.08), transparent 22%),
+    radial-gradient(circle at 82% 20%, rgba(37, 99, 235, 0.08), transparent 24%),
+    linear-gradient(180deg, #f7fbff 0%, #edf5ff 100%);
+}
+
+.landing-v2__section--support .landing-v2__container {
+  position: relative;
+  z-index: 1;
+}
+
 .landing-v2__section-head {
   margin-bottom: 2.5rem;
 }
@@ -2948,6 +2954,50 @@
   font-weight: 900;
   line-height: 1.08;
   letter-spacing: -0.04em;
+}
+
+.landing-v2__section--support {
+  background-image: url('/images/landing/hero-study-group.png');
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  position: relative;
+}
+
+.landing-v2__support-panel {
+  max-width: 40%;
+  padding-top: clamp(0.75rem, 2vw, 1.5rem);
+  padding-bottom: clamp(2rem, 4vw, 4rem);
+  margin-bottom: 1.8rem;
+  position: relative;
+  z-index: 1;
+}
+
+.landing-v2__support-content {}
+
+.landing-v2__support-head {
+  margin-bottom: 0;
+  max-width: 100%;
+}
+
+.landing-v2__support-head h2 {
+  max-width: 100%;
+}
+
+.landing-v2__support-head p,
+.landing-v2__support-head h2,
+.landing-v2__support-copy {
+  position: relative;
+  z-index: 1;
+}
+
+.landing-v2__support-copy {
+  max-width: 100%;
+  margin-top: 1.2rem;
+  color: var(--landing-text-2);
+  font-size: clamp(1rem, 1.4vw, 1.08rem);
+  line-height: 1.8;
 }
 
 .landing-v2__features,
@@ -3079,7 +3129,7 @@
   background: radial-gradient(ellipse 50% 50% at 100% 100%, rgba(37, 99, 235, 0.16) 0%, transparent 60%);
 }
 
-.landing-v2__cta > * {
+.landing-v2__cta>* {
   position: relative;
 }
 
@@ -3164,6 +3214,7 @@
 }
 
 @keyframes landing-v2-float-up {
+
   0%,
   100% {
     transform: translateY(0);
@@ -3175,6 +3226,7 @@
 }
 
 @keyframes landing-v2-float-down {
+
   0%,
   100% {
     transform: translateY(0);
@@ -3186,6 +3238,7 @@
 }
 
 @media (max-width: 1024px) {
+
   .landing-v2__hero-grid,
   .landing-v2__features,
   .landing-v2__steps,
@@ -3197,12 +3250,25 @@
     align-items: start;
   }
 
+  .landing-v2__support-panel {
+    max-width: 100%;
+  }
+
   .landing-v2__visual {
     grid-column: 1 / -1;
   }
 
   .landing-v2__mockup {
     width: min(100%, 460px);
+  }
+
+  .landing-v2__support-visual {
+    width: 100%;
+    margin: 1rem 0 1.4rem;
+  }
+
+  .landing-v2__support-art-shell {
+    max-width: 100%;
   }
 }
 
@@ -3220,6 +3286,21 @@
 
   .landing-v2__lead {
     max-width: none;
+  }
+
+  .landing-v2__support-copy {
+    max-width: none;
+    margin-top: 1rem;
+  }
+
+  .landing-v2__support-art-shell {
+    max-width: none;
+  }
+
+  .landing-v2__support-art {
+    width: 122%;
+    max-width: none;
+    margin-left: -10%;
   }
 
   .landing-v2__proof,

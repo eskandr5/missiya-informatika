@@ -13,15 +13,6 @@ import module11 from './module11';
 import module12 from './module12';
 import { MODULE_VARIETY } from './moduleVariety';
 
-const MODULE_COVER_POSITIONS: Record<number, string> = {
-  1: 'center 72%',
-  2: 'center 70%',
-  7: 'center 66%',
-  9: 'center 68%',
-  10: 'center 70%',
-  11: 'center 66%',
-};
-
 const BASE_MODULES: Module[] = [
   module01,
   module02,
@@ -41,5 +32,4 @@ export const MODULES: Module[] = BASE_MODULES.map((mod) => ({
   ...mod,
   ...MODULE_VARIETY[mod.id],
   coverImage: `/images/modules/module-${String(mod.id).padStart(2, '0')}.png`,
-  coverPosition: MODULE_COVER_POSITIONS[mod.id] ?? 'center',
 }));

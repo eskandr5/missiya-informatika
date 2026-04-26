@@ -352,11 +352,20 @@ export default function LandingScreen({ progress, onStart }: Props) {
         </div>
       </section>
 
-      <section className="landing-v2__section">
+      <section className="landing-v2__section landing-v2__section--support">
         <div className="landing-v2__container">
-          <div className="landing-v2__section-head">
-            <p>ПРИНЦИПЫ ПЛАТФОРМЫ</p>
-            <h2>Создано для реального результата</h2>
+          <div className="landing-v2__support-panel">
+            <div className="landing-v2__support-content">
+              <div className="landing-v2__section-head landing-v2__support-head">
+                <p>ПРИНЦИПЫ ПЛАТФОРМЫ</p>
+                <h2>Создано для реального результата</h2>
+              </div>
+
+              <p className="landing-v2__support-copy">
+                Каждый модуль объединяет лексику, аудио, видео и практические задания в понятный маршрут.
+                Учитесь по шагам и видите прогресс после каждой миссии.
+              </p>
+            </div>
           </div>
 
           <div className="landing-v2__features">
@@ -376,6 +385,7 @@ export default function LandingScreen({ progress, onStart }: Props) {
           </div>
         </div>
       </section>
+
 
       <section className="landing-v2__section landing-v2__section--light">
         <div className="landing-v2__container">

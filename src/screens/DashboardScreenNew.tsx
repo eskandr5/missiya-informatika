@@ -139,7 +139,7 @@ export default function DashboardScreenNew({ progress, onSelectModule }: Props) 
                   style={{
                     backgroundColor: module.accent,
                     backgroundImage: module.coverImage ? `url(${module.coverImage})` : undefined,
-                    backgroundPosition: module.coverPosition ?? 'center',
+                    backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'cover',
                   }}
