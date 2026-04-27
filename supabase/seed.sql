@@ -1,0 +1,2 @@
+-- Phase 2 placeholder
+-- Catalog seed data will be added in Phase 6.
