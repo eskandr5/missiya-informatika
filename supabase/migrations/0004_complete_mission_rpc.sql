@@ -15,6 +15,7 @@ declare
   v_existing_result public.user_mission_results%rowtype;
   v_previous_mission_id text;
   v_previous_module_id text;
+  v_previous_module_order integer;
   v_checkpoint_id text;
   v_passed boolean;
   v_was_passed boolean;
@@ -94,49 +95,61 @@ begin
     ) then
       raise exception 'Mission is locked';
     end if;
-  elsif v_mission.module_order > 1 then
+  elsif v_mission.module_order = 1 then
+    null;
+  else
+    select max(previous_module.module_order)
+    into v_previous_module_order
+    from public.mission_catalog previous_module
+    where previous_module.module_order < v_mission.module_order;
+
+    if v_previous_module_order is null then
+      raise exception 'Mission is locked';
+    end if;
+
     select previous_module.module_id
     into v_previous_module_id
     from public.mission_catalog previous_module
-    where previous_module.implemented = true
-      and previous_module.module_order < v_mission.module_order
-    order by previous_module.module_order desc
+    where previous_module.module_order = v_previous_module_order
+    order by previous_module.module_id
     limit 1;
 
-    if v_previous_module_id is not null then
-      if exists (
-        select 1
-        from public.mission_catalog previous_module_mission
-        where previous_module_mission.module_id = v_previous_module_id
-          and previous_module_mission.implemented = true
-          and not exists (
-            select 1
-            from public.user_mission_results previous_module_result
-            where previous_module_result.user_id = p_user_id
-              and previous_module_result.mission_id = previous_module_mission.mission_id
-              and previous_module_result.passed = true
-          )
-      ) then
-        raise exception 'Mission is locked';
-      end if;
+    if v_previous_module_id is null then
+      raise exception 'Mission is locked';
+    end if;
 
-      select checkpoint.checkpoint_id
-      into v_checkpoint_id
-      from public.checkpoint_catalog checkpoint
-      where checkpoint.after_module_id = v_previous_module_id
-        and checkpoint.before_module_id = v_mission.module_id
-      order by checkpoint.order_index
-      limit 1;
+    if exists (
+      select 1
+      from public.mission_catalog previous_module_mission
+      where previous_module_mission.module_id = v_previous_module_id
+        and previous_module_mission.implemented = true
+        and not exists (
+          select 1
+          from public.user_mission_results previous_module_result
+          where previous_module_result.user_id = p_user_id
+            and previous_module_result.mission_id = previous_module_mission.mission_id
+            and previous_module_result.passed = true
+        )
+    ) then
+      raise exception 'Mission is locked';
+    end if;
 
-      if v_checkpoint_id is not null and not exists (
-        select 1
-        from public.user_checkpoint_results checkpoint_result
-        where checkpoint_result.user_id = p_user_id
-          and checkpoint_result.checkpoint_id = v_checkpoint_id
-          and checkpoint_result.passed = true
-      ) then
-        raise exception 'Mission is locked';
-      end if;
+    select checkpoint.checkpoint_id
+    into v_checkpoint_id
+    from public.checkpoint_catalog checkpoint
+    where checkpoint.after_module_id = v_previous_module_id
+      and checkpoint.before_module_id = v_mission.module_id
+    order by checkpoint.order_index
+    limit 1;
+
+    if v_checkpoint_id is not null and not exists (
+      select 1
+      from public.user_checkpoint_results checkpoint_result
+      where checkpoint_result.user_id = p_user_id
+        and checkpoint_result.checkpoint_id = v_checkpoint_id
+        and checkpoint_result.passed = true
+    ) then
+      raise exception 'Mission is locked';
     end if;
   end if;
 
