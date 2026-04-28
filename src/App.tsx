@@ -14,10 +14,11 @@ import ResultScreen from './screens/ResultScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
+import LeaderboardScreen from './screens/LeaderboardScreen';
 
 import type { BadgeDef, Module, ProgressionStage } from './types/content';
 
-type View = 'landing' | 'dashboard' | 'module' | 'mission' | 'result' | 'profile' | 'login' | 'register';
+type View = 'landing' | 'dashboard' | 'module' | 'mission' | 'result' | 'profile' | 'leaderboard' | 'login' | 'register';
 type Theme = 'light' | 'dark';
 
 const THEME_STORAGE_KEY = 'mss2_theme';
@@ -118,6 +119,7 @@ export default function App() {
 
   const navView = useMemo(() => {
     if (view === 'profile') return 'profile';
+    if (view === 'leaderboard') return 'leaderboard';
     if (view === 'module' || view === 'mission' || view === 'result') return 'modules';
     return 'dashboard';
   }, [view]);
@@ -288,6 +290,7 @@ export default function App() {
               else setView('dashboard');
             });
           }}
+          onNavigateLeaderboard={() => requireAuth(() => setView('leaderboard'))}
           onNavigateProfile={() => requireAuth(() => setView('profile'))}
           onThemeChange={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
           isAuthenticated={auth.isAuthenticated}
@@ -383,6 +386,13 @@ export default function App() {
                 reset();
                 goHome();
               }}
+            />
+          )}
+
+          {view === 'leaderboard' && (
+            <LeaderboardScreen
+              currentUserId={auth.user?.id}
+              onBack={goHome}
             />
           )}
         </div>

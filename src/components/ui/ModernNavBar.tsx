@@ -5,16 +5,18 @@ import {
   HiOutlineMoon,
   HiOutlineSquares2X2,
   HiOutlineSun,
+  HiOutlineTrophy,
   HiOutlineUser,
 } from 'react-icons/hi2';
 import type { Progress } from '../../types/progress';
 
 interface NavBarProps {
   progress: Progress;
-  currentView: 'dashboard' | 'modules' | 'profile';
+  currentView: 'dashboard' | 'modules' | 'leaderboard' | 'profile';
   theme: 'light' | 'dark';
   onNavigateDashboard: () => void;
   onNavigateModules: () => void;
+  onNavigateLeaderboard: () => void;
   onNavigateProfile: () => void;
   onThemeChange: () => void;
   isAuthenticated?: boolean;
@@ -29,6 +31,7 @@ export default function ModernNavBar({
   theme,
   onNavigateDashboard,
   onNavigateModules,
+  onNavigateLeaderboard,
   onNavigateProfile,
   onThemeChange,
   isAuthenticated = false,
@@ -68,6 +71,15 @@ export default function ModernNavBar({
           >
             <HiOutlineBookOpen aria-hidden="true" />
             <span>Разделы</span>
+          </button>
+
+          <button
+            type="button"
+            className={`app-nav__menu-btn${currentView === 'leaderboard' ? ' is-active' : ''}`}
+            onClick={onNavigateLeaderboard}
+          >
+            <HiOutlineTrophy aria-hidden="true" />
+            <span>Top</span>
           </button>
 
           <button
