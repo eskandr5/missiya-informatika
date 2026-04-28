@@ -17,6 +17,7 @@ import type { Progress } from '../types/progress';
 interface Props {
   progress: Progress;
   onStart: () => void;
+  onLogin?: () => void;
 }
 
 type PreviewStatus = 'completed' | 'active' | 'locked';
@@ -148,7 +149,7 @@ function AppMockup({
   );
 }
 
-export default function LandingScreen({ progress, onStart }: Props) {
+export default function LandingScreen({ progress, onStart, onLogin }: Props) {
   const rank = getRank(progress.xp);
   const nextRank = getNextRank(progress.xp);
   const returning = progress.completedMissions.length > 0;
@@ -284,6 +285,16 @@ export default function LandingScreen({ progress, onStart }: Props) {
                 <span>Посмотреть программу</span>
                 <LuChevronRight aria-hidden="true" />
               </button>
+
+              {onLogin && (
+                <button
+                  type="button"
+                  onClick={onLogin}
+                  className="btn landing-v2__button landing-v2__button--secondary"
+                >
+                  <span>Войти</span>
+                </button>
+              )}
             </div>
 
             <div className="landing-v2__proof">

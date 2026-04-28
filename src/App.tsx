@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useProgress } from './hooks/useProgress';
+import { useAuth } from './hooks/useAuth';
 import { MODULES } from './data/modules';
 import { getCheckpointAfterModule } from './utils/progression';
 
@@ -11,10 +12,12 @@ import ModuleScreen from './screens/ModuleScreen';
 import MissionScreen from './screens/MissionScreen';
 import ResultScreen from './screens/ResultScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import LoginScreen from './screens/LoginScreen';
+import RegisterScreen from './screens/RegisterScreen';
 
 import type { BadgeDef, Module, ProgressionStage } from './types/content';
 
-type View = 'landing' | 'dashboard' | 'module' | 'mission' | 'result' | 'profile';
+type View = 'landing' | 'dashboard' | 'module' | 'mission' | 'result' | 'profile' | 'login' | 'register';
 type Theme = 'light' | 'dark';
 
 const THEME_STORAGE_KEY = 'mss2_theme';
@@ -39,6 +42,7 @@ interface LastResult {
 
 export default function App() {
   const { progress, completeMission, completeCheckpoint, reset } = useProgress();
+  const auth = useAuth();
 
   const [theme, setTheme] = useState<Theme>(loadTheme);
   const [view, setView] = useState<View>('landing');
@@ -62,6 +66,25 @@ export default function App() {
     if (view === 'module' || view === 'mission' || view === 'result') return 'modules';
     return 'dashboard';
   }, [view]);
+
+  const handleLogin = async (email: string, password: string) => {
+    await auth.login(email, password);
+    setView('dashboard');
+  };
+
+  const handleRegister = async (params: {
+    email: string;
+    password: string;
+    displayName?: string;
+  }) => {
+    await auth.register(params);
+  };
+
+  const handleLogout = () => {
+    auth.logout().catch(error => {
+      console.error('Failed to sign out', error);
+    });
+  };
 
   const handleStageFinish = useCallback((score: number) => {
     if (!activeStage || !activeMod) return;
@@ -159,11 +182,37 @@ export default function App() {
           }}
           onNavigateProfile={() => setView('profile')}
           onThemeChange={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
+          isAuthenticated={auth.isAuthenticated}
+          userEmail={auth.user?.email}
+          onNavigateLogin={() => setView('login')}
+          onLogout={handleLogout}
         />
 
         <div className="app-content">
           {view === 'landing' && (
-            <LandingScreen progress={progress} onStart={() => setView('dashboard')} />
+            <LandingScreen
+              progress={progress}
+              onStart={() => setView('dashboard')}
+              onLogin={() => setView('login')}
+            />
+          )}
+
+          {view === 'login' && (
+            <LoginScreen
+              isLoading={auth.isLoading}
+              onLogin={handleLogin}
+              onBack={() => setView('dashboard')}
+              onRegister={() => setView('register')}
+            />
+          )}
+
+          {view === 'register' && (
+            <RegisterScreen
+              isLoading={auth.isLoading}
+              onRegister={handleRegister}
+              onBack={() => setView('dashboard')}
+              onLogin={() => setView('login')}
+            />
           )}
 
           {view === 'dashboard' && (

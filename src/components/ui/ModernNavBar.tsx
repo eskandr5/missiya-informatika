@@ -1,4 +1,5 @@
 import {
+  HiOutlineArrowRightOnRectangle,
   HiOutlineBookOpen,
   HiOutlineBolt,
   HiOutlineMoon,
@@ -16,6 +17,10 @@ interface NavBarProps {
   onNavigateModules: () => void;
   onNavigateProfile: () => void;
   onThemeChange: () => void;
+  isAuthenticated?: boolean;
+  userEmail?: string;
+  onNavigateLogin?: () => void;
+  onLogout?: () => void;
 }
 
 export default function ModernNavBar({
@@ -26,8 +31,12 @@ export default function ModernNavBar({
   onNavigateModules,
   onNavigateProfile,
   onThemeChange,
+  isAuthenticated = false,
+  userEmail,
+  onNavigateLogin,
+  onLogout,
 }: NavBarProps) {
-  const avatarValue = 'MI';
+  const avatarValue = userEmail?.slice(0, 2).toUpperCase() || 'MI';
 
   return (
     <nav className="app-nav">
@@ -91,6 +100,28 @@ export default function ModernNavBar({
           >
             {theme === 'light' ? <HiOutlineMoon /> : <HiOutlineSun />}
           </button>
+
+          {isAuthenticated ? (
+            <button
+              className="app-nav__auth-btn"
+              type="button"
+              onClick={onLogout}
+              title="Выйти"
+            >
+              <HiOutlineArrowRightOnRectangle aria-hidden="true" />
+              <span>Выйти</span>
+            </button>
+          ) : (
+            <button
+              className="app-nav__auth-btn"
+              type="button"
+              onClick={onNavigateLogin}
+              title="Войти"
+            >
+              <HiOutlineUser aria-hidden="true" />
+              <span>Войти</span>
+            </button>
+          )}
 
           <div className="app-nav__avatar" aria-hidden="true">
             {avatarValue}
