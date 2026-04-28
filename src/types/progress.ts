@@ -1,5 +1,6 @@
 export interface Progress {
   xp: number;
+  currentRank: string;
   completedMissions: string[];
   completedCheckpoints: string[];
   badges: string[];
@@ -9,6 +10,7 @@ export interface Progress {
 
 export const PROGRESS_INITIAL: Progress = {
   xp: 0,
+  currentRank: 'rank_01',
   completedMissions: [],
   completedCheckpoints: [],
   badges: [],

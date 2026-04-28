@@ -41,8 +41,11 @@ interface LastResult {
 }
 
 export default function App() {
-  const { progress, completeMission, completeCheckpoint, reset } = useProgress();
   const auth = useAuth();
+  const { progress, completeMission, completeCheckpoint, reset } = useProgress({
+    isAuthenticated: auth.isAuthenticated,
+    isAuthLoading: auth.isLoading,
+  });
 
   const [theme, setTheme] = useState<Theme>(loadTheme);
   const [view, setView] = useState<View>('landing');
