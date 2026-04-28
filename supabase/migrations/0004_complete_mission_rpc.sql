@@ -76,6 +76,12 @@ begin
     raise exception 'Progress row not found';
   end if;
 
+  -- Backend unlock policy:
+  -- 1. The first implemented mission in module_order 1 is open by default.
+  -- 2. Later missions require the previous implemented mission in the same module.
+  -- 3. The first implemented mission in a later module requires the previous module,
+  --    plus any checkpoint between the modules, to be passed.
+  -- This intentionally ignores frontend-only unlock helpers such as UNLOCK_ALL_FOR_TESTING.
   select previous_mission.mission_id
   into v_previous_mission_id
   from public.mission_catalog previous_mission
@@ -339,3 +345,6 @@ revoke all on function public.complete_mission_internal(uuid, text, integer, jso
 revoke all on function public.complete_mission_internal(uuid, text, integer, jsonb) from anon;
 revoke all on function public.complete_mission_internal(uuid, text, integer, jsonb) from authenticated;
 grant execute on function public.complete_mission_internal(uuid, text, integer, jsonb) to service_role;
+
+comment on function public.complete_mission_internal(uuid, text, integer, jsonb)
+is 'Internal service-role RPC for atomic mission completion. Enforces backend unlock rules from mission_catalog, checkpoint_catalog, user_mission_results, and user_checkpoint_results; not callable by anon or authenticated users.';
