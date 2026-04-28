@@ -18,6 +18,7 @@ interface Props {
   progress: Progress;
   onStart: () => void;
   onLogin?: () => void;
+  onRegister?: () => void;
 }
 
 type PreviewStatus = 'completed' | 'active' | 'locked';
@@ -149,7 +150,7 @@ function AppMockup({
   );
 }
 
-export default function LandingScreen({ progress, onStart, onLogin }: Props) {
+export default function LandingScreen({ progress, onStart, onLogin, onRegister }: Props) {
   const rank = getRank(progress.xp);
   const nextRank = getNextRank(progress.xp);
   const returning = progress.completedMissions.length > 0;
@@ -295,6 +296,16 @@ export default function LandingScreen({ progress, onStart, onLogin }: Props) {
                   <span>Войти</span>
                 </button>
               )}
+
+              {onRegister && (
+                <button
+                  type="button"
+                  onClick={onRegister}
+                  className="btn landing-v2__button landing-v2__button--secondary"
+                >
+                  <span>Создать аккаунт</span>
+                </button>
+              )}
             </div>
 
             <div className="landing-v2__proof">
@@ -428,7 +439,7 @@ export default function LandingScreen({ progress, onStart, onLogin }: Props) {
             <div className="landing-v2__cta-actions">
               <button
                 type="button"
-                onClick={onStart}
+                onClick={onRegister ?? onStart}
                 className="btn landing-v2__button landing-v2__button--primary"
               >
                 <span>{returning ? 'Открыть карту модулей' : 'Войти в систему'}</span>

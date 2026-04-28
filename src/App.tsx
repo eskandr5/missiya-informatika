@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useProgress } from './hooks/useProgress';
 import { useAuth } from './hooks/useAuth';
@@ -21,6 +21,7 @@ type View = 'landing' | 'dashboard' | 'module' | 'mission' | 'result' | 'profile
 type Theme = 'light' | 'dark';
 
 const THEME_STORAGE_KEY = 'mss2_theme';
+const PUBLIC_VIEWS = new Set<View>(['landing', 'login', 'register']);
 
 function loadTheme(): Theme {
   try {
@@ -42,11 +43,12 @@ interface LastResult {
 
 export default function App() {
   const auth = useAuth();
-  const { progress, completeMission, completeCheckpoint, reset } = useProgress({
+  const { progress, isLoading: isProgressLoading, completeMission, completeCheckpoint, reset } = useProgress({
     isAuthenticated: auth.isAuthenticated,
     isAuthLoading: auth.isLoading,
   });
 
+  const initialAuthViewHandled = useRef(false);
   const [theme, setTheme] = useState<Theme>(loadTheme);
   const [view, setView] = useState<View>('landing');
   const [activeMod, setActiveMod] = useState<Module | null>(null);
@@ -58,11 +60,61 @@ export default function App() {
     localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme]);
 
-  const goHome = () => {
+  useEffect(() => {
+    if (auth.isLoading) return;
+
+    if (!auth.isAuthenticated) {
+      initialAuthViewHandled.current = true;
+
+      if (!PUBLIC_VIEWS.has(view)) {
+        setActiveMod(null);
+        setActiveStage(null);
+        setLastResult(null);
+        setView('landing');
+      }
+
+      return;
+    }
+
+    if (!initialAuthViewHandled.current) {
+      initialAuthViewHandled.current = true;
+      if (view === 'landing') {
+        setView('dashboard');
+      }
+      return;
+    }
+
+    if (view === 'login' || view === 'register') {
+      setView('dashboard');
+    }
+  }, [auth.isAuthenticated, auth.isLoading, view]);
+
+  const openLanding = useCallback(() => {
+    setView('landing');
+    setActiveMod(null);
+    setActiveStage(null);
+    setLastResult(null);
+  }, []);
+
+  const goHome = useCallback(() => {
+    if (!auth.isAuthenticated) {
+      openLanding();
+      return;
+    }
+
     setView('dashboard');
     setActiveMod(null);
     setActiveStage(null);
-  };
+  }, [auth.isAuthenticated, openLanding]);
+
+  const requireAuth = useCallback((next: () => void) => {
+    if (!auth.isAuthenticated) {
+      setView('login');
+      return;
+    }
+
+    next();
+  }, [auth.isAuthenticated]);
 
   const navView = useMemo(() => {
     if (view === 'profile') return 'profile';
@@ -80,17 +132,27 @@ export default function App() {
     password: string;
     displayName?: string;
   }) => {
-    await auth.register(params);
+    const result = await auth.register(params);
+    if (result.session) {
+      setView('dashboard');
+    }
   };
 
   const handleLogout = () => {
-    auth.logout().catch(error => {
+    auth.logout().then(() => {
+      openLanding();
+    }).catch(error => {
       console.error('Failed to sign out', error);
     });
   };
 
   const handleStageFinish = useCallback(async (score: number) => {
     if (!activeStage || !activeMod) return;
+
+    if (!auth.isAuthenticated) {
+      setView('login');
+      return;
+    }
 
     let passed = score >= activeStage.passingScore;
     let badgeAwarded: BadgeDef | null = null;
@@ -191,6 +253,27 @@ export default function App() {
     return !!getCheckpointAfterModule(module.id)?.implemented;
   }, [lastResult]);
 
+  const appIsLoading = auth.isLoading || (auth.isAuthenticated && isProgressLoading);
+
+  if (appIsLoading) {
+    return (
+      <div className="app-container">
+        <div
+          className="app-main"
+          style={{
+            minHeight: '100vh',
+            display: 'grid',
+            placeItems: 'center',
+            color: 'var(--text-primary, #0c1628)',
+            fontWeight: 800,
+          }}
+        >
+          Loading...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="app-container">
       <div className="app-main">
@@ -198,12 +281,14 @@ export default function App() {
           progress={progress}
           currentView={navView}
           theme={theme}
-          onNavigateDashboard={goHome}
+          onNavigateDashboard={() => requireAuth(goHome)}
           onNavigateModules={() => {
-            if (activeMod) setView('module');
-            else setView('dashboard');
+            requireAuth(() => {
+              if (activeMod) setView('module');
+              else setView('dashboard');
+            });
           }}
-          onNavigateProfile={() => setView('profile')}
+          onNavigateProfile={() => requireAuth(() => setView('profile'))}
           onThemeChange={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
           isAuthenticated={auth.isAuthenticated}
           userEmail={auth.user?.email}
@@ -215,8 +300,9 @@ export default function App() {
           {view === 'landing' && (
             <LandingScreen
               progress={progress}
-              onStart={() => setView('dashboard')}
+              onStart={() => requireAuth(goHome)}
               onLogin={() => setView('login')}
+              onRegister={() => setView('register')}
             />
           )}
 
@@ -224,7 +310,7 @@ export default function App() {
             <LoginScreen
               isLoading={auth.isLoading}
               onLogin={handleLogin}
-              onBack={() => setView('dashboard')}
+              onBack={openLanding}
               onRegister={() => setView('register')}
             />
           )}
@@ -233,7 +319,7 @@ export default function App() {
             <RegisterScreen
               isLoading={auth.isLoading}
               onRegister={handleRegister}
-              onBack={() => setView('dashboard')}
+              onBack={openLanding}
               onLogin={() => setView('login')}
             />
           )}
@@ -242,8 +328,10 @@ export default function App() {
             <DashboardScreenNew
               progress={progress}
               onSelectModule={module => {
-                setActiveMod(module);
-                setView('module');
+                requireAuth(() => {
+                  setActiveMod(module);
+                  setView('module');
+                });
               }}
             />
           )}
@@ -253,8 +341,10 @@ export default function App() {
               module={activeMod}
               progress={progress}
               onSelectStage={stage => {
-                setActiveStage(stage);
-                setView('mission');
+                requireAuth(() => {
+                  setActiveStage(stage);
+                  setView('mission');
+                });
               }}
               onBack={goHome}
             />

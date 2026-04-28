@@ -39,16 +39,23 @@ export function useAuth() {
     };
   }, []);
 
-  const login = useCallback((email: string, password: string) => {
-    return loginUser(email, password);
+  const login = useCallback(async (email: string, password: string) => {
+    const data = await loginUser(email, password);
+    setSession(data.session);
+    return data;
   }, []);
 
-  const register = useCallback((params: RegisterUserParams) => {
-    return registerUser(params);
+  const register = useCallback(async (params: RegisterUserParams) => {
+    const data = await registerUser(params);
+    if (data.session) {
+      setSession(data.session);
+    }
+    return data;
   }, []);
 
-  const logout = useCallback(() => {
-    return logoutUser();
+  const logout = useCallback(async () => {
+    await logoutUser();
+    setSession(null);
   }, []);
 
   const user = useMemo<User | null>(() => session?.user ?? null, [session]);
