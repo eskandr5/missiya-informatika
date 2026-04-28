@@ -69,11 +69,11 @@ function getCompletionErrorMessage(error: unknown) {
   const message = error instanceof Error ? error.message : '';
 
   if (message.includes('locked')) {
-    return 'Эта миссия пока закрыта. Вернитесь к карте и проверьте предыдущие задания.';
+    return 'Этот этап пока закрыт. Вернитесь к карте и проверьте предыдущие задания.';
   }
 
   if (message.includes('not implemented')) {
-    return 'Эта миссия пока недоступна. Выберите другое задание на карте.';
+    return 'Этот этап пока недоступен. Выберите другое задание на карте.';
   }
 
   if (message.includes('Unauthenticated')) {

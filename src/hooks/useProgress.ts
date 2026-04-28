@@ -4,6 +4,7 @@ import type { BadgeDef } from '../types/content';
 import { PROGRESS_INITIAL } from '../types/progress';
 import { getFullProgressState } from '../services/progress';
 import {
+  completeCheckpoint as completeCheckpointRemote,
   completeMission as completeMissionRemote,
   type CompletionAttempt,
   type CompletionBadgeUnlocked,
@@ -84,6 +85,16 @@ export function useProgress(options: UseProgressOptions = {}) {
     };
   }, [isAuthenticated, isAuthLoading]);
 
+  const hydrateServerProgress = useCallback((serverProgress: Progress): Progress => ({
+    ...PROGRESS_INITIAL,
+    ...serverProgress,
+    completedMissions: serverProgress.completedMissions ?? [],
+    completedCheckpoints: serverProgress.completedCheckpoints ?? [],
+    badges: serverProgress.badges ?? [],
+    missionScores: serverProgress.missionScores ?? {},
+    checkpointScores: serverProgress.checkpointScores ?? {},
+  }), []);
+
   /** Authenticated mission attempts are recorded by the Edge Function, including failed attempts. */
   const completeMission = useCallback(
     async (missionId: string, score: number, xpReward: number, badge: BadgeDef | null): Promise<CompleteStageResult> => {
@@ -93,15 +104,7 @@ export function useProgress(options: UseProgressOptions = {}) {
           score,
         });
 
-        const nextProgress: Progress = {
-          ...PROGRESS_INITIAL,
-          ...serverProgress,
-          completedMissions: serverProgress.completedMissions ?? [],
-          completedCheckpoints: serverProgress.completedCheckpoints ?? [],
-          badges: serverProgress.badges ?? [],
-          missionScores: serverProgress.missionScores ?? {},
-          checkpointScores: serverProgress.checkpointScores ?? {},
-        };
+        const nextProgress = hydrateServerProgress(serverProgress);
         const attempt = serverProgress.attempt as CompletionAttempt | undefined;
 
         setProgress(nextProgress);
@@ -117,79 +120,94 @@ export function useProgress(options: UseProgressOptions = {}) {
         };
       }
 
-      let completionResult: CompleteStageResult | null = null;
+      const alreadyDone = progress.completedMissions.includes(missionId);
+      const xpAwarded = alreadyDone ? 0 : xpReward;
+      const badgeUnlocked = badge && !progress.badges.includes(badge.id)
+        ? { badgeId: badge.id, moduleId: '' }
+        : null;
+      const nextProgress: Progress = {
+        ...progress,
+        xp: progress.xp + xpAwarded,
+        completedMissions: alreadyDone
+          ? progress.completedMissions
+          : [...progress.completedMissions, missionId],
+        missionScores: {
+          ...progress.missionScores,
+          [missionId]: Math.max(progress.missionScores[missionId] ?? 0, score),
+        },
+        badges: badgeUnlocked
+          ? [...progress.badges, badgeUnlocked.badgeId]
+          : progress.badges,
+      };
 
-      setProgress(prev => {
-        const alreadyDone = prev.completedMissions.includes(missionId);
-        const xpAwarded = alreadyDone ? 0 : xpReward;
-        const next: Progress = {
-          ...prev,
-          xp: prev.xp + xpAwarded,
-          completedMissions: alreadyDone
-            ? prev.completedMissions
-            : [...prev.completedMissions, missionId],
-          missionScores: {
-            ...prev.missionScores,
-            [missionId]: Math.max(prev.missionScores[missionId] ?? 0, score),
-          },
-          badges:
-            badge && !prev.badges.includes(badge.id)
-              ? [...prev.badges, badge.id]
-              : prev.badges,
-        };
-        save(next);
-        completionResult = {
-          progress: next,
-          attempt: {
-            score,
-            passed: true,
-            xpAwarded,
-          },
-          badgeUnlocked: badge && !prev.badges.includes(badge.id)
-            ? { badgeId: badge.id, moduleId: '' }
-            : null,
-        };
-        return next;
-      });
+      save(nextProgress);
+      setProgress(nextProgress);
 
-      return completionResult ?? {
-        progress,
+      return {
+        progress: nextProgress,
         attempt: {
           score,
           passed: true,
-          xpAwarded: 0,
+          xpAwarded,
+        },
+        badgeUnlocked,
+      };
+    },
+    [hydrateServerProgress, isAuthenticated, progress],
+  );
+
+  const completeCheckpoint = useCallback(
+    async (checkpointId: string, score: number, xpReward: number): Promise<CompleteStageResult> => {
+      if (isAuthenticated) {
+        const serverProgress = await completeCheckpointRemote({
+          checkpointId,
+          score,
+        });
+
+        const nextProgress = hydrateServerProgress(serverProgress);
+        const attempt = serverProgress.attempt as CompletionAttempt | undefined;
+
+        setProgress(nextProgress);
+
+        return {
+          progress: nextProgress,
+          attempt: {
+            score,
+            passed: attempt?.passed ?? false,
+            xpAwarded: attempt?.xpAwarded ?? 0,
+          },
+          badgeUnlocked: null,
+        };
+      }
+
+      const alreadyDone = progress.completedCheckpoints.includes(checkpointId);
+      const xpAwarded = alreadyDone ? 0 : xpReward;
+      const nextProgress: Progress = {
+        ...progress,
+        xp: progress.xp + xpAwarded,
+        completedCheckpoints: alreadyDone
+          ? progress.completedCheckpoints
+          : [...progress.completedCheckpoints, checkpointId],
+        checkpointScores: {
+          ...progress.checkpointScores,
+          [checkpointId]: Math.max(progress.checkpointScores[checkpointId] ?? 0, score),
+        },
+      };
+
+      save(nextProgress);
+      setProgress(nextProgress);
+
+      return {
+        progress: nextProgress,
+        attempt: {
+          score,
+          passed: true,
+          xpAwarded,
         },
         badgeUnlocked: null,
       };
     },
-    [isAuthenticated, progress],
-  );
-
-  const completeCheckpoint = useCallback(
-    (checkpointId: string, score: number, xpReward: number) => {
-      if (isAuthenticated) {
-        console.warn('Checkpoint completion is not connected to Supabase yet.');
-        return;
-      }
-
-      setProgress(prev => {
-        const alreadyDone = prev.completedCheckpoints.includes(checkpointId);
-        const next: Progress = {
-          ...prev,
-          xp: alreadyDone ? prev.xp : prev.xp + xpReward,
-          completedCheckpoints: alreadyDone
-            ? prev.completedCheckpoints
-            : [...prev.completedCheckpoints, checkpointId],
-          checkpointScores: {
-            ...prev.checkpointScores,
-            [checkpointId]: Math.max(prev.checkpointScores[checkpointId] ?? 0, score),
-          },
-        };
-        save(next);
-        return next;
-      });
-    },
-    [isAuthenticated],
+    [hydrateServerProgress, isAuthenticated, progress],
   );
 
   const reset = useCallback(() => {

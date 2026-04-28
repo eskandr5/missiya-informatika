@@ -83,3 +83,23 @@ export async function completeMission(params: {
 
   return data as CompletionProgressResponse;
 }
+
+export async function completeCheckpoint(params: {
+  checkpointId: string;
+  score: number;
+  completionTime?: number;
+  attemptMeta?: Record<string, unknown>;
+}): Promise<CompletionProgressResponse> {
+  const { data, error } = await supabase.functions.invoke('complete-checkpoint', {
+    body: params,
+  });
+
+  if (error) {
+    throw new CompletionError(
+      await getFunctionErrorMessage(error),
+      getFunctionErrorStatus(error),
+    );
+  }
+
+  return data as CompletionProgressResponse;
+}

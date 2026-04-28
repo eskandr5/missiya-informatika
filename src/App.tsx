@@ -97,9 +97,10 @@ export default function App() {
     let xpEarned = 0;
 
     if (activeStage.stageType === 'checkpoint') {
-      if (passed) {
-        completeCheckpoint(activeStage.id, score, activeStage.xpReward);
-        xpEarned = activeStage.xpReward;
+      if (auth.isAuthenticated || passed) {
+        const result = await completeCheckpoint(activeStage.id, score, activeStage.xpReward);
+        passed = result.attempt.passed;
+        xpEarned = result.attempt.xpAwarded;
       }
     } else if (auth.isAuthenticated || passed) {
       const allModDone = activeMod.missions.every(mission =>
