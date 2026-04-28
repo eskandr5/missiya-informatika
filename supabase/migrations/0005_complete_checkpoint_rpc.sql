@@ -189,15 +189,23 @@ begin
   )
   values (
     p_user_id,
-    'checkpoint_attempt',
+    case when v_passed then 'checkpoint_completed' else 'checkpoint_failed' end,
     v_checkpoint.checkpoint_id,
-    jsonb_build_object(
+    jsonb_strip_nulls(jsonb_build_object(
       'score', p_score,
       'passed', v_passed,
-      'passingScore', v_checkpoint.passing_score,
-      'xpAwarded', v_xp_delta,
-      'attempt', coalesce(p_metadata, '{}'::jsonb)
-    )
+      'xpEarned', v_xp_delta,
+      'completionTime', case
+        when jsonb_typeof(coalesce(p_metadata, '{}'::jsonb) -> 'completionTime') = 'number'
+          then coalesce(p_metadata, '{}'::jsonb) -> 'completionTime'
+        else null
+      end,
+      'activityType', case
+        when jsonb_typeof(coalesce(p_metadata, '{}'::jsonb) -> 'activityType') = 'string'
+          then coalesce(p_metadata, '{}'::jsonb) ->> 'activityType'
+        else null
+      end
+    ))
   );
 
   select jsonb_build_object(

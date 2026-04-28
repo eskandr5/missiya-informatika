@@ -88,6 +88,7 @@ export async function completeCheckpoint(params: {
   checkpointId: string;
   score: number;
   completionTime?: number;
+  activityType?: string;
   attemptMeta?: Record<string, unknown>;
 }): Promise<CompletionProgressResponse> {
   const { data, error } = await supabase.functions.invoke('complete-checkpoint', {

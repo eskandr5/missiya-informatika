@@ -4,7 +4,7 @@ type CompleteCheckpointRequest = {
   checkpointId?: unknown;
   score?: unknown;
   completionTime?: unknown;
-  attemptMeta?: unknown;
+  activityType?: unknown;
 };
 
 const corsHeaders = {
@@ -21,10 +21,6 @@ function jsonResponse(body: unknown, status = 200) {
       'Content-Type': 'application/json',
     },
   });
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 Deno.serve(async request => {
@@ -98,11 +94,19 @@ Deno.serve(async request => {
     },
   });
 
+  const completionTime = typeof body.completionTime === 'number'
+    && Number.isFinite(body.completionTime)
+    && body.completionTime >= 0
+    ? body.completionTime
+    : null;
+  const activityType = typeof body.activityType === 'string'
+    && body.activityType.trim().length > 0
+    && body.activityType.trim().length <= 64
+    ? body.activityType.trim()
+    : null;
   const metadata = {
-    completionTime: typeof body.completionTime === 'number' && Number.isFinite(body.completionTime)
-      ? body.completionTime
-      : null,
-    attemptMeta: isRecord(body.attemptMeta) ? body.attemptMeta : {},
+    completionTime,
+    activityType,
   };
 
   const { data, error } = await adminClient.rpc('complete_checkpoint_internal', {

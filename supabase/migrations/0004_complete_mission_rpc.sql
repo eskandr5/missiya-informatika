@@ -275,10 +275,21 @@ begin
         'badge_earned',
         v_mission.module_id,
         v_mission.mission_id,
-        jsonb_build_object(
-          'badgeId', v_badge_id,
-          'source', 'module_completion'
-        )
+        jsonb_strip_nulls(jsonb_build_object(
+          'score', p_score,
+          'passed', true,
+          'xpEarned', v_xp_delta,
+          'completionTime', case
+            when jsonb_typeof(coalesce(p_metadata, '{}'::jsonb) -> 'completionTime') = 'number'
+              then coalesce(p_metadata, '{}'::jsonb) -> 'completionTime'
+            else null
+          end,
+          'activityType', case
+            when jsonb_typeof(coalesce(p_metadata, '{}'::jsonb) -> 'activityType') = 'string'
+              then coalesce(p_metadata, '{}'::jsonb) ->> 'activityType'
+            else null
+          end
+        ))
       );
     end if;
   end if;
@@ -315,17 +326,24 @@ begin
   )
   values (
     p_user_id,
-    'mission_attempt',
+    case when v_passed then 'mission_completed' else 'mission_failed' end,
     v_mission.module_id,
     v_mission.mission_id,
-    jsonb_build_object(
+    jsonb_strip_nulls(jsonb_build_object(
       'score', p_score,
       'passed', v_passed,
-      'passingScore', v_mission.passing_score,
-      'xpAwarded', v_xp_delta,
-      'badgeAwarded', case when v_badge_awarded then v_badge_id else null end,
-      'attempt', coalesce(p_metadata, '{}'::jsonb)
-    )
+      'xpEarned', v_xp_delta,
+      'completionTime', case
+        when jsonb_typeof(coalesce(p_metadata, '{}'::jsonb) -> 'completionTime') = 'number'
+          then coalesce(p_metadata, '{}'::jsonb) -> 'completionTime'
+        else null
+      end,
+      'activityType', case
+        when jsonb_typeof(coalesce(p_metadata, '{}'::jsonb) -> 'activityType') = 'string'
+          then coalesce(p_metadata, '{}'::jsonb) ->> 'activityType'
+        else null
+      end
+    ))
   );
 
   select jsonb_build_object(
