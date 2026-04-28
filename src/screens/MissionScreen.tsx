@@ -61,14 +61,35 @@ type FlowStep = typeof FLOW_STEPS[number];
 interface Props {
   stage: ProgressionStage;
   module: Module;
-  onFinish: (score: number) => void;
+  onFinish: (score: number) => void | Promise<void>;
   onBack: () => void;
+}
+
+function getCompletionErrorMessage(error: unknown) {
+  const message = error instanceof Error ? error.message : '';
+
+  if (message.includes('locked')) {
+    return 'Эта миссия пока закрыта. Вернитесь к карте и проверьте предыдущие задания.';
+  }
+
+  if (message.includes('not implemented')) {
+    return 'Эта миссия пока недоступна. Выберите другое задание на карте.';
+  }
+
+  if (message.includes('Unauthenticated')) {
+    return 'Сессия входа истекла. Войдите снова и повторите сохранение результата.';
+  }
+
+  return 'Не удалось сохранить результат. Проверьте подключение и попробуйте ещё раз.';
 }
 
 export default function MissionScreen({ stage, module: mod, onFinish, onBack }: Props) {
   const [step, setStep] = useState<FlowStep>('briefing');
   const [showEn, setShowEn] = useState(false);
   const [revealedWords, setRevealedWords] = useState<string[]>([]);
+  const [completionError, setCompletionError] = useState<string | null>(null);
+  const [isCompleting, setIsCompleting] = useState(false);
+  const [lastScore, setLastScore] = useState<number | null>(null);
 
   const modVocab = useMemo(() => {
     const [start, end] = stage.vocabSlice;
@@ -87,6 +108,22 @@ export default function MissionScreen({ stage, module: mod, onFinish, onBack }: 
   const prevStep = () => {
     if (stepIdx > 0) setStep(FLOW_STEPS[stepIdx - 1]);
     else onBack();
+  };
+
+  const handleComplete = async (score: number) => {
+    if (isCompleting) return;
+
+    setIsCompleting(true);
+    setCompletionError(null);
+    setLastScore(score);
+
+    try {
+      await onFinish(score);
+    } catch (error) {
+      setCompletionError(getCompletionErrorMessage(error));
+    } finally {
+      setIsCompleting(false);
+    }
   };
 
   return (
@@ -295,10 +332,45 @@ export default function MissionScreen({ stage, module: mod, onFinish, onBack }: 
               <button onClick={prevStep} className="btn-g text-sm px-3 py-1.5">← К формулировкам</button>
             </div>
             <div className="card p-5" style={{ border: '1px solid var(--border-color)' }}>
+              {isCompleting && (
+                <div
+                  className="mb-4 rounded-xl px-4 py-3 text-sm font-semibold"
+                  style={{
+                    background: 'var(--accent-soft)',
+                    border: '1px solid var(--border-accent-soft)',
+                    color: 'var(--accent)',
+                  }}
+                >
+                  Сохраняем результат...
+                </div>
+              )}
+
+              {completionError && (
+                <div
+                  className="mb-4 rounded-xl px-4 py-3"
+                  style={{
+                    background: 'var(--danger-soft)',
+                    border: '1px solid var(--danger-color)',
+                    color: 'var(--danger-text)',
+                  }}
+                >
+                  <p className="text-sm font-semibold">{completionError}</p>
+                  {lastScore !== null && (
+                    <button
+                      type="button"
+                      className="btn-g mt-3 text-sm"
+                      onClick={() => void handleComplete(lastScore)}
+                    >
+                      Попробовать сохранить снова
+                    </button>
+                  )}
+                </div>
+              )}
+
               {ActivityComp && stage.activityData ? (
                 <ActivityComp
                   data={stage.activityData as ActivityData}
-                  onComplete={onFinish}
+                  onComplete={handleComplete}
                   phrases={mod.phrases}
                 />
               ) : (

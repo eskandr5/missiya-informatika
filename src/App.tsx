@@ -89,21 +89,40 @@ export default function App() {
     });
   };
 
-  const handleStageFinish = useCallback((score: number) => {
+  const handleStageFinish = useCallback(async (score: number) => {
     if (!activeStage || !activeMod) return;
 
-    const passed = score >= activeStage.passingScore;
+    let passed = score >= activeStage.passingScore;
     let badgeAwarded: BadgeDef | null = null;
+    let xpEarned = 0;
 
-    if (passed) {
-      if (activeStage.stageType === 'checkpoint') {
+    if (activeStage.stageType === 'checkpoint') {
+      if (passed) {
         completeCheckpoint(activeStage.id, score, activeStage.xpReward);
-      } else {
+        xpEarned = activeStage.xpReward;
+      }
+    } else if (auth.isAuthenticated || passed) {
+      const allModDone = activeMod.missions.every(mission =>
+        mission.id === activeStage.id ? true : progress.completedMissions.includes(mission.id),
+      );
+      const localBadge = allModDone ? activeMod.badge : null;
+      const result = await completeMission(activeStage.id, score, activeStage.xpReward, localBadge);
+      passed = result.attempt.passed;
+      xpEarned = result.attempt.xpAwarded;
+
+      if (result.badgeUnlocked?.badgeId === activeMod.badge.id) {
+        badgeAwarded = activeMod.badge;
+      } else if (!auth.isAuthenticated && result.badgeUnlocked) {
+        badgeAwarded = activeMod.badge;
+      }
+    }
+
+    if (!auth.isAuthenticated && passed && activeStage.stageType !== 'checkpoint') {
+      if (!badgeAwarded) {
         const allModDone = activeMod.missions.every(mission =>
           mission.id === activeStage.id ? true : progress.completedMissions.includes(mission.id),
         );
         if (allModDone) badgeAwarded = activeMod.badge;
-        completeMission(activeStage.id, score, activeStage.xpReward, badgeAwarded);
       }
     }
 
@@ -112,11 +131,11 @@ export default function App() {
       stage: activeStage,
       module: activeMod,
       passed,
-      xpEarned: passed ? activeStage.xpReward : 0,
+      xpEarned,
       badge: badgeAwarded,
     });
     setView('result');
-  }, [activeMod, activeStage, completeCheckpoint, completeMission, progress.completedMissions]);
+  }, [activeMod, activeStage, auth.isAuthenticated, completeCheckpoint, completeMission, progress.completedMissions]);
 
   const handleNext = useCallback(() => {
     if (!lastResult) return;

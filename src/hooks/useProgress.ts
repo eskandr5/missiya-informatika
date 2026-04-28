@@ -3,6 +3,11 @@ import type { Progress } from '../types/progress';
 import type { BadgeDef } from '../types/content';
 import { PROGRESS_INITIAL } from '../types/progress';
 import { getFullProgressState } from '../services/progress';
+import {
+  completeMission as completeMissionRemote,
+  type CompletionAttempt,
+  type CompletionBadgeUnlocked,
+} from '../services/completion';
 
 const STORAGE_KEY = 'mss2_prog';
 
@@ -33,6 +38,16 @@ function save(p: Progress): void {
 interface UseProgressOptions {
   isAuthenticated?: boolean;
   isAuthLoading?: boolean;
+}
+
+export interface CompleteStageResult {
+  progress: Progress;
+  attempt: {
+    score: number;
+    passed: boolean;
+    xpAwarded: number;
+  };
+  badgeUnlocked: CompletionBadgeUnlocked | null;
 }
 
 export function useProgress(options: UseProgressOptions = {}) {
@@ -69,19 +84,47 @@ export function useProgress(options: UseProgressOptions = {}) {
     };
   }, [isAuthenticated, isAuthLoading]);
 
-  /** Called only when score >= passingScore — enforced by App */
+  /** Authenticated mission attempts are recorded by the Edge Function, including failed attempts. */
   const completeMission = useCallback(
-    (missionId: string, score: number, xpReward: number, badge: BadgeDef | null) => {
+    async (missionId: string, score: number, xpReward: number, badge: BadgeDef | null): Promise<CompleteStageResult> => {
       if (isAuthenticated) {
-        console.warn('Mission completion is not connected to Supabase yet.');
-        return;
+        const serverProgress = await completeMissionRemote({
+          missionId,
+          score,
+        });
+
+        const nextProgress: Progress = {
+          ...PROGRESS_INITIAL,
+          ...serverProgress,
+          completedMissions: serverProgress.completedMissions ?? [],
+          completedCheckpoints: serverProgress.completedCheckpoints ?? [],
+          badges: serverProgress.badges ?? [],
+          missionScores: serverProgress.missionScores ?? {},
+          checkpointScores: serverProgress.checkpointScores ?? {},
+        };
+        const attempt = serverProgress.attempt as CompletionAttempt | undefined;
+
+        setProgress(nextProgress);
+
+        return {
+          progress: nextProgress,
+          attempt: {
+            score,
+            passed: attempt?.passed ?? false,
+            xpAwarded: attempt?.xpAwarded ?? 0,
+          },
+          badgeUnlocked: serverProgress.badgeUnlocked ?? attempt?.badgeUnlocked ?? null,
+        };
       }
+
+      let completionResult: CompleteStageResult | null = null;
 
       setProgress(prev => {
         const alreadyDone = prev.completedMissions.includes(missionId);
+        const xpAwarded = alreadyDone ? 0 : xpReward;
         const next: Progress = {
           ...prev,
-          xp: alreadyDone ? prev.xp : prev.xp + xpReward,
+          xp: prev.xp + xpAwarded,
           completedMissions: alreadyDone
             ? prev.completedMissions
             : [...prev.completedMissions, missionId],
@@ -95,10 +138,31 @@ export function useProgress(options: UseProgressOptions = {}) {
               : prev.badges,
         };
         save(next);
+        completionResult = {
+          progress: next,
+          attempt: {
+            score,
+            passed: true,
+            xpAwarded,
+          },
+          badgeUnlocked: badge && !prev.badges.includes(badge.id)
+            ? { badgeId: badge.id, moduleId: '' }
+            : null,
+        };
         return next;
       });
+
+      return completionResult ?? {
+        progress,
+        attempt: {
+          score,
+          passed: true,
+          xpAwarded: 0,
+        },
+        badgeUnlocked: null,
+      };
     },
-    [isAuthenticated],
+    [isAuthenticated, progress],
   );
 
   const completeCheckpoint = useCallback(
