@@ -22,6 +22,19 @@ export interface CompletionProgressResponse extends Progress {
   attempt?: CompletionAttempt;
 }
 
+export type MissionAnswerPayload =
+  | Record<string, number>
+  | Array<{
+      id?: string;
+      questionId?: string;
+      answer?: number;
+      choiceIndex?: number;
+      selectedIndex?: number;
+    }>
+  | {
+      answers: Record<string, number>;
+    };
+
 export class CompletionError extends Error {
   status?: number;
 
@@ -65,7 +78,8 @@ function getFunctionErrorStatus(error: unknown): number | undefined {
 
 export async function completeMission(params: {
   missionId: string;
-  score: number;
+  score?: number;
+  answers?: MissionAnswerPayload;
   completionTime?: number;
   activityType?: string;
   attemptMeta?: Record<string, unknown>;

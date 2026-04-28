@@ -1,10 +1,15 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.105.0';
+import {
+  scoreMissionAnswers,
+  type MissionValidationRow,
+} from './scoring.ts';
 
 type CompleteMissionRequest = {
   missionId?: unknown;
   score?: unknown;
   completionTime?: unknown;
   activityType?: unknown;
+  answers?: unknown;
 };
 
 const corsHeaders = {
@@ -55,20 +60,28 @@ Deno.serve(async request => {
   }
 
   const missionId = typeof body.missionId === 'string' ? body.missionId.trim() : '';
-  const score = body.score;
+  const submittedScore = body.score;
 
   if (!missionId) {
     return jsonResponse({ error: 'Missing missionId' }, 400);
   }
 
-  if (
-    typeof score !== 'number'
-    || !Number.isFinite(score)
-    || !Number.isInteger(score)
-    || score < 0
-    || score > 100
-  ) {
-    return jsonResponse({ error: 'Score must be an integer between 0 and 100' }, 400);
+  let score: number | null = null;
+
+  if (submittedScore !== undefined) {
+    if (
+      typeof submittedScore !== 'number'
+      || !Number.isFinite(submittedScore)
+      || !Number.isInteger(submittedScore)
+      || submittedScore < 0
+      || submittedScore > 100
+    ) {
+      return jsonResponse({ error: 'Score must be an integer between 0 and 100' }, 400);
+    }
+
+    score = submittedScore;
+  } else if (body.answers === undefined) {
+    return jsonResponse({ error: 'Provide either score or answers' }, 400);
   }
 
   const userClient = createClient(supabaseUrl, anonKey, {
@@ -104,6 +117,43 @@ Deno.serve(async request => {
     && body.activityType.trim().length <= 64
     ? body.activityType.trim()
     : null;
+
+  if (body.answers !== undefined && !activityType && score === null) {
+    return jsonResponse({ error: 'activityType is required when submitting answers without a score' }, 400);
+  }
+
+  if (body.answers !== undefined && activityType) {
+    const { data: validationRows, error: validationError } = await adminClient
+      .from('mission_validation')
+      .select('mission_id, activity_type, validation_payload, scoring_version')
+      .eq('mission_id', missionId)
+      .eq('activity_type', activityType)
+      .order('updated_at', { ascending: false })
+      .limit(1);
+
+    if (validationError) {
+      return jsonResponse({ error: 'Failed to load mission validation data' }, 500);
+    }
+
+    const validation = (validationRows?.[0] ?? null) as MissionValidationRow | null;
+
+    if (validation) {
+      try {
+        score = scoreMissionAnswers(validation, body.answers).score;
+      } catch (error) {
+        return jsonResponse({
+          error: error instanceof Error ? error.message : 'Unable to score submitted answers',
+        }, 400);
+      }
+    } else if (score === null) {
+      return jsonResponse({ error: 'No server validation data exists for this mission; provide score' }, 400);
+    }
+  }
+
+  if (score === null) {
+    return jsonResponse({ error: 'Score could not be determined' }, 400);
+  }
+
   const metadata = {
     completionTime,
     activityType,
