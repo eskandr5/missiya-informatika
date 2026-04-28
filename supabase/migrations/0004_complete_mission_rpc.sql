@@ -220,7 +220,21 @@ begin
     else 'rank_01'
   end;
 
-  v_badge_id := 'module:' || v_mission.module_id || ':complete';
+  v_badge_id := case v_mission.module_id
+    when '1' then 'explorer'
+    when '2' then 'engineer'
+    when '3' then 'organizer'
+    when '4' then 'creator'
+    when '5' then 'mathematician'
+    when '6' then 'calculator'
+    when '7' then 'logician'
+    when '8' then 'algorithmist'
+    when '9' then 'designer'
+    when '10' then 'coder'
+    when '11' then 'programmer'
+    when '12' then 'graduate'
+    else 'module:' || v_mission.module_id || ':complete'
+  end;
 
   if v_passed and not exists (
     select 1
@@ -247,6 +261,26 @@ begin
 
     get diagnostics v_badge_insert_count = row_count;
     v_badge_awarded := v_badge_insert_count > 0;
+
+    if v_badge_awarded then
+      insert into public.analytics_events (
+        user_id,
+        event_type,
+        module_id,
+        mission_id,
+        metadata
+      )
+      values (
+        p_user_id,
+        'badge_earned',
+        v_mission.module_id,
+        v_mission.mission_id,
+        jsonb_build_object(
+          'badgeId', v_badge_id,
+          'source', 'module_completion'
+        )
+      );
+    end if;
   end if;
 
   update public.user_progress
@@ -324,13 +358,27 @@ begin
       from public.user_checkpoint_results result
       where result.user_id = p_user_id
     ), '{}'::jsonb),
+    'badgeUnlocked', case
+      when v_badge_awarded then jsonb_build_object(
+        'badgeId', v_badge_id,
+        'moduleId', v_mission.module_id
+      )
+      else null
+    end,
     'attempt', jsonb_build_object(
       'missionId', v_mission.mission_id,
       'score', p_score,
       'passed', v_passed,
       'passingScore', v_mission.passing_score,
       'xpAwarded', v_xp_delta,
-      'badgeAwarded', case when v_badge_awarded then v_badge_id else null end
+      'badgeAwarded', case when v_badge_awarded then v_badge_id else null end,
+      'badgeUnlocked', case
+        when v_badge_awarded then jsonb_build_object(
+          'badgeId', v_badge_id,
+          'moduleId', v_mission.module_id
+        )
+        else null
+      end
     )
   )
   into v_result
@@ -347,4 +395,4 @@ revoke all on function public.complete_mission_internal(uuid, text, integer, jso
 grant execute on function public.complete_mission_internal(uuid, text, integer, jsonb) to service_role;
 
 comment on function public.complete_mission_internal(uuid, text, integer, jsonb)
-is 'Internal service-role RPC for atomic mission completion. Enforces backend unlock rules from mission_catalog, checkpoint_catalog, user_mission_results, and user_checkpoint_results; not callable by anon or authenticated users.';
+is 'Internal service-role RPC for atomic mission completion. Enforces backend unlock rules and v1 module-completion badges from trusted catalog/result tables; not callable by anon or authenticated users.';
