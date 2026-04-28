@@ -60,7 +60,7 @@ export default function ProfileScreen({ progress, onBack, onReset }: Props) {
   const xpSinceRank = progress.xp - rank.minXP;
   const xpRange = nextRank ? nextRank.minXP - rank.minXP : 1;
   const xpFill = nextRank ? Math.max(8, Math.min(100, Math.round((xpSinceRank / xpRange) * 100))) : 100;
-  const currentRankIndex = RANKS.findIndex(item => item.name === rank.name);
+  const currentRankIndex = RANKS.findIndex(item => item.id === rank.id);
   const earnedBadges = MODULES
     .map(module => module.badge)
     .filter(badge => progress.badges.includes(badge.id));
