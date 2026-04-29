@@ -3,7 +3,7 @@ import type { MultipleChoiceData } from '../types/activity';
 
 interface Props {
   data: MultipleChoiceData;
-  onComplete: (score: number) => void;
+  onComplete: (score: number, answers?: Record<string, number>) => void;
 }
 
 const LETTERS = ['А', 'Б', 'В', 'Г', 'Д'];
@@ -19,7 +19,7 @@ export default function MultipleChoiceActivity({ data, onComplete }: Props) {
     questions.forEach(q => { if (answers[q.id] === q.correct) c++; });
     const s = Math.round((c / questions.length) * 100);
     setSubmitted(true);
-    setTimeout(() => onComplete(s), 1600);
+    setTimeout(() => onComplete(s, answers), 1600);
   };
 
   return (

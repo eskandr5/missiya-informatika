@@ -7,6 +7,7 @@ import {
   completeCheckpoint as completeCheckpointRemote,
   completeMission as completeMissionRemote,
   type CompletionAttempt,
+  type CompletionAnswerPayload,
   type CompletionBadgeUnlocked,
 } from '../services/completion';
 
@@ -112,7 +113,7 @@ export function useProgress(options: UseProgressOptions = {}) {
         return {
           progress: nextProgress,
           attempt: {
-            score,
+            score: attempt?.score ?? score,
             passed: attempt?.passed ?? false,
             xpAwarded: attempt?.xpAwarded ?? 0,
           },
@@ -157,11 +158,19 @@ export function useProgress(options: UseProgressOptions = {}) {
   );
 
   const completeCheckpoint = useCallback(
-    async (checkpointId: string, score: number, xpReward: number): Promise<CompleteStageResult> => {
+    async (
+      checkpointId: string,
+      score: number,
+      xpReward: number,
+      answers?: CompletionAnswerPayload,
+      activityType?: string,
+    ): Promise<CompleteStageResult> => {
       if (isAuthenticated) {
         const serverProgress = await completeCheckpointRemote({
           checkpointId,
           score,
+          answers,
+          activityType,
         });
 
         const nextProgress = hydrateServerProgress(serverProgress);
@@ -172,7 +181,7 @@ export function useProgress(options: UseProgressOptions = {}) {
         return {
           progress: nextProgress,
           attempt: {
-            score,
+            score: attempt?.score ?? score,
             passed: attempt?.passed ?? false,
             xpAwarded: attempt?.xpAwarded ?? 0,
           },

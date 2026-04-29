@@ -22,7 +22,7 @@ export interface CompletionProgressResponse extends Progress {
   attempt?: CompletionAttempt;
 }
 
-export type MissionAnswerPayload =
+export type CompletionAnswerPayload =
   | Record<string, number>
   | Array<{
       id?: string;
@@ -34,6 +34,8 @@ export type MissionAnswerPayload =
   | {
       answers: Record<string, number>;
     };
+
+export type MissionAnswerPayload = CompletionAnswerPayload;
 
 export class CompletionError extends Error {
   status?: number;
@@ -101,6 +103,7 @@ export async function completeMission(params: {
 export async function completeCheckpoint(params: {
   checkpointId: string;
   score: number;
+  answers?: CompletionAnswerPayload;
   completionTime?: number;
   activityType?: string;
   attemptMeta?: Record<string, unknown>;

@@ -17,6 +17,7 @@ import RegisterScreen from './screens/RegisterScreen';
 import LeaderboardScreen from './screens/LeaderboardScreen';
 
 import type { BadgeDef, Module, ProgressionStage } from './types/content';
+import type { CompletionAnswerPayload } from './services/completion';
 
 type View = 'landing' | 'dashboard' | 'module' | 'mission' | 'result' | 'profile' | 'leaderboard' | 'login' | 'register';
 type Theme = 'light' | 'dark';
@@ -148,7 +149,7 @@ export default function App() {
     });
   };
 
-  const handleStageFinish = useCallback(async (score: number) => {
+  const handleStageFinish = useCallback(async (score: number, answers?: CompletionAnswerPayload) => {
     if (!activeStage || !activeMod) return;
 
     if (!auth.isAuthenticated) {
@@ -156,13 +157,15 @@ export default function App() {
       return;
     }
 
+    let finalScore = score;
     let passed = score >= activeStage.passingScore;
     let badgeAwarded: BadgeDef | null = null;
     let xpEarned = 0;
 
     if (activeStage.stageType === 'checkpoint') {
       if (auth.isAuthenticated || passed) {
-        const result = await completeCheckpoint(activeStage.id, score, activeStage.xpReward);
+        const result = await completeCheckpoint(activeStage.id, score, activeStage.xpReward, answers, activeStage.type);
+        finalScore = result.attempt.score;
         passed = result.attempt.passed;
         xpEarned = result.attempt.xpAwarded;
       }
@@ -172,6 +175,7 @@ export default function App() {
       );
       const localBadge = allModDone ? activeMod.badge : null;
       const result = await completeMission(activeStage.id, score, activeStage.xpReward, localBadge);
+      finalScore = result.attempt.score;
       passed = result.attempt.passed;
       xpEarned = result.attempt.xpAwarded;
 
@@ -192,7 +196,7 @@ export default function App() {
     }
 
     setLastResult({
-      score,
+      score: finalScore,
       stage: activeStage,
       module: activeMod,
       passed,
@@ -237,7 +241,7 @@ export default function App() {
     }
 
     setView('module');
-  }, [lastResult]);
+  }, [goHome, lastResult]);
 
   const hasNext = useMemo(() => {
     if (!lastResult?.passed) return false;

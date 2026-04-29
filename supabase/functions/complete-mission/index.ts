@@ -2,7 +2,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.105.0';
 import {
   scoreMissionAnswers,
   type MissionValidationRow,
-} from './scoring.ts';
+} from '../_shared/scoring.ts';
 
 type CompleteMissionRequest = {
   missionId?: unknown;
@@ -26,6 +26,10 @@ function jsonResponse(body: unknown, status = 200) {
       'Content-Type': 'application/json',
     },
   });
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 Deno.serve(async request => {
@@ -54,7 +58,13 @@ Deno.serve(async request => {
   let body: CompleteMissionRequest;
 
   try {
-    body = await request.json();
+    const parsedBody: unknown = await request.json();
+
+    if (!isRecord(parsedBody)) {
+      return jsonResponse({ error: 'JSON body must be an object' }, 400);
+    }
+
+    body = parsedBody;
   } catch {
     return jsonResponse({ error: 'Invalid JSON body' }, 400);
   }
@@ -168,9 +178,10 @@ Deno.serve(async request => {
 
   if (error) {
     const message = error.message || 'Mission completion failed';
-    const status = message.includes('not found')
+    const lowerMessage = message.toLowerCase();
+    const status = lowerMessage.includes('not found')
       ? 404
-      : message.includes('locked') || message.includes('not implemented')
+      : lowerMessage.includes('locked') || lowerMessage.includes('not implemented')
         ? 409
         : 400;
 

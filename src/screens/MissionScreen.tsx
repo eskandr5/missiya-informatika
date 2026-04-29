@@ -3,6 +3,7 @@ import type { ComponentType } from 'react';
 import { HiOutlineBolt } from 'react-icons/hi2';
 import type { ActivityData } from '../types/activity';
 import type { MissionType, Module, Phrase, ProgressionStage } from '../types/content';
+import type { CompletionAnswerPayload } from '../services/completion';
 import { DL } from '../utils/helpers';
 import BinaryLockActivity from '../activities/BinaryLockActivity';
 import MatchingActivity from '../activities/MatchingActivity';
@@ -32,7 +33,7 @@ import StepBar from '../components/ui/StepBar';
 interface ActivityProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
-  onComplete: (score: number) => void;
+  onComplete: (score: number, answers?: CompletionAnswerPayload) => void;
   phrases?: Phrase[];
 }
 
@@ -61,7 +62,7 @@ type FlowStep = typeof FLOW_STEPS[number];
 interface Props {
   stage: ProgressionStage;
   module: Module;
-  onFinish: (score: number) => void | Promise<void>;
+  onFinish: (score: number, answers?: CompletionAnswerPayload) => void | Promise<void>;
   onBack: () => void;
 }
 
@@ -110,7 +111,7 @@ export default function MissionScreen({ stage, module: mod, onFinish, onBack }: 
     else onBack();
   };
 
-  const handleComplete = async (score: number) => {
+  const handleComplete = async (score: number, answers?: CompletionAnswerPayload) => {
     if (isCompleting) return;
 
     setIsCompleting(true);
@@ -118,7 +119,7 @@ export default function MissionScreen({ stage, module: mod, onFinish, onBack }: 
     setLastScore(score);
 
     try {
-      await onFinish(score);
+      await onFinish(score, answers);
     } catch (error) {
       setCompletionError(getCompletionErrorMessage(error));
     } finally {

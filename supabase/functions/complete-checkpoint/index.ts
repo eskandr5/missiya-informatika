@@ -1,10 +1,15 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.105.0';
+import {
+  scoreAnswers,
+  type ValidationRow,
+} from '../_shared/scoring.ts';
 
 type CompleteCheckpointRequest = {
   checkpointId?: unknown;
   score?: unknown;
   completionTime?: unknown;
   activityType?: unknown;
+  answers?: unknown;
 };
 
 const corsHeaders = {
@@ -21,6 +26,10 @@ function jsonResponse(body: unknown, status = 200) {
       'Content-Type': 'application/json',
     },
   });
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 Deno.serve(async request => {
@@ -49,26 +58,40 @@ Deno.serve(async request => {
   let body: CompleteCheckpointRequest;
 
   try {
-    body = await request.json();
+    const parsedBody: unknown = await request.json();
+
+    if (!isRecord(parsedBody)) {
+      return jsonResponse({ error: 'JSON body must be an object' }, 400);
+    }
+
+    body = parsedBody;
   } catch {
     return jsonResponse({ error: 'Invalid JSON body' }, 400);
   }
 
   const checkpointId = typeof body.checkpointId === 'string' ? body.checkpointId.trim() : '';
-  const score = body.score;
+  const submittedScore = body.score;
 
   if (!checkpointId) {
     return jsonResponse({ error: 'Missing checkpointId' }, 400);
   }
 
-  if (
-    typeof score !== 'number'
-    || !Number.isFinite(score)
-    || !Number.isInteger(score)
-    || score < 0
-    || score > 100
-  ) {
-    return jsonResponse({ error: 'Score must be an integer between 0 and 100' }, 400);
+  let score: number | null = null;
+
+  if (submittedScore !== undefined) {
+    if (
+      typeof submittedScore !== 'number'
+      || !Number.isFinite(submittedScore)
+      || !Number.isInteger(submittedScore)
+      || submittedScore < 0
+      || submittedScore > 100
+    ) {
+      return jsonResponse({ error: 'Score must be an integer between 0 and 100' }, 400);
+    }
+
+    score = submittedScore;
+  } else if (body.answers === undefined) {
+    return jsonResponse({ error: 'Provide either score or answers' }, 400);
   }
 
   const userClient = createClient(supabaseUrl, anonKey, {
@@ -104,9 +127,48 @@ Deno.serve(async request => {
     && body.activityType.trim().length <= 64
     ? body.activityType.trim()
     : null;
+
+  const { data: validationRows, error: validationError } = await adminClient
+    .from('checkpoint_validation')
+    .select('checkpoint_id, activity_type, validation_payload, scoring_version')
+    .eq('checkpoint_id', checkpointId)
+    .order('updated_at', { ascending: false });
+
+  if (validationError) {
+    return jsonResponse({ error: 'Failed to load checkpoint validation data' }, 500);
+  }
+
+  const checkpointValidations = (validationRows ?? []) as Array<ValidationRow & { checkpoint_id: string }>;
+  const validation = activityType
+    ? checkpointValidations.find(row => row.activity_type === activityType) ?? null
+    : checkpointValidations[0] ?? null;
+  const metadataActivityType = validation?.activity_type ?? activityType;
+
+  if (checkpointValidations.length > 0) {
+    if (!validation) {
+      return jsonResponse({ error: 'No validation data exists for this checkpoint activity type' }, 400);
+    }
+
+    if (body.answers === undefined) {
+      return jsonResponse({ error: 'answers are required for this checkpoint' }, 400);
+    }
+
+    try {
+      score = scoreAnswers(validation, body.answers).score;
+    } catch (error) {
+      return jsonResponse({
+        error: error instanceof Error ? error.message : 'Unable to score submitted answers',
+      }, 400);
+    }
+  }
+
+  if (score === null) {
+    return jsonResponse({ error: 'Score could not be determined' }, 400);
+  }
+
   const metadata = {
     completionTime,
-    activityType,
+    activityType: metadataActivityType,
   };
 
   const { data, error } = await adminClient.rpc('complete_checkpoint_internal', {
@@ -118,9 +180,10 @@ Deno.serve(async request => {
 
   if (error) {
     const message = error.message || 'Checkpoint completion failed';
-    const status = message.includes('not found')
+    const lowerMessage = message.toLowerCase();
+    const status = lowerMessage.includes('not found')
       ? 404
-      : message.includes('locked') || message.includes('not attached')
+      : lowerMessage.includes('locked') || lowerMessage.includes('not attached')
         ? 409
         : 400;
 

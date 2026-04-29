@@ -66,3 +66,29 @@ on conflict (checkpoint_id) do update set
   passing_score = excluded.passing_score,
   xp_reward = excluded.xp_reward,
   updated_at = now();
+
+insert into public.checkpoint_validation (
+  checkpoint_id,
+  activity_type,
+  validation_payload,
+  scoring_version
+)
+values
+  (
+    'checkpoint-1',
+    'multiple_choice',
+    '{
+      "questions": [
+        { "id": "cp1-q1", "correct": 0 },
+        { "id": "cp1-q2", "correct": 1 },
+        { "id": "cp1-q3", "correct": 1 },
+        { "id": "cp1-q4", "correct": 2 },
+        { "id": "cp1-q5", "correct": 0 },
+        { "id": "cp1-q6", "correct": 1 }
+      ]
+    }'::jsonb,
+    'v1'
+  )
+on conflict (checkpoint_id, activity_type, scoring_version) do update set
+  validation_payload = excluded.validation_payload,
+  updated_at = now();
