@@ -1,4 +1,8 @@
-create table public.mission_validation (
+-- 0007_mission_validation.sql
+-- Optional server-side scoring validation table.
+-- Safe to re-run manually.
+
+create table if not exists public.mission_validation (
   mission_id text not null references public.mission_catalog(mission_id) on delete cascade,
   activity_type text not null check (length(trim(activity_type)) > 0),
   validation_payload jsonb not null default '{}'::jsonb,
@@ -8,16 +12,20 @@ create table public.mission_validation (
   primary key (mission_id, activity_type, scoring_version)
 );
 
-create index mission_validation_mission_activity_idx
+create index if not exists mission_validation_mission_activity_idx
 on public.mission_validation (mission_id, activity_type, updated_at desc);
+
+drop trigger if exists set_mission_validation_updated_at on public.mission_validation;
 
 create trigger set_mission_validation_updated_at
 before update on public.mission_validation
-for each row execute function public.set_updated_at();
+for each row
+execute function public.set_updated_at();
 
 alter table public.mission_validation enable row level security;
+alter table public.mission_validation force row level security;
 
-revoke all on table public.mission_validation from PUBLIC;
+revoke all on table public.mission_validation from public;
 revoke all on table public.mission_validation from anon;
 revoke all on table public.mission_validation from authenticated;
 
