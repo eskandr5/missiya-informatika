@@ -1,151 +1,130 @@
-# Миссия: Информатика
+# Mission: Informatics
 
-Учебное React-приложение в формате интерактивного симулятора для изучения информатики. Проект сочетает модульную структуру, миссии с разными типами заданий, словарь терминов, ключевые фразы и систему прогресса с XP и значками.
+Mission: Informatics is a React + Vite + TypeScript learning application with a Supabase-native backend in v1.
 
-## Обзор проекта
+The frontend keeps the lesson content in static TypeScript files under `src/data/**`. The backend uses Supabase Auth, PostgreSQL, Row Level Security, Edge Functions, and SQL RPC functions for persistent identity, progress, XP, badges, analytics, and leaderboard data.
 
-«Миссия: Информатика» — это фронтенд-проект, ориентированный на пошаговое прохождение учебных модулей. Пользователь начинает с главного экрана, переходит к карте модулей, открывает конкретный модуль, изучает словарь и фразы, затем выполняет миссию и получает результат.
+## Current Architecture
 
-На текущем этапе проект реализован как клиентское SPA-приложение без backend-части. Прогресс пользователя сохраняется локально в браузере.
+- Frontend: React 19, TypeScript, Vite
+- Backend v1: Supabase-native
+- Auth: Supabase Auth
+- Database: Supabase PostgreSQL
+- Authorization: Row Level Security
+- Protected writes: Supabase Edge Functions plus internal SQL RPCs
+- Content source: frontend static data files
 
-## Для кого проект
+This repository does not use Express, Fastify, Next.js, MongoDB, or a custom Node.js backend for v1.
 
-Проект рассчитан на:
+## Frontend Supabase Files
 
-- студентов подготовительных и вводных учебных программ;
-- начинающих изучать основы информатики;
-- преподавателей и разработчиков учебных демо-платформ;
-- команду, которая развивает интерактивный образовательный интерфейс на React.
+The frontend integration currently includes these files:
 
-## Что уже реализовано
+- `src/lib/supabase.ts`
+- `src/services/auth.ts`
+- `src/services/progress.ts`
+- `src/services/completion.ts`
+- `src/services/leaderboard.ts`
+- `src/hooks/useAuth.ts`
+- `src/hooks/useProgress.ts`
+- `src/screens/LoginScreen.tsx`
+- `src/screens/RegisterScreen.tsx`
+- `src/screens/LeaderboardScreen.tsx`
 
-Сейчас в проекте доступны:
+What they do:
 
-- стартовый экран проекта;
-- экран карты модулей;
-- экран отдельного модуля;
-- экран миссии с пошаговым сценарием;
-- экран результата после прохождения;
-- экран профиля с прогрессом, рангом и значками;
-- система локального прогресса: XP, завершённые миссии, лучшие результаты и значки;
-- 12 учебных модулей;
-- 26 миссий в данных проекта;
-- 5 миссий с включённой логикой прохождения;
-- словарь терминов и блок ключевых фраз внутри модулей;
-- несколько форматов интерактивных заданий.
+- `src/lib/supabase.ts` creates the browser Supabase client with `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+- `src/services/auth.ts` wraps registration, login, and logout.
+- `src/services/progress.ts` reads the authenticated user's progress state from Supabase.
+- `src/services/completion.ts` calls the protected Edge Functions for mission and checkpoint completion.
+- `src/services/leaderboard.ts` reads the authenticated leaderboard RPC.
+- `src/hooks/useAuth.ts` manages the current session and auth state subscription.
+- `src/hooks/useProgress.ts` hydrates Supabase progress for authenticated users and keeps guest local progress for unauthenticated users.
+- `src/screens/LoginScreen.tsx`, `src/screens/RegisterScreen.tsx`, and `src/screens/LeaderboardScreen.tsx` provide the auth and leaderboard UI.
 
-## Текущие типы активностей
+## Supabase Files
 
-В проекте уже реализованы следующие типы заданий:
+The Supabase implementation lives under `supabase/`:
 
-- `matching` — сопоставление терминов и определений;
-- `sequence` — восстановление хронологии;
-- `multiple_choice` — выбор правильного ответа;
-- `drag_drop` — распределение элементов по зонам;
-- `classification` — классификация объектов по категориям;
-- `error_correction` — поиск и исправление ошибок.
+- `supabase/migrations/`
+- `supabase/seed.sql`
+- `supabase/functions/complete-mission/index.ts`
+- `supabase/functions/complete-checkpoint/index.ts`
 
-Часть типов миссий и часть модулей уже подготовлены на уровне структуры данных, но ещё не реализованы в интерфейсе прохождения.
+Current migrations include:
 
-## Технологический стек
+- `0001_core_schema.sql`
+- `0002_new_user_trigger.sql`
+- `0003_rls_policies.sql`
+- `0004_complete_mission_rpc.sql`
+- `0005_complete_checkpoint_rpc.sql`
+- `0006_leaderboard_rpc.sql`
+- `0007_mission_validation.sql`
+- `0008_security_review_hardening.sql`
 
-- React 19
-- TypeScript
-- Vite
-- ESLint
-- CSS через глобальные стили проекта
-- LocalStorage для хранения пользовательского прогресса
-
-## Структура проекта
+## Project Structure
 
 ```text
 src/
-  activities/   # интерактивные учебные задания
-  assets/       # изображения и статические ресурсы
-  components/   # переиспользуемые UI- и mission-компоненты
-  data/         # модули, контент, звания и учебные данные
-  hooks/        # пользовательские хуки, включая прогресс
-  screens/      # основные экраны приложения
-  styles/       # глобальные стили
-  types/        # типы TypeScript
-  utils/        # вспомогательные функции
-  App.tsx       # основной маршрутизирующий слой приложения
-  main.tsx      # точка входа
+  activities/
+  assets/
+  components/
+  data/
+  hooks/
+  lib/
+  screens/
+  services/
+  styles/
+  types/
+  utils/
+supabase/
+  functions/
+    complete-mission/
+    complete-checkpoint/
+  migrations/
+  seed.sql
+docs/
 ```
 
-## Локальный запуск
+## Local Development
 
-### Требования
+Requirements:
 
-- Node.js 18+ рекомендуется
+- Node.js 18+
 - npm
 
-### Установка зависимостей
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-### Запуск в режиме разработки
+Create `.env.local` with:
+
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+Run the app:
 
 ```bash
 npm run dev
 ```
 
-После запуска Vite покажет локальный адрес приложения в терминале.
-
-### Сборка проекта
+Run checks:
 
 ```bash
+npm run typecheck
+npm run lint
 npm run build
 ```
 
-### Предпросмотр production-сборки
+## Documentation Map
 
-```bash
-npm run preview
-```
-
-## Как устроен пользовательский сценарий
-
-Текущий поток работы приложения выглядит так:
-
-1. Пользователь попадает на стартовый экран.
-2. Переходит к карте модулей.
-3. Выбирает доступный модуль.
-4. Изучает описание, словарь и фразы.
-5. Выполняет миссию.
-6. Получает результат, XP и возможную награду.
-7. Возвращается к модулю, карте или профилю.
-
-## Текущее состояние проекта
-
-Проект находится в стадии активной фронтенд-разработки. Уже готова базовая архитектура приложения, основная навигация, визуальная система экранов, локальная модель прогресса и несколько полноценных интерактивных механик.
-
-При этом проект пока не включает:
-
-- backend;
-- авторизацию;
-- серверное хранение данных;
-- синхронизацию прогресса между устройствами;
-- административную панель;
-- полноценную реализацию всех объявленных типов миссий.
-
-## Roadmap
-
-Ближайшие направления развития:
-
-- расширение количества реализованных миссий;
-- подключение остальных типов учебных активностей;
-- наполнение контентом всех модулей;
-- улучшение UX прохождения и обратной связи по ошибкам;
-- дальнейшая адаптация интерфейса под разные размеры экранов;
-- возможное добавление серверного хранения прогресса в будущих версиях.
-
-## Назначение репозитория
-
-Этот репозиторий подходит как:
-
-- учебный пример SPA на React + TypeScript;
-- основа для образовательного интерфейса по информатике;
-- стартовая точка для дальнейшего расширения контента и логики миссий.
+- `docs/supabase-setup.md`: frontend Supabase client setup and file references
+- `docs/deployment.md`: frontend hosting and Supabase deployment
+- `docs/backend-catalog-report.md`: extracted catalog and seed-alignment notes
+- `docs/mission-validation.md`: optional server-side scoring notes
+- `docs/security-review.md`: Phase 21 backend security review
+- `docs/testing-checklist.md`: Phase 22 automated checks and manual Supabase verification

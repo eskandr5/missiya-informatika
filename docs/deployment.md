@@ -1,6 +1,6 @@
 # Deployment
 
-This guide covers the lightweight v1 deployment path for Mission: Informatics.
+This guide covers the lightweight v1 deployment path for Mission: Informatics with its Supabase-native backend.
 
 ## Frontend Hosting
 
@@ -56,6 +56,13 @@ Do not add service-role or database secrets to frontend hosting:
 
 Use the Supabase CLI from the repository root.
 
+Supabase files deployed from this repository:
+
+- `supabase/migrations/`
+- `supabase/seed.sql`
+- `supabase/functions/complete-mission/index.ts`
+- `supabase/functions/complete-checkpoint/index.ts`
+
 Link the local project to the remote Supabase project:
 
 ```bash
@@ -68,6 +75,12 @@ Apply database migrations:
 supabase db push
 ```
 
+Seed catalog data when needed:
+
+```bash
+supabase db seed
+```
+
 Deploy Edge Functions:
 
 ```bash
@@ -76,6 +89,23 @@ supabase functions deploy complete-checkpoint
 ```
 
 The deployed functions are the only trusted write path for protected progress, completion, badge, and analytics updates.
+
+## Frontend Files Used In Production
+
+The deployed frontend relies on:
+
+- `src/lib/supabase.ts`
+- `src/services/auth.ts`
+- `src/services/progress.ts`
+- `src/services/completion.ts`
+- `src/services/leaderboard.ts`
+- `src/hooks/useAuth.ts`
+- `src/hooks/useProgress.ts`
+- `src/screens/LoginScreen.tsx`
+- `src/screens/RegisterScreen.tsx`
+- `src/screens/LeaderboardScreen.tsx`
+
+These files call Supabase directly from the browser using the anon key and invoke the protected Edge Functions for write operations.
 
 ## Function Secrets
 
@@ -108,7 +138,8 @@ The Edge Functions currently return CORS headers that allow browser calls. Befor
 2. Configure frontend hosting with `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
 3. Run `supabase link --project-ref your-project-ref`.
 4. Run `supabase db push`.
-5. Set `SUPABASE_SERVICE_ROLE_KEY` in Supabase function secrets only.
-6. Deploy `complete-mission` and `complete-checkpoint`.
-7. Configure Supabase Site URL and redirect URLs.
-8. Deploy the frontend.
+5. Run `supabase db seed` if the remote catalog is empty or needs refresh.
+6. Set `SUPABASE_SERVICE_ROLE_KEY` in Supabase function secrets only.
+7. Deploy `complete-mission` and `complete-checkpoint`.
+8. Configure Supabase Site URL and redirect URLs.
+9. Deploy the frontend.
